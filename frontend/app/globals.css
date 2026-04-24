@@ -1,0 +1,292 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f4f6f8;
+  color: #102a43;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.hero-board-float {
+  animation: heroBoardFloat 5.8s ease-in-out infinite;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.hero-board-glow {
+  animation: heroBoardGlowFloat 5.8s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.hero-board-glass {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 28px 70px rgba(35, 55, 140, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.navbar-logo-spin {
+  animation: navbarLogoSpin 14s linear infinite;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+@keyframes heroBoardFloat {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -12px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes heroBoardGlowFloat {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate3d(0, -10px, 0) scale(1.06);
+    opacity: 0.82;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.55;
+  }
+}
+
+@keyframes navbarLogoSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-board-float,
+  .hero-board-glow,
+  .navbar-logo-spin {
+    animation: none;
+  }
+}
+
+.dashboard-loading-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.18), transparent 26%),
+    radial-gradient(circle at bottom left, rgba(255, 255, 255, 0.1), transparent 22%),
+    linear-gradient(135deg, rgba(47, 84, 219, 0.94) 0%, rgba(63, 102, 234, 0.96) 54%, rgba(107, 151, 255, 0.98) 100%);
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.32s ease, visibility 0.32s ease;
+  z-index: 1000;
+}
+
+.dashboard-loading-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.dashboard-loading-card {
+  width: min(460px, 100%);
+  padding: 30px 30px 26px;
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow: 0 30px 80px rgba(20, 45, 110, 0.25);
+  color: #ffffff;
+  text-align: center;
+}
+
+.dashboard-loading-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: "Plus Jakarta Sans", "Aptos", "Segoe UI", sans-serif;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.dashboard-loading-brand img {
+  width: 42px;
+  height: 42px;
+  display: block;
+  animation: dashboardLoaderSpin 2.8s linear infinite;
+}
+
+.dashboard-loading-title {
+  margin: 18px 0 8px;
+  font-family: "Plus Jakarta Sans", "Aptos", "Segoe UI", sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+}
+
+.dashboard-loading-copy {
+  margin: 0;
+  color: rgba(243, 247, 255, 0.86);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.dashboard-loading-progress {
+  margin-top: 20px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  overflow: hidden;
+}
+
+.dashboard-loading-progress span {
+  display: block;
+  width: 42%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.35), #ffffff, rgba(255, 255, 255, 0.35));
+  animation: dashboardLoaderBar 1.4s ease-in-out infinite;
+}
+
+.dashboard-loading-meta {
+  margin-top: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(240, 245, 255, 0.72);
+}
+
+.logout-loading-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(244, 248, 255, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.24s ease, visibility 0.24s ease;
+  z-index: 1200;
+}
+
+.logout-loading-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.logout-loading-card {
+  width: min(360px, 100%);
+  padding: 28px 28px 24px;
+  border-radius: 28px;
+  background: linear-gradient(135deg, rgba(47, 84, 219, 0.96) 0%, rgba(63, 102, 234, 0.98) 58%, rgba(107, 151, 255, 1) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 24px 56px rgba(31, 56, 118, 0.18);
+  text-align: center;
+}
+
+.logout-loading-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 18px;
+  display: grid;
+  place-items: center;
+}
+
+.logout-loading-icon img {
+  width: 50px;
+  height: 50px;
+  display: block;
+  animation: dashboardLoaderSpin 6.2s linear infinite;
+}
+
+.logout-loading-title {
+  margin: 0;
+  color: #ffffff;
+  font-family: "Plus Jakarta Sans", "Aptos", "Segoe UI", sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.logout-loading-copy {
+  margin: 10px 0 0;
+  color: rgba(243, 247, 255, 0.88);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.login-loader-bar span {
+  animation: loginLoaderBar 1.4s ease-in-out infinite;
+}
+
+@keyframes dashboardLoaderSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dashboardLoaderBar {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
+
+@keyframes loginLoaderBar {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}

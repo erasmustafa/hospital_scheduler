@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; color: #0f172a; }
+    h1 { margin: 0 0 8px 0; }
+    .muted { color: #475569; margin-bottom: 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+    .card { border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; }
+    .label { font-size: 12px; color: #64748b; margin-bottom: 6px; }
+    .value { font-size: 20px; font-weight: 700; }
+    ul { padding-left: 18px; }
+  </style>
+</head>
+<body>
+  <h1>{{ greeting_name }}</h1>
+  <p class="muted">{{ staff_dashboard_subtitle }}</p>
+
+  <section class="grid">
+    <article class="card"><div class="label">Aktif Personel</div><div class="value">{{ active_staff_count }}</div></article>
+    <article class="card"><div class="label">Bugun Vardiya</div><div class="value">{{ today_assignment_count }}</div></article>
+    <article class="card"><div class="label">Gece Nobet</div><div class="value">{{ tonight_oncall_count }}</div></article>
+    <article class="card"><div class="label">Bekleyen Talep</div><div class="value">{{ pending_leave_count }}</div></article>
+    <article class="card"><div class="label">Aylik Vardiya</div><div class="value">{{ personal_month_shift_count }}</div></article>
+    <article class="card"><div class="label">Aylik Gece</div><div class="value">{{ personal_month_night_count }}</div></article>
+    <article class="card"><div class="label">Kalan Izin</div><div class="value">{{ remaining_leave_days }}</div></article>
+  </section>
+
+  <section style="margin-top: 24px;">
+    <h2>Duyurular</h2>
+    <ul>
+      {% for item in announcement_messages %}
+      <li><strong>{{ item.title }}</strong> - {{ item.body }}</li>
+      {% empty %}
+      <li>Duyuru yok.</li>
+      {% endfor %}
+    </ul>
+  </section>
+</body>
+</html>
+

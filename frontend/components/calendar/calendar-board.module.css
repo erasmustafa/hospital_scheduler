@@ -1,0 +1,594 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.layout {
+  display: block;
+  height: 100%;
+  min-height: 0;
+}
+
+.calendarCard {
+  border: 1px solid #dbe3ef;
+  border-radius: 28px;
+  background: #ffffff;
+  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.06);
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 14px;
+  padding: 22px 22px 26px;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.calendarCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.headerTitleWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.calendarCardHeader h2 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.05;
+  font-weight: 800;
+  color: #122340;
+  letter-spacing: -0.04em;
+}
+
+.calendarCardHeader p {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #6d7d92;
+}
+
+.infoBadgeWrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.infoBadge {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dbe4ef;
+  border-radius: 999px;
+  background: #f8fbff;
+  color: #5d79dc;
+  cursor: help;
+}
+
+.infoTooltip {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 280px;
+  padding: 10px 12px;
+  border: 1px solid #dbe4ef;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+  color: #5f7089;
+  font-size: 12px;
+  line-height: 1.5;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 140ms ease, visibility 140ms ease;
+  z-index: 4;
+}
+
+.infoBadgeWrap:hover .infoTooltip,
+.infoBadgeWrap:focus-within .infoTooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.calendarFrame {
+  min-height: 0;
+  height: 100%;
+  border: 1px solid #deE7f2;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  overflow: auto;
+  padding: 0;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.toolbarLeft,
+.toolbarRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.navButton,
+.iconAction,
+.todayButton,
+.staticField,
+.selectField {
+  min-height: 44px;
+  border: 1px solid #dbe4ef;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #213452;
+}
+
+.navButton,
+.iconAction {
+  width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 140ms ease, border-color 140ms ease;
+}
+
+.todayButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.navButton:hover,
+.iconAction:hover,
+.todayButton:hover,
+.selectField:hover,
+.staticField:hover {
+  background: #f7fbff;
+  border-color: #cfdced;
+}
+
+.staticField,
+.selectField {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+}
+
+.staticField {
+  min-width: 204px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #243754;
+}
+
+.staticField svg:last-child {
+  margin-left: auto;
+  color: #8393a9;
+}
+
+.staticFieldIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  background: #eef4ff;
+  color: #3e67e9;
+  flex-shrink: 0;
+}
+
+.selectField {
+  min-width: 200px;
+  position: relative;
+  cursor: pointer;
+}
+
+.selectField select {
+  appearance: none;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 24px 0 0;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 700;
+  color: #243754;
+  outline: none;
+}
+
+.selectField::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #8393a9;
+  border-bottom: 2px solid #8393a9;
+  transform: translateY(-60%) rotate(45deg);
+  pointer-events: none;
+}
+
+.selectField select:disabled {
+  color: #8a97ab;
+}
+
+.infoText {
+  margin: 0;
+  font-size: 13px;
+  color: #6d7d92;
+}
+
+.errorText {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #f4c8cf;
+  border-radius: 16px;
+  background: #fff4f6;
+  color: #ad2235;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.assignmentEventChip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 20px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  border: 1px solid #c7d4f2;
+  background: #ecf3ff;
+}
+
+.eventStaffName {
+  font-size: 11px;
+  font-weight: 700;
+  color: #11203c;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
+}
+
+.eventShiftName {
+  font-size: 10px;
+  color: #41618e;
+  white-space: nowrap;
+}
+
+.eventBadge {
+  min-width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: #4a63d9;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.holidayEventChip {
+  min-height: 20px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid #f3c8ce;
+  background: #fff1f3;
+  color: #a92a3d;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.dragGhost {
+  position: fixed;
+  z-index: 60;
+  pointer-events: none;
+  min-width: 200px;
+  max-width: 240px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid #bfd1ef;
+  background: #ffffff;
+  box-shadow: 0 14px 30px rgba(9, 17, 38, 0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dragGhost strong {
+  font-size: 13px;
+  color: #0e1f38;
+}
+
+.dragGhost span {
+  font-size: 12px;
+  color: #37517c;
+}
+
+.dragGhost small {
+  font-size: 11px;
+  color: #607291;
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.42);
+  padding: 16px;
+}
+
+.modalCard {
+  width: min(640px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  background: #ffffff;
+  border: 1px solid #d6dfec;
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: 0 22px 40px rgba(13, 20, 37, 0.24);
+}
+
+.modalCard h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #0f203b;
+}
+
+.modalSubtitle {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #5f7089;
+}
+
+.summaryGrid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.summaryGrid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px;
+  border: 1px solid #dce4f0;
+  border-radius: 14px;
+  background: #f9fbff;
+}
+
+.summaryGrid span {
+  font-size: 11px;
+  color: #6b7d95;
+}
+
+.summaryGrid strong {
+  font-size: 13px;
+  color: #10203d;
+}
+
+.swapBlock {
+  margin-top: 14px;
+}
+
+.swapBlock > p {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #172840;
+}
+
+.emptySwapState {
+  padding: 10px;
+  border: 1px dashed #cad6e8;
+  border-radius: 14px;
+  color: #62758f;
+  font-size: 13px;
+}
+
+.swapList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.swapOption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid #d6dfec;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.swapOption span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.swapOption strong {
+  font-size: 13px;
+  color: #122342;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.swapOption small {
+  font-size: 12px;
+  color: #62748e;
+}
+
+.swapOption em {
+  margin-left: auto;
+  min-width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: #eaf0ff;
+  color: #2d52c0;
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.modalActions {
+  margin-top: 14px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.modalActions button {
+  min-height: 40px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 14px;
+  background: #3358d8;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modalActions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cancelButton {
+  background: #dee5f0 !important;
+  color: #22344f !important;
+}
+
+.primaryButton {
+  background: #2349c9 !important;
+}
+
+.page :global(.calendar-drop-highlight .fc-daygrid-day-frame) {
+  box-shadow: inset 0 0 0 2px #2f58da;
+  border-radius: 6px;
+}
+
+.page :global(.fc .fc-daygrid-day-number) {
+  color: #132544;
+  font-weight: 700;
+  text-decoration: none !important;
+  font-size: 12px;
+  padding: 10px 12px 0 0 !important;
+}
+
+.page :global(.fc .fc-event) {
+  border: none !important;
+  background: transparent !important;
+  cursor: grab;
+}
+
+.page :global(.fc .fc-event.fc-event-dragging) {
+  opacity: 0.4;
+}
+
+.page :global(.fc-theme-standard td),
+.page :global(.fc-theme-standard th),
+.page :global(.fc-theme-standard .fc-scrollgrid) {
+  border-color: #e4ecf4;
+}
+
+.page :global(.fc .fc-scrollgrid) {
+  border: none !important;
+}
+
+.page :global(.fc .fc-col-header-cell-cushion) {
+  color: #7a8ca2;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 14px 0;
+  text-decoration: none !important;
+}
+
+.page :global(.fc .fc-daygrid-day-frame) {
+  min-height: 126px;
+}
+
+@media (max-width: 768px) {
+  .calendarCard {
+    padding: 16px;
+    border-radius: 22px;
+  }
+
+  .headerTitleWrap {
+    align-items: flex-start;
+  }
+
+  .infoTooltip {
+    left: 0;
+    top: calc(100% + 10px);
+    transform: none;
+    width: min(280px, calc(100vw - 96px));
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toolbarLeft,
+  .toolbarRight {
+    width: 100%;
+  }
+
+  .toolbarRight {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .staticField,
+  .selectField {
+    min-width: 0;
+  }
+
+  .modalActions {
+    flex-direction: column;
+  }
+
+  .modalActions button {
+    width: 100%;
+  }
+}
