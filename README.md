@@ -1,5 +1,3 @@
-# hospital_scheduler
-Smart hospital workforce scheduling system with automated shift generation, fairness optimization, and interactive calendar-based management.
 # 🏥 Hospital Scheduler
 
 Automated hospital staff scheduling platform built with Django, featuring intelligent shift allocation, workload balancing, and interactive calendar management.
