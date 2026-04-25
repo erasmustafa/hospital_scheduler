@@ -675,7 +675,7 @@ export function CalendarBoard() {
               plugins={[dayGridPlugin, interactionPlugin]}
               locale={trLocale}
               initialView="dayGridMonth"
-              height="auto"
+              height="100%"
               fixedWeekCount={false}
               dayMaxEventRows={4}
               headerToolbar={false}
