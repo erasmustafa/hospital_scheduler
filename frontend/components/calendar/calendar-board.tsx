@@ -278,6 +278,23 @@ export function CalendarBoard() {
     setIsStaffDropdownOpen(false);
   }, []);
 
+  const closeAllDropdowns = useCallback(() => {
+    setIsMonthDropdownOpen(false);
+    setIsScopeDropdownOpen(false);
+    setIsDepartmentDropdownOpen(false);
+    setIsStaffDropdownOpen(false);
+  }, []);
+
+  const openDropdown = useCallback(
+    (dropdown: "month" | "scope" | "department" | "staff") => {
+      setIsMonthDropdownOpen(dropdown === "month");
+      setIsScopeDropdownOpen(dropdown === "scope");
+      setIsDepartmentDropdownOpen(dropdown === "department");
+      setIsStaffDropdownOpen(dropdown === "staff");
+    },
+    []
+  );
+
   const clearDropHighlights = useCallback(() => {
     if (highlightedCellRef.current) {
       highlightedCellRef.current.classList.remove("calendar-drop-highlight");
@@ -798,7 +815,12 @@ export function CalendarBoard() {
             </div>
 
             <div className={styles.toolbarRight}>
-              <div ref={monthDropdownRef} className={styles.monthDropdown}>
+              <div
+                ref={monthDropdownRef}
+                className={styles.monthDropdown}
+                onMouseEnter={() => openDropdown("month")}
+                onMouseLeave={closeAllDropdowns}
+              >
                 <button
                   type="button"
                   className={`${styles.monthDropdownButton} ${
@@ -807,10 +829,11 @@ export function CalendarBoard() {
                   aria-haspopup="listbox"
                   aria-expanded={isMonthDropdownOpen}
                   onClick={() => {
-                    setIsScopeDropdownOpen(false);
-                    setIsDepartmentDropdownOpen(false);
-                    setIsStaffDropdownOpen(false);
-                    setIsMonthDropdownOpen((current) => !current);
+                    if (isMonthDropdownOpen) {
+                      closeAllDropdowns();
+                      return;
+                    }
+                    openDropdown("month");
                   }}
                 >
                   <span className={styles.monthDropdownIcon}>
@@ -855,7 +878,12 @@ export function CalendarBoard() {
                 ) : null}
               </div>
 
-              <div ref={scopeDropdownRef} className={styles.scopeDropdown}>
+              <div
+                ref={scopeDropdownRef}
+                className={styles.scopeDropdown}
+                onMouseEnter={() => openDropdown("scope")}
+                onMouseLeave={closeAllDropdowns}
+              >
                 <button
                   type="button"
                   className={`${styles.scopeDropdownButton} ${
@@ -864,10 +892,11 @@ export function CalendarBoard() {
                   aria-haspopup="listbox"
                   aria-expanded={isScopeDropdownOpen}
                   onClick={() => {
-                    setIsMonthDropdownOpen(false);
-                    setIsDepartmentDropdownOpen(false);
-                    setIsStaffDropdownOpen(false);
-                    setIsScopeDropdownOpen((current) => !current);
+                    if (isScopeDropdownOpen) {
+                      closeAllDropdowns();
+                      return;
+                    }
+                    openDropdown("scope");
                   }}
                 >
                   <span className={styles.scopeDropdownIcon}>
@@ -909,7 +938,17 @@ export function CalendarBoard() {
                 ) : null}
               </div>
 
-              <div ref={departmentDropdownRef} className={styles.selectFieldDropdown}>
+              <div
+                ref={departmentDropdownRef}
+                className={styles.selectFieldDropdown}
+                onMouseEnter={() => {
+                  if (scope !== "department" && scope !== "all") {
+                    return;
+                  }
+                  openDropdown("department");
+                }}
+                onMouseLeave={closeAllDropdowns}
+              >
                 <button
                   type="button"
                   className={`${styles.selectFieldButton} ${
@@ -922,10 +961,11 @@ export function CalendarBoard() {
                     if (scope !== "department" && scope !== "all") {
                       return;
                     }
-                    setIsMonthDropdownOpen(false);
-                    setIsScopeDropdownOpen(false);
-                    setIsStaffDropdownOpen(false);
-                    setIsDepartmentDropdownOpen((current) => !current);
+                    if (isDepartmentDropdownOpen) {
+                      closeAllDropdowns();
+                      return;
+                    }
+                    openDropdown("department");
                   }}
                 >
                   <span className={styles.selectFieldDropdownIcon}>
@@ -981,7 +1021,17 @@ export function CalendarBoard() {
                 ) : null}
               </div>
 
-              <div ref={staffDropdownRef} className={styles.selectFieldDropdown}>
+              <div
+                ref={staffDropdownRef}
+                className={styles.selectFieldDropdown}
+                onMouseEnter={() => {
+                  if (scope !== "staff") {
+                    return;
+                  }
+                  openDropdown("staff");
+                }}
+                onMouseLeave={closeAllDropdowns}
+              >
                 <button
                   type="button"
                   className={`${styles.selectFieldButton} ${
@@ -994,10 +1044,11 @@ export function CalendarBoard() {
                     if (scope !== "staff") {
                       return;
                     }
-                    setIsMonthDropdownOpen(false);
-                    setIsScopeDropdownOpen(false);
-                    setIsDepartmentDropdownOpen(false);
-                    setIsStaffDropdownOpen((current) => !current);
+                    if (isStaffDropdownOpen) {
+                      closeAllDropdowns();
+                      return;
+                    }
+                    openDropdown("staff");
                   }}
                 >
                   <span className={styles.selectFieldDropdownIcon}>
