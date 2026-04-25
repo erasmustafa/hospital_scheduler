@@ -195,10 +195,15 @@
   justify-content: center;
   width: 24px;
   height: 24px;
+  line-height: 0;
   border-radius: 8px;
   background: #eef4ff;
   color: #3e67e9;
   flex-shrink: 0;
+}
+
+.staticFieldIcon svg {
+  display: block;
 }
 
 .selectField {
