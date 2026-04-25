@@ -33,6 +33,7 @@ const generalLinks = [
 
 const userLinks = [
   { href: "/messages", label: "Mesajlar", icon: MessageSquare, managerOnly: false },
+  { href: "/dashboard/chat", label: "Kurumsal Chat", icon: MessageSquare, managerOnly: false },
   { href: "/calendar", label: "Takvim", icon: CalendarDays, managerOnly: false },
 ];
 
@@ -68,6 +69,8 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
     user?.username ||
     "kullanici";
   const avatarLetter = (displayName[0] || "K").toUpperCase();
+  const isActiveLink = (href: string) =>
+    href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(href);
 
   return (
     <aside
@@ -112,7 +115,7 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
           <nav style={styles.nav}>
             {visibleGeneralLinks.map((link) => {
               const Icon = link.icon;
-              const active = pathname.startsWith(link.href);
+              const active = isActiveLink(link.href);
               return (
                 <Link
                   key={link.href}
@@ -139,7 +142,7 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
           <nav style={styles.nav}>
             {visibleUserLinks.map((link) => {
               const Icon = link.icon;
-              const active = pathname.startsWith(link.href);
+              const active = isActiveLink(link.href);
               return (
                 <Link
                   key={link.href}
