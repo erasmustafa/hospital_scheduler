@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
+  Building2,
   CalendarDays,
   Check,
   ChevronDown,
@@ -100,6 +101,13 @@ type MoveAssignmentResponse = {
 
 type ScopeType = "all" | "department" | "staff" | "my";
 
+const SCOPE_OPTIONS = [
+  { value: "all" as const, label: "Tüm Birimler", icon: Users },
+  { value: "department" as const, label: "Birim", icon: Building2 },
+  { value: "staff" as const, label: "Personel", icon: UserRound },
+  { value: "my" as const, label: "Benim Takvimim", icon: CalendarDays },
+];
+
 type CalendarDragStartArg = {
   event: EventApi;
   jsEvent: MouseEvent;
@@ -161,6 +169,7 @@ export function CalendarBoard() {
   const calendarRef = useRef<FullCalendar | null>(null);
   const calendarFrameRef = useRef<HTMLDivElement | null>(null);
   const monthDropdownRef = useRef<HTMLDivElement | null>(null);
+  const scopeDropdownRef = useRef<HTMLDivElement | null>(null);
   const pointerMoveHandlerRef = useRef<((event: PointerEvent) => void) | null>(null);
   const confirmModalTimerRef = useRef<number | null>(null);
   const confirmModalOpenedAtRef = useRef(0);
@@ -181,6 +190,7 @@ export function CalendarBoard() {
   const [calendarTitle, setCalendarTitle] = useState("");
   const [calendarDate, setCalendarDate] = useState(() => new Date());
   const [isMonthDropdownOpen, setIsMonthDropdownOpen] = useState(false);
+  const [isScopeDropdownOpen, setIsScopeDropdownOpen] = useState(false);
 
   const [dragGhost, setDragGhost] = useState<DragGhostState>({
     visible: false,
@@ -236,11 +246,18 @@ export function CalendarBoard() {
   }, [calendarDate]);
 
   const selectedMonthKey = `${calendarDate.getFullYear()}-${calendarDate.getMonth()}`;
+  const selectedScopeOption =
+    SCOPE_OPTIONS.find((option) => option.value === scope) ?? SCOPE_OPTIONS[0];
 
   const selectCalendarMonth = useCallback((date: Date) => {
     calendarRef.current?.getApi().gotoDate(date);
     setCalendarDate(date);
     setIsMonthDropdownOpen(false);
+  }, []);
+
+  const selectScope = useCallback((nextScope: ScopeType) => {
+    setScope(nextScope);
+    setIsScopeDropdownOpen(false);
   }, []);
 
   const clearDropHighlights = useCallback(() => {
@@ -311,6 +328,35 @@ export function CalendarBoard() {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isMonthDropdownOpen]);
+
+  useEffect(() => {
+    if (!isScopeDropdownOpen) {
+      return undefined;
+    }
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (
+        scopeDropdownRef.current &&
+        !scopeDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsScopeDropdownOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsScopeDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isScopeDropdownOpen]);
 
   const setDropHighlightFromPointer = useCallback((clientX: number, clientY: number) => {
     const target = document.elementFromPoint(clientX, clientY);
@@ -687,7 +733,10 @@ export function CalendarBoard() {
                   }`}
                   aria-haspopup="listbox"
                   aria-expanded={isMonthDropdownOpen}
-                  onClick={() => setIsMonthDropdownOpen((current) => !current)}
+                  onClick={() => {
+                    setIsScopeDropdownOpen(false);
+                    setIsMonthDropdownOpen((current) => !current);
+                  }}
                 >
                   <span className={styles.monthDropdownIcon}>
                     <CalendarDays size={20} />
@@ -731,7 +780,59 @@ export function CalendarBoard() {
                 ) : null}
               </div>
 
-              <label className={styles.selectField}>
+              <div ref={scopeDropdownRef} className={styles.scopeDropdown}>
+                <button
+                  type="button"
+                  className={`${styles.scopeDropdownButton} ${
+                    isScopeDropdownOpen ? styles.scopeDropdownButtonOpen : ""
+                  }`}
+                  aria-haspopup="listbox"
+                  aria-expanded={isScopeDropdownOpen}
+                  onClick={() => {
+                    setIsMonthDropdownOpen(false);
+                    setIsScopeDropdownOpen((current) => !current);
+                  }}
+                >
+                  <span className={styles.scopeDropdownIcon}>
+                    <Users size={18} />
+                  </span>
+                  <span className={styles.scopeDropdownLabel}>{selectedScopeOption.label}</span>
+                  <ChevronDown
+                    size={18}
+                    className={styles.scopeDropdownChevron}
+                    aria-hidden="true"
+                  />
+                </button>
+
+                {isScopeDropdownOpen ? (
+                  <div className={styles.scopeDropdownMenu} role="listbox">
+                    {SCOPE_OPTIONS.map((option) => {
+                      const Icon = option.icon;
+                      const isSelected = option.value === scope;
+                      const withDivider = option.value === "my";
+
+                      return (
+                        <button
+                          key={option.value}
+                          type="button"
+                          role="option"
+                          aria-selected={isSelected}
+                          className={`${styles.scopeOption} ${
+                            isSelected ? styles.scopeOptionSelected : ""
+                          } ${withDivider ? styles.scopeOptionDivider : ""}`}
+                          onClick={() => selectScope(option.value)}
+                        >
+                          <Icon size={20} />
+                          <span>{option.label}</span>
+                          {isSelected ? <Check size={20} /> : null}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : null}
+              </div>
+
+              <label className={styles.selectField} hidden>
                 <span className={styles.staticFieldIcon}>
                   <Users size={16} />
                 </span>

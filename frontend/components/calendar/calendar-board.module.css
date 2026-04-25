@@ -247,7 +247,7 @@
 }
 
 .monthDropdownLabel {
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 700;
   color: #243754;
   text-transform: capitalize;
@@ -291,7 +291,7 @@
   background: transparent;
   color: #243754;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 700;
   text-align: left;
   text-transform: capitalize;
@@ -330,6 +330,127 @@
 
 .monthOptionSelected svg {
   color: #064bdc;
+}
+
+.scopeDropdown {
+  position: relative;
+  min-width: 200px;
+  z-index: 8;
+}
+
+.scopeDropdownButton {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border: 1px solid #dbe4ef;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #243754;
+  cursor: pointer;
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+
+.scopeDropdownButton:hover,
+.scopeDropdownButtonOpen {
+  border-color: #cfdced;
+  background: #f7fbff;
+}
+
+.scopeDropdownIcon {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  border-radius: 8px;
+  background: #eef4ff;
+  color: #2f58da;
+  flex-shrink: 0;
+}
+
+.scopeDropdownLabel {
+  font-size: 14px;
+  font-weight: 700;
+  color: #243754;
+  white-space: nowrap;
+}
+
+.scopeDropdownChevron {
+  margin-left: auto;
+  color: #8393a9;
+  transition: transform 160ms ease;
+}
+
+.scopeDropdownButtonOpen .scopeDropdownChevron {
+  transform: rotate(180deg);
+}
+
+.scopeDropdownMenu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid #dbe4ef;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 24px 52px rgba(15, 23, 42, 0.1);
+}
+
+.scopeOption {
+  position: relative;
+  width: 100%;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 14px;
+  border: none;
+  background: transparent;
+  color: #243754;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+.scopeOption:hover {
+  background: #f7fbff;
+}
+
+.scopeOption svg {
+  flex-shrink: 0;
+  color: #2f58da;
+}
+
+.scopeOption svg:last-child {
+  margin-left: auto;
+}
+
+.scopeOptionSelected {
+  background: #f1f6ff;
+  color: #064bdc;
+  font-weight: 700;
+}
+
+.scopeOptionSelected::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 4px;
+  border-radius: 999px;
+  background: #064bdc;
+}
+
+.scopeOptionDivider {
+  border-top: 1px solid #e8eef6;
 }
 
 .selectField {
