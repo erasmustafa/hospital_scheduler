@@ -234,6 +234,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   const isDashboard = pathname.startsWith("/dashboard");
+  const shouldShowTopbar = isDashboard && !pathname.startsWith("/dashboard/chat");
 
   return (
     <div
@@ -262,7 +263,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           overflow: "hidden",
         }}
       >
-        {isDashboard && pageInfo && (
+        {shouldShowTopbar && pageInfo && (
           <Topbar title={pageInfo.title} subtitle={pageInfo.subtitle} />
         )}
         <div style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>{children}</div>
