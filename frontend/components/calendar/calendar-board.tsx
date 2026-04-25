@@ -538,7 +538,7 @@ export function CalendarBoard() {
         <span className={styles.eventStaffName}>
           {props.staff_name || arg.event.title}
         </span>
-        {props.shift_type ? (
+        {props.shift_type && !props.is_nobet ? (
           <span className={styles.eventShiftName}>{props.shift_type}</span>
         ) : null}
         {props.is_nobet ? <span className={styles.eventBadge}>N</span> : null}
