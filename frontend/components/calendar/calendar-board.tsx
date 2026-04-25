@@ -943,24 +943,6 @@ export function CalendarBoard() {
                 ) : null}
               </div>
 
-              <label className={styles.selectField} hidden>
-                <span className={styles.staticFieldIcon}>
-                  <Users size={16} />
-                </span>
-                <select
-                  value={selectedDepartment}
-                  disabled={scope !== "department" && scope !== "all"}
-                  onChange={(event) => setSelectedDepartment(event.target.value)}
-                >
-                  <option value="">Tüm Birimler</option>
-                  {departments.map((department) => (
-                    <option key={department.id} value={String(department.id)}>
-                      {department.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
               <label className={styles.selectField}>
                 <span className={styles.staticFieldIcon}>
                   <UserRound size={16} />
