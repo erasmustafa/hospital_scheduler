@@ -263,6 +263,25 @@
   border-radius: 6px;
   border: 1px solid #c7d4f2;
   background: #ecf3ff;
+  cursor: grab;
+  box-shadow: 0 1px 2px rgba(38, 77, 143, 0.08);
+  transition: transform 140ms ease, border-color 140ms ease, background-color 140ms ease,
+    box-shadow 140ms ease;
+  will-change: transform;
+}
+
+.assignmentEventChip:hover {
+  transform: translateY(-1px);
+  border-color: #4f7cff;
+  background: #ffffff;
+  box-shadow: 0 10px 22px rgba(47, 88, 218, 0.16);
+}
+
+.assignmentEventChip:active {
+  cursor: grabbing;
+  transform: translateY(0) scale(0.99);
+  border-color: #2f58da;
+  box-shadow: 0 6px 14px rgba(47, 88, 218, 0.18);
 }
 
 .eventStaffName {
