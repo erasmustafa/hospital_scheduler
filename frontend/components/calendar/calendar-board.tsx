@@ -158,6 +158,7 @@ function eventKind(event: EventApi): "assignment" | "holiday" {
 
 export function CalendarBoard() {
   const calendarRef = useRef<FullCalendar | null>(null);
+  const calendarFrameRef = useRef<HTMLDivElement | null>(null);
   const pointerMoveHandlerRef = useRef<((event: PointerEvent) => void) | null>(null);
   const confirmModalTimerRef = useRef<number | null>(null);
   const confirmModalOpenedAtRef = useRef(0);
@@ -230,6 +231,39 @@ export function CalendarBoard() {
       highlightedCellRef.current.classList.remove("calendar-drop-highlight");
       highlightedCellRef.current = null;
     }
+  }, []);
+
+  useEffect(() => {
+    const frame = calendarFrameRef.current;
+    if (!frame) {
+      return undefined;
+    }
+
+    let animationFrameId: number | null = null;
+
+    const updateCalendarSize = () => {
+      if (animationFrameId !== null) {
+        window.cancelAnimationFrame(animationFrameId);
+      }
+
+      animationFrameId = window.requestAnimationFrame(() => {
+        calendarRef.current?.getApi().updateSize();
+      });
+    };
+
+    updateCalendarSize();
+
+    const observer = new ResizeObserver(updateCalendarSize);
+    observer.observe(frame);
+    window.addEventListener("resize", updateCalendarSize);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateCalendarSize);
+      if (animationFrameId !== null) {
+        window.cancelAnimationFrame(animationFrameId);
+      }
+    };
   }, []);
 
   const setDropHighlightFromPointer = useCallback((clientX: number, clientY: number) => {
@@ -669,7 +703,7 @@ export function CalendarBoard() {
             </div>
           </div>
 
-          <div className={styles.calendarFrame}>
+          <div ref={calendarFrameRef} className={styles.calendarFrame}>
             <FullCalendar
               ref={calendarRef}
               plugins={[dayGridPlugin, interactionPlugin]}
