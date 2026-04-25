@@ -170,6 +170,7 @@ export function CalendarBoard() {
   const calendarFrameRef = useRef<HTMLDivElement | null>(null);
   const monthDropdownRef = useRef<HTMLDivElement | null>(null);
   const scopeDropdownRef = useRef<HTMLDivElement | null>(null);
+  const departmentDropdownRef = useRef<HTMLDivElement | null>(null);
   const pointerMoveHandlerRef = useRef<((event: PointerEvent) => void) | null>(null);
   const confirmModalTimerRef = useRef<number | null>(null);
   const confirmModalOpenedAtRef = useRef(0);
@@ -191,6 +192,7 @@ export function CalendarBoard() {
   const [calendarDate, setCalendarDate] = useState(() => new Date());
   const [isMonthDropdownOpen, setIsMonthDropdownOpen] = useState(false);
   const [isScopeDropdownOpen, setIsScopeDropdownOpen] = useState(false);
+  const [isDepartmentDropdownOpen, setIsDepartmentDropdownOpen] = useState(false);
 
   const [dragGhost, setDragGhost] = useState<DragGhostState>({
     visible: false,
@@ -248,6 +250,8 @@ export function CalendarBoard() {
   const selectedMonthKey = `${calendarDate.getFullYear()}-${calendarDate.getMonth()}`;
   const selectedScopeOption =
     SCOPE_OPTIONS.find((option) => option.value === scope) ?? SCOPE_OPTIONS[0];
+  const selectedDepartmentOption =
+    departments.find((department) => String(department.id) === selectedDepartment) ?? null;
 
   const selectCalendarMonth = useCallback((date: Date) => {
     calendarRef.current?.getApi().gotoDate(date);
@@ -258,6 +262,11 @@ export function CalendarBoard() {
   const selectScope = useCallback((nextScope: ScopeType) => {
     setScope(nextScope);
     setIsScopeDropdownOpen(false);
+  }, []);
+
+  const selectDepartment = useCallback((departmentId: string) => {
+    setSelectedDepartment(departmentId);
+    setIsDepartmentDropdownOpen(false);
   }, []);
 
   const clearDropHighlights = useCallback(() => {
@@ -357,6 +366,35 @@ export function CalendarBoard() {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isScopeDropdownOpen]);
+
+  useEffect(() => {
+    if (!isDepartmentDropdownOpen) {
+      return undefined;
+    }
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (
+        departmentDropdownRef.current &&
+        !departmentDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDepartmentDropdownOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsDepartmentDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isDepartmentDropdownOpen]);
 
   const setDropHighlightFromPointer = useCallback((clientX: number, clientY: number) => {
     const target = document.elementFromPoint(clientX, clientY);
@@ -735,11 +773,12 @@ export function CalendarBoard() {
                   aria-expanded={isMonthDropdownOpen}
                   onClick={() => {
                     setIsScopeDropdownOpen(false);
+                    setIsDepartmentDropdownOpen(false);
                     setIsMonthDropdownOpen((current) => !current);
                   }}
                 >
                   <span className={styles.monthDropdownIcon}>
-                    <CalendarDays size={20} />
+                    <CalendarDays size={18} />
                   </span>
                   <span className={styles.monthDropdownLabel}>{calendarTitle}</span>
                   <ChevronDown
@@ -772,7 +811,7 @@ export function CalendarBoard() {
                         >
                           <CalendarDays size={20} />
                           <span>{monthLabel}</span>
-                          {isSelected ? <Check size={20} /> : null}
+                          {isSelected ? <Check size={18} /> : null}
                         </button>
                       );
                     })}
@@ -790,11 +829,12 @@ export function CalendarBoard() {
                   aria-expanded={isScopeDropdownOpen}
                   onClick={() => {
                     setIsMonthDropdownOpen(false);
+                    setIsDepartmentDropdownOpen(false);
                     setIsScopeDropdownOpen((current) => !current);
                   }}
                 >
                   <span className={styles.scopeDropdownIcon}>
-                    <Users size={18} />
+                    <Users size={17} />
                   </span>
                   <span className={styles.scopeDropdownLabel}>{selectedScopeOption.label}</span>
                   <ChevronDown
@@ -822,9 +862,80 @@ export function CalendarBoard() {
                           } ${withDivider ? styles.scopeOptionDivider : ""}`}
                           onClick={() => selectScope(option.value)}
                         >
-                          <Icon size={20} />
+                          <Icon size={18} />
                           <span>{option.label}</span>
-                          {isSelected ? <Check size={20} /> : null}
+                          {isSelected ? <Check size={18} /> : null}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : null}
+              </div>
+
+              <div ref={departmentDropdownRef} className={styles.selectFieldDropdown}>
+                <button
+                  type="button"
+                  className={`${styles.selectFieldButton} ${
+                    isDepartmentDropdownOpen ? styles.selectFieldButtonOpen : ""
+                  }`}
+                  aria-haspopup="listbox"
+                  aria-expanded={isDepartmentDropdownOpen}
+                  disabled={scope !== "department" && scope !== "all"}
+                  onClick={() => {
+                    if (scope !== "department" && scope !== "all") {
+                      return;
+                    }
+                    setIsMonthDropdownOpen(false);
+                    setIsScopeDropdownOpen(false);
+                    setIsDepartmentDropdownOpen((current) => !current);
+                  }}
+                >
+                  <span className={styles.selectFieldDropdownIcon}>
+                    <Users size={18} />
+                  </span>
+                  <span className={styles.selectFieldDropdownLabel}>
+                    {selectedDepartmentOption?.name ?? "Tüm Birimler"}
+                  </span>
+                  <ChevronDown
+                    size={18}
+                    className={styles.selectFieldDropdownChevron}
+                    aria-hidden="true"
+                  />
+                </button>
+
+                {isDepartmentDropdownOpen ? (
+                  <div className={styles.selectFieldDropdownMenu} role="listbox">
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={!selectedDepartment}
+                      className={`${styles.selectFieldOption} ${
+                        !selectedDepartment ? styles.selectFieldOptionSelected : ""
+                      }`}
+                      onClick={() => selectDepartment("")}
+                    >
+                      <Users size={18} />
+                      <span>Tüm Birimler</span>
+                      {!selectedDepartment ? <Check size={18} /> : null}
+                    </button>
+
+                    {departments.map((department) => {
+                      const isSelected = selectedDepartment === String(department.id);
+
+                      return (
+                        <button
+                          key={department.id}
+                          type="button"
+                          role="option"
+                          aria-selected={isSelected}
+                          className={`${styles.selectFieldOption} ${
+                            isSelected ? styles.selectFieldOptionSelected : ""
+                          }`}
+                          onClick={() => selectDepartment(String(department.id))}
+                        >
+                          <Building2 size={18} />
+                          <span>{department.name}</span>
+                          {isSelected ? <Check size={18} /> : null}
                         </button>
                       );
                     })}
@@ -833,21 +944,6 @@ export function CalendarBoard() {
               </div>
 
               <label className={styles.selectField} hidden>
-                <span className={styles.staticFieldIcon}>
-                  <Users size={16} />
-                </span>
-                <select
-                  value={scope}
-                  onChange={(event) => setScope(event.target.value as ScopeType)}
-                >
-                  <option value="all">Tüm Birimler</option>
-                  <option value="department">Birim</option>
-                  <option value="staff">Personel</option>
-                  <option value="my">Benim Takvimim</option>
-                </select>
-              </label>
-
-              <label className={styles.selectField}>
                 <span className={styles.staticFieldIcon}>
                   <Users size={16} />
                 </span>

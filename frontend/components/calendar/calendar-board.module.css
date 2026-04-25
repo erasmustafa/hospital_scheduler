@@ -404,7 +404,7 @@
 .scopeOption {
   position: relative;
   width: 100%;
-  min-height: 52px;
+  min-height: 48px;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -451,6 +451,140 @@
 
 .scopeOptionDivider {
   border-top: 1px solid #e8eef6;
+}
+
+.selectFieldDropdown {
+  position: relative;
+  min-width: 200px;
+  z-index: 8;
+}
+
+.selectFieldButton {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border: 1px solid #dbe4ef;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #243754;
+  cursor: pointer;
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+
+.selectFieldButton:hover,
+.selectFieldButtonOpen {
+  border-color: #cfdced;
+  background: #f7fbff;
+}
+
+.selectFieldButton:disabled {
+  cursor: not-allowed;
+  color: #8a97ab;
+  background: #fbfcfe;
+}
+
+.selectFieldDropdownIcon {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  border-radius: 8px;
+  background: #eef4ff;
+  color: #2f58da;
+  flex-shrink: 0;
+}
+
+.selectFieldDropdownLabel {
+  font-size: 14px;
+  font-weight: 700;
+  color: #243754;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.selectFieldButton:disabled .selectFieldDropdownLabel {
+  color: #8a97ab;
+}
+
+.selectFieldDropdownChevron {
+  margin-left: auto;
+  color: #8393a9;
+  transition: transform 160ms ease;
+}
+
+.selectFieldButtonOpen .selectFieldDropdownChevron {
+  transform: rotate(180deg);
+}
+
+.selectFieldDropdownMenu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #dbe4ef;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 24px 52px rgba(15, 23, 42, 0.1);
+}
+
+.selectFieldOption {
+  position: relative;
+  width: 100%;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 14px;
+  border: none;
+  background: transparent;
+  color: #243754;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+.selectFieldOption + .selectFieldOption {
+  border-top: 1px solid #e8eef6;
+}
+
+.selectFieldOption:hover {
+  background: #f7fbff;
+}
+
+.selectFieldOption svg {
+  flex-shrink: 0;
+  color: #2f58da;
+}
+
+.selectFieldOption svg:last-child {
+  margin-left: auto;
+}
+
+.selectFieldOptionSelected {
+  background: #f1f6ff;
+  color: #064bdc;
+  font-weight: 700;
+}
+
+.selectFieldOptionSelected::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 4px;
+  border-radius: 999px;
+  background: #064bdc;
 }
 
 .selectField {
