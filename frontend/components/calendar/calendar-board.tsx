@@ -157,7 +157,7 @@ function extractErrorMessage(error: unknown): string {
   if (error instanceof Error) {
     return error.message;
   }
-  return "Islem tamamlanamadi.";
+  return "İşlem tamamlanamadı.";
 }
 
 function eventKind(event: EventApi): "assignment" | "holiday" {
@@ -171,6 +171,7 @@ export function CalendarBoard() {
   const monthDropdownRef = useRef<HTMLDivElement | null>(null);
   const scopeDropdownRef = useRef<HTMLDivElement | null>(null);
   const departmentDropdownRef = useRef<HTMLDivElement | null>(null);
+  const staffDropdownRef = useRef<HTMLDivElement | null>(null);
   const pointerMoveHandlerRef = useRef<((event: PointerEvent) => void) | null>(null);
   const confirmModalTimerRef = useRef<number | null>(null);
   const confirmModalOpenedAtRef = useRef(0);
@@ -193,6 +194,7 @@ export function CalendarBoard() {
   const [isMonthDropdownOpen, setIsMonthDropdownOpen] = useState(false);
   const [isScopeDropdownOpen, setIsScopeDropdownOpen] = useState(false);
   const [isDepartmentDropdownOpen, setIsDepartmentDropdownOpen] = useState(false);
+  const [isStaffDropdownOpen, setIsStaffDropdownOpen] = useState(false);
 
   const [dragGhost, setDragGhost] = useState<DragGhostState>({
     visible: false,
@@ -252,6 +254,8 @@ export function CalendarBoard() {
     SCOPE_OPTIONS.find((option) => option.value === scope) ?? SCOPE_OPTIONS[0];
   const selectedDepartmentOption =
     departments.find((department) => String(department.id) === selectedDepartment) ?? null;
+  const selectedStaffOption =
+    availableStaff.find((item) => String(item.id) === selectedStaff) ?? null;
 
   const selectCalendarMonth = useCallback((date: Date) => {
     calendarRef.current?.getApi().gotoDate(date);
@@ -267,6 +271,11 @@ export function CalendarBoard() {
   const selectDepartment = useCallback((departmentId: string) => {
     setSelectedDepartment(departmentId);
     setIsDepartmentDropdownOpen(false);
+  }, []);
+
+  const selectStaff = useCallback((staffId: string) => {
+    setSelectedStaff(staffId);
+    setIsStaffDropdownOpen(false);
   }, []);
 
   const clearDropHighlights = useCallback(() => {
@@ -395,6 +404,32 @@ export function CalendarBoard() {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isDepartmentDropdownOpen]);
+
+  useEffect(() => {
+    if (!isStaffDropdownOpen) {
+      return undefined;
+    }
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (staffDropdownRef.current && !staffDropdownRef.current.contains(event.target as Node)) {
+        setIsStaffDropdownOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsStaffDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isStaffDropdownOpen]);
 
   const setDropHighlightFromPointer = useCallback((clientX: number, clientY: number) => {
     const target = document.elementFromPoint(clientX, clientY);
@@ -774,6 +809,7 @@ export function CalendarBoard() {
                   onClick={() => {
                     setIsScopeDropdownOpen(false);
                     setIsDepartmentDropdownOpen(false);
+                    setIsStaffDropdownOpen(false);
                     setIsMonthDropdownOpen((current) => !current);
                   }}
                 >
@@ -830,6 +866,7 @@ export function CalendarBoard() {
                   onClick={() => {
                     setIsMonthDropdownOpen(false);
                     setIsDepartmentDropdownOpen(false);
+                    setIsStaffDropdownOpen(false);
                     setIsScopeDropdownOpen((current) => !current);
                   }}
                 >
@@ -887,6 +924,7 @@ export function CalendarBoard() {
                     }
                     setIsMonthDropdownOpen(false);
                     setIsScopeDropdownOpen(false);
+                    setIsStaffDropdownOpen(false);
                     setIsDepartmentDropdownOpen((current) => !current);
                   }}
                 >
@@ -943,23 +981,77 @@ export function CalendarBoard() {
                 ) : null}
               </div>
 
-              <label className={styles.selectField}>
-                <span className={styles.staticFieldIcon}>
-                  <UserRound size={16} />
-                </span>
-                <select
-                  value={selectedStaff}
+              <div ref={staffDropdownRef} className={styles.selectFieldDropdown}>
+                <button
+                  type="button"
+                  className={`${styles.selectFieldButton} ${
+                    isStaffDropdownOpen ? styles.selectFieldButtonOpen : ""
+                  }`}
+                  aria-haspopup="listbox"
+                  aria-expanded={isStaffDropdownOpen}
                   disabled={scope !== "staff"}
-                  onChange={(event) => setSelectedStaff(event.target.value)}
+                  onClick={() => {
+                    if (scope !== "staff") {
+                      return;
+                    }
+                    setIsMonthDropdownOpen(false);
+                    setIsScopeDropdownOpen(false);
+                    setIsDepartmentDropdownOpen(false);
+                    setIsStaffDropdownOpen((current) => !current);
+                  }}
                 >
-                  <option value="">Tüm Personel</option>
-                  {availableStaff.map((item) => (
-                    <option key={item.id} value={String(item.id)}>
-                      {item.fullName}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                  <span className={styles.selectFieldDropdownIcon}>
+                    <UserRound size={18} />
+                  </span>
+                  <span className={styles.selectFieldDropdownLabel}>
+                    {selectedStaffOption?.fullName ?? "Tüm Personel"}
+                  </span>
+                  <ChevronDown
+                    size={18}
+                    className={styles.selectFieldDropdownChevron}
+                    aria-hidden="true"
+                  />
+                </button>
+
+                {isStaffDropdownOpen ? (
+                  <div className={styles.selectFieldDropdownMenu} role="listbox">
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={!selectedStaff}
+                      className={`${styles.selectFieldOption} ${
+                        !selectedStaff ? styles.selectFieldOptionSelected : ""
+                      }`}
+                      onClick={() => selectStaff("")}
+                    >
+                      <Users size={18} />
+                      <span>Tüm Personel</span>
+                      {!selectedStaff ? <Check size={18} /> : null}
+                    </button>
+
+                    {availableStaff.map((item) => {
+                      const isSelected = selectedStaff === String(item.id);
+
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          role="option"
+                          aria-selected={isSelected}
+                          className={`${styles.selectFieldOption} ${
+                            isSelected ? styles.selectFieldOptionSelected : ""
+                          }`}
+                          onClick={() => selectStaff(String(item.id))}
+                        >
+                          <UserRound size={18} />
+                          <span>{item.fullName}</span>
+                          {isSelected ? <Check size={18} /> : null}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : null}
+              </div>
 
               <button
                 type="button"
@@ -1032,9 +1124,9 @@ export function CalendarBoard() {
                 role="dialog"
                 aria-modal="true"
               >
-                <h3>Vardiya islemini onayla</h3>
+                <h3>Vardiya işlemini onayla</h3>
                 <p className={styles.modalSubtitle}>
-                  Tasima veya ayni birim icinde swap secenegini kullanabilirsiniz.
+                  Taşıma veya aynı birim içinde swap seçeneğini kullanabilirsiniz.
                 </p>
 
                 <div className={styles.summaryGrid}>
@@ -1051,20 +1143,20 @@ export function CalendarBoard() {
                     <strong>{confirmState.sourceDepartment}</strong>
                   </div>
                   <div>
-                    <span>Kaynak Gun</span>
+                    <span>Kaynak Gün</span>
                     <strong>{formatDateLabel(confirmState.sourceDate)}</strong>
                   </div>
                   <div>
-                    <span>Hedef Gun</span>
+                    <span>Hedef Gün</span>
                     <strong>{formatDateLabel(confirmState.targetDate)}</strong>
                   </div>
                 </div>
 
                 <div className={styles.swapBlock}>
-                  <p>Ayni birimde uygun vardiyalar</p>
+                  <p>Aynı birimde uygun vardiyalar</p>
                   {confirmState.swapCandidates.length === 0 ? (
                     <div className={styles.emptySwapState}>
-                      Bu birimde swap yapilabilecek vardiya bulunamadi.
+                      Bu birimde swap yapılabilecek vardiya bulunamadı.
                     </div>
                   ) : (
                     <div className={styles.swapList}>
@@ -1101,14 +1193,14 @@ export function CalendarBoard() {
                     onClick={() => closeConfirmModal(true)}
                     disabled={isSubmittingMove}
                   >
-                    Iptal
+                    İptal
                   </button>
                   <button
                     type="button"
                     onClick={() => void runMoveAction()}
                     disabled={isSubmittingMove}
                   >
-                    Sadece Tasi
+                    Sadece Taşı
                   </button>
                   <button
                     type="button"
@@ -1116,7 +1208,7 @@ export function CalendarBoard() {
                     onClick={() => void runSwapAction()}
                     disabled={isSubmittingMove || confirmState.swapCandidates.length === 0}
                   >
-                    Yer Degistir
+                    Yer Değiştir
                   </button>
                 </div>
               </div>
