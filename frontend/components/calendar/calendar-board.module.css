@@ -206,6 +206,134 @@
   display: block;
 }
 
+.monthDropdown {
+  position: relative;
+  min-width: 300px;
+  z-index: 8;
+}
+
+.monthDropdownButton {
+  width: 100%;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 18px;
+  border: 1px solid #dbe4ef;
+  border-radius: 20px;
+  background: #ffffff;
+  color: #122340;
+  cursor: pointer;
+  box-shadow: 0 12px 34px rgba(15, 23, 42, 0.04);
+  transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+}
+
+.monthDropdownButton:hover,
+.monthDropdownButtonOpen {
+  border-color: #cbd8ea;
+  background: #fbfdff;
+  box-shadow: 0 16px 38px rgba(31, 72, 140, 0.08);
+}
+
+.monthDropdownIcon {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #f4f8ff 0%, #edf4ff 100%);
+  color: #62738b;
+  flex-shrink: 0;
+}
+
+.monthDropdownLabel {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #11203c;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.monthDropdownChevron {
+  margin-left: auto;
+  color: #62738b;
+  transition: transform 160ms ease;
+}
+
+.monthDropdownButtonOpen .monthDropdownChevron {
+  transform: rotate(180deg);
+}
+
+.monthDropdownMenu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 12px 8px;
+  border: 1px solid #dbe4ef;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 24px 52px rgba(15, 23, 42, 0.1);
+}
+
+.monthOption {
+  position: relative;
+  width: 100%;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: #122340;
+  cursor: pointer;
+  font-size: 19px;
+  font-weight: 500;
+  text-align: left;
+  text-transform: capitalize;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+.monthOption svg {
+  flex-shrink: 0;
+  color: #62738b;
+}
+
+.monthOption svg:last-child {
+  margin-left: auto;
+}
+
+.monthOption:hover {
+  background: #f5f8ff;
+}
+
+.monthOptionSelected {
+  background: #f1f6ff;
+  color: #064bdc;
+  font-weight: 700;
+}
+
+.monthOptionSelected::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 4px;
+  border-radius: 999px;
+  background: #064bdc;
+}
+
+.monthOptionSelected svg {
+  color: #064bdc;
+}
+
 .selectField {
   min-width: 200px;
   position: relative;
@@ -611,8 +739,10 @@
   }
 
   .staticField,
+  .monthDropdown,
   .selectField {
     min-width: 0;
+    width: 100%;
   }
 
   .modalActions {

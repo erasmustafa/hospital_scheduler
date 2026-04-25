@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   CalendarDays,
+  Check,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -159,6 +160,7 @@ function eventKind(event: EventApi): "assignment" | "holiday" {
 export function CalendarBoard() {
   const calendarRef = useRef<FullCalendar | null>(null);
   const calendarFrameRef = useRef<HTMLDivElement | null>(null);
+  const monthDropdownRef = useRef<HTMLDivElement | null>(null);
   const pointerMoveHandlerRef = useRef<((event: PointerEvent) => void) | null>(null);
   const confirmModalTimerRef = useRef<number | null>(null);
   const confirmModalOpenedAtRef = useRef(0);
@@ -177,6 +179,8 @@ export function CalendarBoard() {
   const [isSubmittingMove, setIsSubmittingMove] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [calendarTitle, setCalendarTitle] = useState("");
+  const [calendarDate, setCalendarDate] = useState(() => new Date());
+  const [isMonthDropdownOpen, setIsMonthDropdownOpen] = useState(false);
 
   const [dragGhost, setDragGhost] = useState<DragGhostState>({
     visible: false,
@@ -226,6 +230,19 @@ export function CalendarBoard() {
     return { x, y };
   }, [dragGhost]);
 
+  const monthOptions = useMemo(() => {
+    const year = calendarDate.getFullYear();
+    return Array.from({ length: 12 }, (_, monthIndex) => new Date(year, monthIndex, 1));
+  }, [calendarDate]);
+
+  const selectedMonthKey = `${calendarDate.getFullYear()}-${calendarDate.getMonth()}`;
+
+  const selectCalendarMonth = useCallback((date: Date) => {
+    calendarRef.current?.getApi().gotoDate(date);
+    setCalendarDate(date);
+    setIsMonthDropdownOpen(false);
+  }, []);
+
   const clearDropHighlights = useCallback(() => {
     if (highlightedCellRef.current) {
       highlightedCellRef.current.classList.remove("calendar-drop-highlight");
@@ -265,6 +282,35 @@ export function CalendarBoard() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!isMonthDropdownOpen) {
+      return undefined;
+    }
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (
+        monthDropdownRef.current &&
+        !monthDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsMonthDropdownOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsMonthDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isMonthDropdownOpen]);
 
   const setDropHighlightFromPointer = useCallback((clientX: number, clientY: number) => {
     const target = document.elementFromPoint(clientX, clientY);
@@ -633,12 +679,56 @@ export function CalendarBoard() {
             </div>
 
             <div className={styles.toolbarRight}>
-              <div className={styles.staticField}>
-                <span className={styles.staticFieldIcon}>
-                  <CalendarDays size={16} />
-                </span>
-                <span>{calendarTitle}</span>
-                <ChevronDown size={16} />
+              <div ref={monthDropdownRef} className={styles.monthDropdown}>
+                <button
+                  type="button"
+                  className={`${styles.monthDropdownButton} ${
+                    isMonthDropdownOpen ? styles.monthDropdownButtonOpen : ""
+                  }`}
+                  aria-haspopup="listbox"
+                  aria-expanded={isMonthDropdownOpen}
+                  onClick={() => setIsMonthDropdownOpen((current) => !current)}
+                >
+                  <span className={styles.monthDropdownIcon}>
+                    <CalendarDays size={20} />
+                  </span>
+                  <span className={styles.monthDropdownLabel}>{calendarTitle}</span>
+                  <ChevronDown
+                    size={18}
+                    className={styles.monthDropdownChevron}
+                    aria-hidden="true"
+                  />
+                </button>
+
+                {isMonthDropdownOpen ? (
+                  <div className={styles.monthDropdownMenu} role="listbox">
+                    {monthOptions.map((monthDate) => {
+                      const monthKey = `${monthDate.getFullYear()}-${monthDate.getMonth()}`;
+                      const isSelected = monthKey === selectedMonthKey;
+                      const monthLabel = monthDate.toLocaleDateString("tr-TR", {
+                        month: "long",
+                        year: "numeric",
+                      });
+
+                      return (
+                        <button
+                          key={monthKey}
+                          type="button"
+                          role="option"
+                          aria-selected={isSelected}
+                          className={`${styles.monthOption} ${
+                            isSelected ? styles.monthOptionSelected : ""
+                          }`}
+                          onClick={() => selectCalendarMonth(monthDate)}
+                        >
+                          <CalendarDays size={20} />
+                          <span>{monthLabel}</span>
+                          {isSelected ? <Check size={20} /> : null}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : null}
               </div>
 
               <label className={styles.selectField}>
@@ -720,6 +810,7 @@ export function CalendarBoard() {
               eventContent={renderEventContent}
               datesSet={(arg) => {
                 setCalendarTitle(arg.view.title);
+                setCalendarDate(arg.view.currentStart);
               }}
               eventAllow={(_dropInfo, draggedEvent) => {
                 if (!draggedEvent) {
