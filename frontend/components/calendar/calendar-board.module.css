@@ -538,8 +538,9 @@
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.12em;
+  line-height: 1;
   text-transform: uppercase;
-  padding: 14px 0;
+  padding: 8px 0;
   text-decoration: none !important;
 }
 
