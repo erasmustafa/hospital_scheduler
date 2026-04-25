@@ -179,7 +179,7 @@
 
 .staticField {
   min-width: 204px;
-  font-size: 14px;
+  font-size: 10px;
   font-weight: 700;
   color: #243754;
 }
@@ -208,57 +208,55 @@
 
 .monthDropdown {
   position: relative;
-  min-width: 300px;
+  min-width: 204px;
   z-index: 8;
 }
 
 .monthDropdownButton {
   width: 100%;
-  min-height: 56px;
+  min-height: 44px;
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 0 18px;
+  gap: 10px;
+  padding: 0 14px;
   border: 1px solid #dbe4ef;
-  border-radius: 20px;
+  border-radius: 16px;
   background: #ffffff;
-  color: #122340;
+  color: #243754;
   cursor: pointer;
-  box-shadow: 0 12px 34px rgba(15, 23, 42, 0.04);
-  transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+  transition: border-color 140ms ease, background-color 140ms ease;
 }
 
 .monthDropdownButton:hover,
 .monthDropdownButtonOpen {
-  border-color: #cbd8ea;
-  background: #fbfdff;
-  box-shadow: 0 16px 38px rgba(31, 72, 140, 0.08);
+  border-color: #cfdced;
+  background: #f7fbff;
 }
 
 .monthDropdownIcon {
-  width: 42px;
-  height: 42px;
+  width: 24px;
+  height: 24px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 14px;
-  background: linear-gradient(180deg, #f4f8ff 0%, #edf4ff 100%);
-  color: #62738b;
+  line-height: 0;
+  border-radius: 8px;
+  background: #eef4ff;
+  color: #3e67e9;
   flex-shrink: 0;
 }
 
 .monthDropdownLabel {
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  color: #11203c;
+  font-size: 10px;
+  font-weight: 700;
+  color: #243754;
   text-transform: capitalize;
   white-space: nowrap;
 }
 
 .monthDropdownChevron {
   margin-left: auto;
-  color: #62738b;
+  color: #8393a9;
   transition: transform 160ms ease;
 }
 
@@ -271,11 +269,11 @@
   top: calc(100% + 4px);
   left: 0;
   width: 100%;
-  max-height: 380px;
+  max-height: 320px;
   overflow-y: auto;
-  padding: 12px 8px;
+  padding: 8px;
   border: 1px solid #dbe4ef;
-  border-radius: 18px;
+  border-radius: 16px;
   background: #ffffff;
   box-shadow: 0 24px 52px rgba(15, 23, 42, 0.1);
 }
@@ -283,18 +281,18 @@
 .monthOption {
   position: relative;
   width: 100%;
-  min-height: 56px;
+  min-height: 44px;
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 0 18px;
+  gap: 10px;
+  padding: 0 14px;
   border: none;
   border-radius: 12px;
   background: transparent;
-  color: #122340;
+  color: #243754;
   cursor: pointer;
-  font-size: 19px;
-  font-weight: 500;
+  font-size: 10px;
+  font-weight: 700;
   text-align: left;
   text-transform: capitalize;
   transition: background-color 140ms ease, color 140ms ease;
@@ -323,9 +321,9 @@
   content: "";
   position: absolute;
   left: 0;
-  top: 8px;
-  bottom: 8px;
-  width: 4px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
   border-radius: 999px;
   background: #064bdc;
 }
