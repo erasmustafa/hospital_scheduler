@@ -68,8 +68,8 @@ export default function MessageComposer({
   };
 
   return (
-    <footer className="shrink-0 border-t border-slate-200 bg-white px-6 py-3">
-      <div className="mx-auto max-w-5xl rounded-[22px] border border-slate-200 bg-gradient-to-br from-slate-50 to-[#F7FAFF] p-2.5 shadow-[0_18px_42px_-34px_rgba(15,23,42,0.24)]">
+    <footer className="shrink-0 border-t border-slate-200 bg-white px-6 py-2">
+      <div className="mx-auto max-w-5xl rounded-[20px] border border-slate-200 bg-gradient-to-br from-slate-50 to-[#F7FAFF] p-2 shadow-[0_16px_34px_-30px_rgba(15,23,42,0.22)]">
         <textarea
           value={value}
           onChange={(event) => setValue(event.target.value)}
@@ -84,8 +84,8 @@ export default function MessageComposer({
             }
           }}
           rows={1}
-          placeholder="Mesajinizi yazin veya / komut kullanin"
-          className="min-h-[34px] w-full resize-none bg-transparent text-sm leading-5 text-slate-700 outline-none placeholder:text-slate-400"
+          placeholder="Mesajınızı yazın veya / komut kullanın"
+          className="min-h-[28px] w-full resize-none bg-transparent text-[13px] leading-5 text-slate-700 outline-none placeholder:text-slate-400"
         />
 
         {commandSuggestions.length > 0 ? (
@@ -111,14 +111,14 @@ export default function MessageComposer({
         ) : null}
 
         <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <ComposerButton
               icon={<Plus className={`h-3.5 w-3.5 transition-transform ${toolsOpen ? "rotate-45" : ""}`} />}
-              label="Araclari goster"
+              label="Araçları göster"
               onClick={() => setToolsOpen((current) => !current)}
             />
             <div
-              className={`flex items-center gap-2 overflow-hidden transition-all duration-300 ease-out ${
+              className={`flex items-center gap-1.5 overflow-hidden transition-all duration-300 ease-out ${
                 toolsOpen ? "max-w-80 translate-x-0 opacity-100" : "max-w-0 translate-x-2 opacity-0"
               }`}
             >
@@ -138,10 +138,10 @@ export default function MessageComposer({
           <button
             type="button"
             onClick={submit}
-            aria-label="Gonder"
-            className="inline-flex items-center justify-center rounded-xl bg-blue-600 p-2 text-white shadow-[0_18px_40px_-24px_rgba(37,99,235,0.6)] transition hover:bg-blue-700"
+            aria-label="Gönder"
+            className="inline-flex items-center justify-center rounded-xl bg-blue-600 p-1.5 text-white shadow-[0_18px_40px_-24px_rgba(37,99,235,0.6)] transition hover:bg-blue-700"
           >
-            <Send className="h-4 w-4" />
+            <Send className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>

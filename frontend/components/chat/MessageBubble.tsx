@@ -24,12 +24,12 @@ export default function MessageBubble({
 
   return (
     <article
-      className={`group flex gap-1 ${isOwnMessage ? "justify-end" : "justify-start"} ${
+      className={`group flex gap-0.5 ${isOwnMessage ? "justify-end" : "justify-start"} ${
         isOwnMessage ? "flex-row-reverse" : ""
       }`}
     >
       <div
-        className={`relative mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[11px] font-black shadow-sm ${
+        className={`relative mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-black shadow-sm ${
           isSystem
             ? "bg-blue-600 text-white"
             : isOwnMessage
@@ -39,12 +39,12 @@ export default function MessageBubble({
       >
         {message.sender.initials ?? message.sender.name.slice(0, 2).toUpperCase()}
         {!isSystem && !isOwnMessage ? (
-          <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border border-white bg-emerald-500" />
+          <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full border border-white bg-emerald-500" />
         ) : null}
       </div>
 
       <div
-        className={`max-w-[720px] rounded-[20px] border px-2.5 py-2 shadow-[0_14px_30px_-30px_rgba(15,23,42,0.24)] transition group-hover:shadow-[0_18px_38px_-30px_rgba(15,23,42,0.28)] ${
+        className={`max-w-[680px] rounded-[18px] border px-2 py-1.5 shadow-[0_12px_24px_-26px_rgba(15,23,42,0.22)] transition group-hover:shadow-[0_16px_32px_-26px_rgba(15,23,42,0.26)] ${
           isSystem
             ? "border-blue-100 bg-[linear-gradient(180deg,#f8fbff_0%,#edf5ff_100%)]"
             : isOwnMessage
@@ -52,51 +52,52 @@ export default function MessageBubble({
               : "border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)]"
         }`}
       >
-        <div className="flex items-start justify-between gap-2.5">
-          <div>
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
             <div className="flex items-center gap-1.5">
-              <p className="text-[12px] font-semibold text-slate-900">{message.sender.name}</p>
+              <p className="truncate text-[11px] font-medium text-slate-900">{message.sender.name}</p>
               {message.sender.role ? (
-                <span className="text-[10px] text-slate-500">/ {message.sender.role}</span>
+                <span className="truncate text-[10px] text-slate-500">/ {message.sender.role}</span>
               ) : null}
               {message.isPinned ? <Pin className="h-3.5 w-3.5 text-blue-600" /> : null}
               {isSystem ? <Bot className="h-3.5 w-3.5 text-slate-400" /> : null}
             </div>
-            <p className="mt-0.5 text-[10px] text-slate-500">
-              {formatMessageTime(message.createdAt)}
-            </p>
           </div>
           <MessageActionMenu onAction={(action) => onAction(message, action)} />
         </div>
 
         <p
-          className={`mt-1.5 text-[12px] leading-5 ${
+          className={`mt-1 text-[11px] leading-[18px] ${
             isSystem ? "text-slate-600" : "text-slate-700"
           }`}
         >
           {message.content}
         </p>
 
+        <div className="mt-1 flex justify-end">
+          <p className="text-[10px] text-slate-500">{formatMessageTime(message.createdAt)}</p>
+        </div>
+
         {message.type === "task" && message.metadata ? (
-          <div className="mt-2">
+          <div className="mt-1.5">
             <TaskMiniCard task={message.metadata as unknown as Task} />
           </div>
         ) : null}
 
         {message.type === "reminder" && message.metadata ? (
-          <div className="mt-2">
+          <div className="mt-1.5">
             <ReminderMiniCard reminder={message.metadata as unknown as Reminder} />
           </div>
         ) : null}
 
         {message.type === "shift" && message.metadata ? (
-          <div className="mt-2">
+          <div className="mt-1.5">
             <ShiftMiniCard shift={message.metadata as unknown as ShiftCardItem} />
           </div>
         ) : null}
 
         {message.type === "decision" && message.metadata ? (
-          <div className="mt-2">
+          <div className="mt-1.5">
             <DecisionCard
               decision={{
                 id: message.id,
