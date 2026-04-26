@@ -1,6 +1,6 @@
 "use client";
 
-import { Send, Sparkles } from "lucide-react";
+import { AtSign, MessageSquarePlus, Paperclip, Plus, Send, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import parseSlashCommand from "@/components/chat/utils/parseSlashCommand";
 
@@ -12,6 +12,24 @@ type MessageComposerProps = {
 };
 
 const COMMANDS = ["/reminder", "/task", "/shift", "/decision", "/agenda", "/poll"];
+
+function ComposerButton({
+  icon,
+  label,
+}: {
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-100 text-slate-500 transition hover:bg-blue-50 hover:text-blue-700"
+    >
+      {icon}
+    </button>
+  );
+}
 
 export default function MessageComposer({
   onSend,
@@ -36,14 +54,33 @@ export default function MessageComposer({
     return COMMANDS.filter((command) => command.startsWith(value.trim()) || value.trim() === "/");
   }, [value]);
 
+  const submit = () => {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return;
+    }
+    onSend(trimmed);
+    setValue("");
+  };
+
   return (
-    <div className="border-t border-slate-200 bg-white px-6 py-5">
-      <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-4 shadow-inner shadow-slate-100">
+    <footer className="shrink-0 border-t border-slate-200 bg-white px-6 py-5">
+      <div className="mx-auto max-w-5xl rounded-[28px] border border-slate-200 bg-white p-4 shadow-[0_20px_48px_-36px_rgba(15,23,42,0.32)]">
         <textarea
           value={value}
           onChange={(event) => setValue(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && !event.shiftKey) {
+              event.preventDefault();
+              submit();
+            }
+            if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+              event.preventDefault();
+              onOpenCommandPalette();
+            }
+          }}
           rows={3}
-          placeholder="Mesajınızı yazın veya / komutları ile görev, reminder, shift aksiyonu başlatın"
+          placeholder="Mesajinizi yazin veya / komut kullanin"
           className="w-full resize-none bg-transparent text-sm leading-7 text-slate-700 outline-none placeholder:text-slate-400"
         />
 
@@ -63,39 +100,38 @@ export default function MessageComposer({
         ) : null}
 
         {parsed.isCommand ? (
-          <div className="mb-3 rounded-2xl border border-indigo-100 bg-indigo-50 px-3 py-2 text-xs text-indigo-700">
-            Komut algılandı: <strong>/{parsed.command}</strong>
-            {parsed.args ? ` · İçerik: ${parsed.args}` : " · İçerik bekleniyor"}
+          <div className="mb-3 rounded-2xl bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700">
+            Komut algilandi: /{parsed.command}
+            {parsed.args ? ` · ${parsed.args}` : " · icerik bekleniyor"}
           </div>
         ) : null}
 
         <div className="flex items-center justify-between gap-3">
-          <button
-            type="button"
-            onClick={onOpenCommandPalette}
-            className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-700"
-          >
-            <Sparkles className="h-4 w-4 text-blue-600" />
-            Komut Paleti
-          </button>
+          <div className="flex items-center gap-2">
+            <ComposerButton icon={<Plus className="h-4 w-4" />} label="Ekle" />
+            <ComposerButton icon={<Paperclip className="h-4 w-4" />} label="Dosya ekle" />
+            <ComposerButton icon={<MessageSquarePlus className="h-4 w-4" />} label="Not ekle" />
+            <ComposerButton icon={<AtSign className="h-4 w-4" />} label="Kisi etiketle" />
+            <button
+              type="button"
+              onClick={onOpenCommandPalette}
+              className="rounded-2xl bg-slate-100 px-4 py-2 text-sm font-black text-slate-700 transition hover:bg-blue-50 hover:text-blue-700"
+            >
+              /
+            </button>
+          </div>
 
           <button
             type="button"
-            onClick={() => {
-              const trimmed = value.trim();
-              if (!trimmed) {
-                return;
-              }
-              onSend(trimmed);
-              setValue("");
-            }}
-            className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-200/80"
+            onClick={submit}
+            className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-2.5 text-sm font-black text-white shadow-[0_18px_40px_-24px_rgba(37,99,235,0.6)] transition hover:bg-blue-700"
           >
+            <Sparkles className="h-4 w-4" />
+            Gonder
             <Send className="h-4 w-4" />
-            Gönder
           </button>
         </div>
       </div>
-    </div>
+    </footer>
   );
 }

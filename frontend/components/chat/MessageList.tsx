@@ -19,57 +19,59 @@ export default function MessageList({
   let lastDay = "";
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-gradient-to-b from-slate-50 via-white to-slate-50 px-6 py-6">
-      {isLoading ? (
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 text-sm font-medium text-slate-500">
-          Mesajlar yükleniyor...
+    <section className="min-h-0 flex-1 overflow-y-auto bg-gradient-to-b from-slate-50/75 to-white px-6 py-6">
+      <div className="mx-auto max-w-5xl">
+        {isLoading ? (
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 text-sm font-medium text-slate-500">
+            Mesajlar yukleniyor...
+          </div>
+        ) : null}
+
+        {!isLoading && messages.length === 0 ? (
+          <div className="rounded-3xl border border-dashed border-slate-300 bg-white/80 p-8 text-center text-sm text-slate-500">
+            Bu kanalda henuz mesaj yok. Ilk mesaji gondererek akis baslatabiliriz.
+          </div>
+        ) : null}
+
+        <div className="space-y-5">
+          {messages.map((message) => {
+            const dayLabel = formatMessageDay(message.createdAt);
+            const showDay = dayLabel !== lastDay;
+            lastDay = dayLabel;
+
+            return (
+              <div key={message.id} className="space-y-4">
+                {showDay ? (
+                  <div className="flex items-center gap-4">
+                    <div className="h-px flex-1 bg-slate-200" />
+                    <span className="rounded-full border border-slate-200 bg-white px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">
+                      {dayLabel}
+                    </span>
+                    <div className="h-px flex-1 bg-slate-200" />
+                  </div>
+                ) : null}
+
+                <MessageBubble
+                  message={message}
+                  isOwnMessage={message.sender.id === "current-user"}
+                  onAction={onMessageAction}
+                />
+              </div>
+            );
+          })}
         </div>
-      ) : null}
 
-      {!isLoading && messages.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-slate-300 bg-white/80 p-8 text-center text-sm text-slate-500">
-          Bu kanalda henüz mesaj yok. İlk mesajı göndererek akışı başlatabiliriz.
-        </div>
-      ) : null}
-
-      <div className="space-y-5">
-        {messages.map((message) => {
-          const dayLabel = formatMessageDay(message.createdAt);
-          const showDay = dayLabel !== lastDay;
-          lastDay = dayLabel;
-
-          return (
-            <div key={message.id} className="space-y-4">
-              {showDay ? (
-                <div className="flex items-center gap-3">
-                  <div className="h-px flex-1 bg-slate-200" />
-                  <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">
-                    {dayLabel}
-                  </span>
-                  <div className="h-px flex-1 bg-slate-200" />
-                </div>
-              ) : null}
-
-              <MessageBubble
-                message={message}
-                isOwnMessage={message.sender.id === "current-user"}
-                onAction={onMessageAction}
-              />
-            </div>
-          );
-        })}
+        {typingUsers.length > 0 ? (
+          <div className="mt-6 inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-medium text-slate-500 shadow-sm">
+            <span className="flex gap-1">
+              <span className="h-2 w-2 animate-bounce rounded-full bg-blue-400 [animation-delay:-0.2s]" />
+              <span className="h-2 w-2 animate-bounce rounded-full bg-blue-300 [animation-delay:-0.1s]" />
+              <span className="h-2 w-2 animate-bounce rounded-full bg-blue-200" />
+            </span>
+            {typingUsers.join(", ")} yaziyor...
+          </div>
+        ) : null}
       </div>
-
-      {typingUsers.length > 0 ? (
-        <div className="mt-6 inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-medium text-slate-500 shadow-sm">
-          <span className="flex gap-1">
-            <span className="h-2 w-2 animate-bounce rounded-full bg-blue-400 [animation-delay:-0.2s]" />
-            <span className="h-2 w-2 animate-bounce rounded-full bg-blue-400 [animation-delay:-0.1s]" />
-            <span className="h-2 w-2 animate-bounce rounded-full bg-blue-400" />
-          </span>
-          {typingUsers.join(", ")} yazıyor...
-        </div>
-      ) : null}
-    </div>
+    </section>
   );
 }

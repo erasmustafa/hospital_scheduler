@@ -25,15 +25,15 @@ const MOCK_SHIFTS: ShiftCardItem[] = [
   {
     id: "shift-1",
     staffName: "Emin Oral",
-    shiftLabel: "Gündüz Vardiyası",
+    shiftLabel: "Gunduz Vardiyasi",
     start: "08:00",
     end: "16:00",
     departmentId: "er",
   },
   {
     id: "shift-2",
-    staffName: "Demet Çelik Gelen",
-    shiftLabel: "Gece Vardiyası",
+    staffName: "Demet Celik Gelen",
+    shiftLabel: "Gece Vardiyasi",
     start: "16:00",
     end: "00:00",
     departmentId: "icu",
@@ -43,15 +43,15 @@ const MOCK_SHIFTS: ShiftCardItem[] = [
 const MOCK_ACTIVITIES: ActivityItem[] = [
   {
     id: "act-1",
-    title: "İzin talebi güncellendi",
-    description: "Ameliyathane kanalındaki onay akışına yeni talep düştü.",
+    title: "Izin talebi guncellendi",
+    description: "Ameliyathane kanalindaki onay akisina yeni talep dustu.",
     createdAt: "2026-04-26T09:05:00",
     tone: "info",
   },
   {
     id: "act-2",
-    title: "Görev tamamlandı",
-    description: "Gece vardiyası doğrulama görevi başarıyla kapatıldı.",
+    title: "Gorev tamamlandi",
+    description: "Gece vardiyasi dogrulama gorevi basariyla kapatildi.",
     createdAt: "2026-04-26T10:12:00",
     tone: "success",
   },
@@ -82,12 +82,7 @@ export default function ChatShell() {
   } = useDepartments();
   const { channels, activeChannel, activeChannelId, setActiveChannelId, pinnedChannels } =
     useChannels({ activeDepartmentId });
-  const {
-    messages,
-    isLoading,
-    typingUsers,
-    sendMessage,
-  } = useChatMessages({
+  const { messages, isLoading, typingUsers, sendMessage } = useChatMessages({
     channelId: activeChannelId,
     activeDepartmentId,
   });
@@ -102,6 +97,7 @@ export default function ChatShell() {
         setCommandPaletteOpen(true);
       }
     };
+
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
@@ -111,6 +107,7 @@ export default function ChatShell() {
     if (!normalized) {
       return channels;
     }
+
     return channels.filter((channel) =>
       `${channel.name} ${channel.description ?? ""}`
         .toLocaleLowerCase("tr-TR")
@@ -197,98 +194,100 @@ export default function ChatShell() {
   };
 
   return (
-    <div className="grid h-full min-h-0 grid-cols-1 bg-slate-50 xl:grid-cols-[280px_minmax(0,1fr)_340px]">
-      <ChatSidebar
-        search={search}
-        onSearchChange={setSearch}
-        channels={visibleChannels}
-        activeChannelId={activeChannelId}
-        onSelectChannel={setActiveChannelId}
-        departments={departments}
-        activeDepartmentId={activeDepartmentId}
-        onSelectDepartment={setActiveDepartmentId}
-        pinnedChannels={pinnedChannels}
-      />
-
-      <main className="flex min-w-0 min-h-0 flex-col border-x border-slate-200 bg-white">
-        <ChatHeader
-          activeChannel={activeChannel}
-          activeDepartment={activeDepartment}
-          onOpenPlanner={planner.openPlanner}
-          onOpenReminder={() =>
-            setReminderDraft({
-              title: "",
-              departmentId: activeDepartmentId ?? undefined,
-            })
-          }
-          onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+    <div className="h-full min-h-0 overflow-hidden bg-[#F4F7FB] p-4 xl:p-5">
+      <div className="grid h-full min-h-0 grid-cols-1 gap-4 rounded-[30px] border border-slate-200 bg-white p-3 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.28)] xl:grid-cols-[290px_minmax(0,1fr)_340px]">
+        <ChatSidebar
+          search={search}
+          onSearchChange={setSearch}
+          channels={visibleChannels}
+          activeChannelId={activeChannelId}
+          onSelectChannel={setActiveChannelId}
+          departments={departments}
+          activeDepartmentId={activeDepartmentId}
+          onSelectDepartment={setActiveDepartmentId}
+          pinnedChannels={pinnedChannels}
         />
-        <MessageList
-          messages={messages}
-          isLoading={isLoading}
-          typingUsers={typingUsers}
-          onMessageAction={handleMessageAction}
+
+        <main className="relative flex min-w-0 min-h-0 flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white">
+          <ChatHeader
+            activeChannel={activeChannel}
+            activeDepartment={activeDepartment}
+            onOpenPlanner={planner.openPlanner}
+            onOpenReminder={() =>
+              setReminderDraft({
+                title: "",
+                departmentId: activeDepartmentId ?? undefined,
+              })
+            }
+            onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+          />
+          <MessageList
+            messages={messages}
+            isLoading={isLoading}
+            typingUsers={typingUsers}
+            onMessageAction={handleMessageAction}
+          />
+          <MessageComposer
+            onSend={handleSend}
+            prefillText={composerPrefill}
+            onPrefillConsumed={() => setComposerPrefill(null)}
+            onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+          />
+        </main>
+
+        <ChatRightPanel
+          shifts={MOCK_SHIFTS}
+          reminders={reminderEngine.upcomingReminders}
+          tasks={messageActions.openTasks}
+          decisions={messageActions.pinnedDecisions}
+          activities={MOCK_ACTIVITIES}
         />
-        <MessageComposer
-          onSend={handleSend}
-          prefillText={composerPrefill}
-          onPrefillConsumed={() => setComposerPrefill(null)}
-          onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+
+        <FloatingPlanner
+          open={planner.isOpen}
+          selectedDate={planner.selectedDate}
+          onSelectDate={planner.setSelectedDate}
+          onClose={planner.closePlanner}
+          plannerItems={planner.plannerItems}
+          todaysItems={planner.todaysItems}
+          shifts={MOCK_SHIFTS}
+          tasks={messageActions.openTasks}
+          reminders={reminderEngine.upcomingReminders}
+          departments={departments}
         />
-      </main>
 
-      <ChatRightPanel
-        shifts={MOCK_SHIFTS}
-        reminders={reminderEngine.upcomingReminders}
-        tasks={messageActions.openTasks}
-        decisions={messageActions.pinnedDecisions}
-        activities={MOCK_ACTIVITIES}
-      />
+        <CreateTaskModal
+          open={Boolean(taskDraft)}
+          initialTitle={taskDraft?.title}
+          departmentId={taskDraft?.departmentId}
+          onClose={() => setTaskDraft(null)}
+          onCreate={handleTaskCreate}
+        />
 
-      <FloatingPlanner
-        open={planner.isOpen}
-        selectedDate={planner.selectedDate}
-        onSelectDate={planner.setSelectedDate}
-        onClose={planner.closePlanner}
-        plannerItems={planner.plannerItems}
-        todaysItems={planner.todaysItems}
-        shifts={MOCK_SHIFTS}
-        tasks={messageActions.openTasks}
-        reminders={reminderEngine.upcomingReminders}
-        departments={departments}
-      />
+        <ReminderPopover
+          open={Boolean(reminderDraft)}
+          initialTitle={reminderDraft?.title}
+          departmentId={reminderDraft?.departmentId}
+          onClose={() => setReminderDraft(null)}
+          onCreate={handleReminderCreate}
+        />
 
-      <CreateTaskModal
-        open={Boolean(taskDraft)}
-        initialTitle={taskDraft?.title}
-        departmentId={taskDraft?.departmentId}
-        onClose={() => setTaskDraft(null)}
-        onCreate={handleTaskCreate}
-      />
-
-      <ReminderPopover
-        open={Boolean(reminderDraft)}
-        initialTitle={reminderDraft?.title}
-        departmentId={reminderDraft?.departmentId}
-        onClose={() => setReminderDraft(null)}
-        onCreate={handleReminderCreate}
-      />
-
-      <CommandPalette
-        open={commandPaletteOpen}
-        onClose={() => setCommandPaletteOpen(false)}
-        onRunCommand={(value) => {
-          if (value.includes("Hatırlatıcı")) {
-            setReminderDraft({ title: "", departmentId: activeDepartmentId ?? undefined });
-          }
-          if (value.includes("Yeni görev")) {
-            setTaskDraft({ title: "", departmentId: activeDepartmentId ?? undefined });
-          }
-          if (value.includes("Karar")) {
-            planner.openPlanner();
-          }
-        }}
-      />
+        <CommandPalette
+          open={commandPaletteOpen}
+          onClose={() => setCommandPaletteOpen(false)}
+          onRunCommand={(value) => {
+            if (value.includes("Hatirlatici")) {
+              setReminderDraft({ title: "", departmentId: activeDepartmentId ?? undefined });
+            }
+            if (value.includes("Yeni gorev")) {
+              setTaskDraft({ title: "", departmentId: activeDepartmentId ?? undefined });
+            }
+            if (value.includes("Karar")) {
+              planner.openPlanner();
+            }
+          }}
+        />
+      </div>
     </div>
   );
 }

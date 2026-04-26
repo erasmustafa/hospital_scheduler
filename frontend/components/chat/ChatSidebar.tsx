@@ -16,6 +16,23 @@ type ChatSidebarProps = {
   pinnedChannels: Channel[];
 };
 
+function SectionTitle({
+  title,
+  meta,
+}: {
+  title: string;
+  meta?: string;
+}) {
+  return (
+    <div className="flex items-center justify-between">
+      <h2 className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">
+        {title}
+      </h2>
+      {meta ? <span className="text-xs font-semibold text-slate-400">{meta}</span> : null}
+    </div>
+  );
+}
+
 export default function ChatSidebar({
   search,
   onSearchChange,
@@ -28,46 +45,20 @@ export default function ChatSidebar({
   pinnedChannels,
 }: ChatSidebarProps) {
   return (
-    <aside className="hidden h-full min-h-0 flex-col border-r border-slate-200 bg-gradient-to-b from-slate-900 via-slate-900 to-blue-950 text-white xl:flex">
-      <div className="border-b border-white/10 px-5 py-5">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-200/70">
-          Context-Aware Chat
-        </p>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight">Kurumsal İletişim</h1>
-        <p className="mt-2 text-sm leading-6 text-slate-300">
-          Birim bazlı kanallar, görev akışı ve mini planner aynı ekranda.
-        </p>
-      </div>
+    <aside className="hidden min-h-0 flex-col rounded-[28px] border border-slate-200 bg-white p-4 xl:flex">
+      <label className="flex h-14 items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 shadow-sm shadow-slate-200/60">
+        <Search className="h-4 w-4 text-slate-400" />
+        <input
+          value={search}
+          onChange={(event) => onSearchChange(event.target.value)}
+          placeholder="Kanallarda ara..."
+          className="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
+        />
+      </label>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-4 py-5">
-        <label className="flex h-12 items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4">
-          <Search className="h-4 w-4 text-slate-400" />
-          <input
-            value={search}
-            onChange={(event) => onSearchChange(event.target.value)}
-            placeholder="Kanallarda ara"
-            className="w-full bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
-          />
-        </label>
-
+      <div className="mt-6 flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto">
         <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
-              Kanallar
-            </h2>
-            <span className="text-xs font-semibold text-slate-500">{channels.length}</span>
-          </div>
-          <ChannelList
-            channels={channels}
-            activeChannelId={activeChannelId}
-            onSelectChannel={onSelectChannel}
-          />
-        </section>
-
-        <section className="space-y-3">
-          <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
-            Birimler
-          </h2>
+          <SectionTitle title="Birimler" meta={String(departments.length)} />
           <DepartmentBadgeList
             departments={departments}
             activeDepartmentId={activeDepartmentId}
@@ -76,8 +67,17 @@ export default function ChatSidebar({
         </section>
 
         <section className="space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
-            <Star className="h-3.5 w-3.5" />
+          <SectionTitle title="Kanallar" meta={String(channels.length)} />
+          <ChannelList
+            channels={channels}
+            activeChannelId={activeChannelId}
+            onSelectChannel={onSelectChannel}
+          />
+        </section>
+
+        <section className="space-y-3">
+          <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">
+            <Star className="h-3.5 w-3.5 text-blue-500" />
             Sabitlenenler
           </div>
           <div className="space-y-2">
@@ -86,10 +86,15 @@ export default function ChatSidebar({
                 key={channel.id}
                 type="button"
                 onClick={() => onSelectChannel(channel.id)}
-                className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-slate-200 transition hover:bg-white/10"
+                className="flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left transition hover:border-blue-200 hover:bg-blue-50/60"
               >
-                <span className="truncate">{channel.name}</span>
-                <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-bold text-blue-200">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-slate-900">{channel.name}</p>
+                  <p className="mt-1 truncate text-xs text-slate-500">
+                    {channel.description ?? "Sabitlenen kanal"}
+                  </p>
+                </div>
+                <span className="rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold text-white">
                   {channel.unreadCount}
                 </span>
               </button>

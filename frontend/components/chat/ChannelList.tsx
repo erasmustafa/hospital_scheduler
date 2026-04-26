@@ -22,39 +22,49 @@ export default function ChannelList({
     <div className="space-y-2">
       {channels.map((channel) => {
         const active = channel.id === activeChannelId;
+
         return (
           <button
             key={channel.id}
             type="button"
             onClick={() => onSelectChannel(channel.id)}
-            className={`group flex w-full items-start gap-3 rounded-2xl border px-3 py-3 text-left transition ${
+            className={`flex w-full items-start gap-3 rounded-2xl border px-3 py-3 text-left transition ${
               active
-                ? "border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 shadow-sm shadow-blue-100"
-                : "border-transparent bg-white/70 hover:border-slate-200 hover:bg-white"
+                ? "border-blue-200 bg-blue-600 text-white shadow-[0_18px_40px_-26px_rgba(37,99,235,0.55)]"
+                : "border-slate-200 bg-white text-slate-700 hover:border-blue-100 hover:bg-slate-50"
             }`}
           >
-            <div
-              className={`mt-0.5 rounded-xl p-2 ${
-                active ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-500"
+            <span
+              className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+                active ? "bg-white/15 text-white" : "bg-slate-100 text-slate-500"
               }`}
             >
               {channelIcon(channel.type)}
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center justify-between gap-2">
-                <p className="truncate text-sm font-semibold text-slate-900">{channel.name}</p>
+            </span>
+
+            <span className="min-w-0 flex-1">
+              <span className="flex items-center justify-between gap-3">
+                <span className="truncate text-sm font-bold">{channel.name}</span>
                 {channel.unreadCount > 0 ? (
-                  <span className="rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold text-white">
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-[11px] font-black ${
+                      active ? "bg-white text-blue-700" : "bg-blue-600 text-white"
+                    }`}
+                  >
                     {channel.unreadCount}
                   </span>
                 ) : null}
-              </div>
+              </span>
               {channel.description ? (
-                <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-500">
+                <span
+                  className={`mt-1 line-clamp-2 block text-xs leading-5 ${
+                    active ? "text-blue-100" : "text-slate-500"
+                  }`}
+                >
                   {channel.description}
-                </p>
+                </span>
               ) : null}
-            </div>
+            </span>
           </button>
         );
       })}
