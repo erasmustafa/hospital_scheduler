@@ -153,7 +153,7 @@ export default function ChatRightPanel({
   activities,
 }: ChatRightPanelProps) {
   return (
-    <aside className="hidden min-h-0 overflow-y-auto rounded-[26px] border border-slate-200 bg-[#F8FAFD] p-2.5 xl:block">
+    <aside className="hidden min-h-0 overflow-y-auto rounded-[26px] border border-slate-200 bg-[#F8FAFD] p-2 xl:block">
       <div className="rounded-[22px] border border-slate-200 bg-white p-3 shadow-sm shadow-slate-200/60">
         <section>
           <SectionHeader title="Bugunku Vardiyalar" link="Tumunu Gor" />
@@ -166,8 +166,8 @@ export default function ChatRightPanel({
 
         <section className="mt-4 border-t border-slate-100 pt-4">
           <SectionHeader title="Yaklasan Hatirlaticilar" link="Tumunu Gor" />
-          <div className="grid grid-cols-2 gap-2">
-            {reminders.slice(0, 4).map((reminder) => (
+          <div className="space-y-2">
+            {reminders.slice(0, 2).map((reminder) => (
               <ReminderGridCard key={reminder.id} reminder={reminder} />
             ))}
           </div>

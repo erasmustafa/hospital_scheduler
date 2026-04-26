@@ -32,7 +32,7 @@ const MOCK_SHIFTS: ShiftCardItem[] = [
   },
   {
     id: "shift-2",
-    staffName: "Demet Celik Gelen",
+    staffName: "Demet Çelik Gelen",
     shiftLabel: "Gece Vardiyasi",
     start: "16:00",
     end: "00:00",
@@ -43,15 +43,15 @@ const MOCK_SHIFTS: ShiftCardItem[] = [
 const MOCK_ACTIVITIES: ActivityItem[] = [
   {
     id: "act-1",
-    title: "Izin talebi guncellendi",
-    description: "Ameliyathane kanalindaki onay akisina yeni talep dustu.",
+    title: "İzin talebi güncellendi",
+    description: "Ameliyathane kanalındaki onay akışına yeni talep düştü.",
     createdAt: "2026-04-26T09:05:00",
     tone: "info",
   },
   {
     id: "act-2",
-    title: "Gorev tamamlandi",
-    description: "Gece vardiyasi dogrulama gorevi basariyla kapatildi.",
+    title: "Görev tamamlandı",
+    description: "Gece vardiyası doğrulama görevi başarıyla kapatıldı.",
     createdAt: "2026-04-26T10:12:00",
     tone: "success",
   },
@@ -195,7 +195,7 @@ export default function ChatShell() {
 
   return (
     <div className="h-full min-h-0 overflow-hidden bg-[#F4F7FB] p-4 xl:p-5">
-      <div className="grid h-full min-h-0 grid-cols-1 gap-4 rounded-[30px] border border-slate-200 bg-white p-3 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.28)] xl:grid-cols-[261px_minmax(0,1fr)_340px]">
+      <div className="grid h-full min-h-0 grid-cols-1 gap-4 rounded-[30px] border border-slate-200 bg-white p-3 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.28)] xl:grid-cols-[261px_minmax(0,1fr)_289px]">
         <ChatSidebar
           search={search}
           onSearchChange={setSearch}
@@ -275,10 +275,10 @@ export default function ChatShell() {
           open={commandPaletteOpen}
           onClose={() => setCommandPaletteOpen(false)}
           onRunCommand={(value) => {
-            if (value.includes("Hatirlatici")) {
+            if (value.includes("Hatırlatıcı")) {
               setReminderDraft({ title: "", departmentId: activeDepartmentId ?? undefined });
             }
-            if (value.includes("Yeni gorev")) {
+            if (value.includes("Yeni görev")) {
               setTaskDraft({ title: "", departmentId: activeDepartmentId ?? undefined });
             }
             if (value.includes("Karar")) {
