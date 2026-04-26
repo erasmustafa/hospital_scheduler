@@ -1,6 +1,6 @@
 "use client";
 
-import { AtSign, MessageSquarePlus, Paperclip, Plus, Send, Sparkles } from "lucide-react";
+import { AtSign, MessageSquarePlus, Paperclip, Plus, Send } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import parseSlashCommand from "@/components/chat/utils/parseSlashCommand";
 
@@ -16,14 +16,17 @@ const COMMANDS = ["/reminder", "/task", "/shift", "/decision", "/agenda", "/poll
 function ComposerButton({
   icon,
   label,
+  onClick,
 }: {
   icon: React.ReactNode;
   label: string;
+  onClick?: () => void;
 }) {
   return (
     <button
       type="button"
       aria-label={label}
+      onClick={onClick}
       className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/80 text-slate-500 ring-1 ring-slate-200 transition hover:bg-blue-50 hover:text-blue-700"
     >
       {icon}
@@ -38,6 +41,7 @@ export default function MessageComposer({
   onOpenCommandPalette,
 }: MessageComposerProps) {
   const [value, setValue] = useState("");
+  const [toolsOpen, setToolsOpen] = useState(false);
 
   useEffect(() => {
     if (prefillText) {
@@ -108,27 +112,36 @@ export default function MessageComposer({
 
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <ComposerButton icon={<Plus className="h-3.5 w-3.5" />} label="Ekle" />
-            <ComposerButton icon={<Paperclip className="h-3.5 w-3.5" />} label="Dosya ekle" />
-            <ComposerButton icon={<MessageSquarePlus className="h-3.5 w-3.5" />} label="Not ekle" />
-            <ComposerButton icon={<AtSign className="h-3.5 w-3.5" />} label="Kisi etiketle" />
-            <button
-              type="button"
-              onClick={onOpenCommandPalette}
-              className="rounded-xl bg-white/80 px-3 py-1.5 text-xs font-black text-slate-700 ring-1 ring-slate-200 transition hover:bg-blue-50 hover:text-blue-700"
+            <ComposerButton
+              icon={<Plus className={`h-3.5 w-3.5 transition-transform ${toolsOpen ? "rotate-45" : ""}`} />}
+              label="Araclari goster"
+              onClick={() => setToolsOpen((current) => !current)}
+            />
+            <div
+              className={`flex items-center gap-2 overflow-hidden transition-all duration-300 ease-out ${
+                toolsOpen ? "max-w-80 translate-x-0 opacity-100" : "max-w-0 translate-x-2 opacity-0"
+              }`}
             >
-              /
-            </button>
+              <ComposerButton icon={<Paperclip className="h-3.5 w-3.5" />} label="Dosya ekle" />
+              <ComposerButton icon={<MessageSquarePlus className="h-3.5 w-3.5" />} label="Not ekle" />
+              <ComposerButton icon={<AtSign className="h-3.5 w-3.5" />} label="Kisi etiketle" />
+              <button
+                type="button"
+                onClick={onOpenCommandPalette}
+                className="rounded-xl bg-white/80 px-3 py-1.5 text-xs font-black text-slate-700 ring-1 ring-slate-200 transition hover:bg-blue-50 hover:text-blue-700"
+              >
+                /
+              </button>
+            </div>
           </div>
 
           <button
             type="button"
             onClick={submit}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-black text-white shadow-[0_18px_40px_-24px_rgba(37,99,235,0.6)] transition hover:bg-blue-700"
+            aria-label="Gonder"
+            className="inline-flex items-center justify-center rounded-xl bg-blue-600 p-2.5 text-white shadow-[0_18px_40px_-24px_rgba(37,99,235,0.6)] transition hover:bg-blue-700"
           >
-            <Sparkles className="h-3.5 w-3.5" />
-            Gonder
-            <Send className="h-3.5 w-3.5" />
+            <Send className="h-4 w-4" />
           </button>
         </div>
       </div>
