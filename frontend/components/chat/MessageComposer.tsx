@@ -24,7 +24,7 @@ function ComposerButton({
     <button
       type="button"
       aria-label={label}
-      className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-100 text-slate-500 transition hover:bg-blue-50 hover:text-blue-700"
+      className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/80 text-slate-500 ring-1 ring-slate-200 transition hover:bg-blue-50 hover:text-blue-700"
     >
       {icon}
     </button>
@@ -65,7 +65,7 @@ export default function MessageComposer({
 
   return (
     <footer className="shrink-0 border-t border-slate-200 bg-white px-6 py-5">
-      <div className="mx-auto max-w-5xl rounded-[28px] border border-slate-200 bg-white p-4 shadow-[0_20px_48px_-36px_rgba(15,23,42,0.32)]">
+      <div className="mx-auto max-w-5xl rounded-[24px] border border-slate-200 bg-gradient-to-br from-slate-50 to-[#F7FAFF] p-3 shadow-[0_18px_42px_-34px_rgba(15,23,42,0.24)]">
         <textarea
           value={value}
           onChange={(event) => setValue(event.target.value)}
@@ -79,9 +79,9 @@ export default function MessageComposer({
               onOpenCommandPalette();
             }
           }}
-          rows={3}
+          rows={2}
           placeholder="Mesajinizi yazin veya / komut kullanin"
-          className="w-full resize-none bg-transparent text-sm leading-7 text-slate-700 outline-none placeholder:text-slate-400"
+          className="w-full resize-none bg-transparent text-sm leading-6 text-slate-700 outline-none placeholder:text-slate-400"
         />
 
         {commandSuggestions.length > 0 ? (
@@ -108,14 +108,14 @@ export default function MessageComposer({
 
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <ComposerButton icon={<Plus className="h-4 w-4" />} label="Ekle" />
-            <ComposerButton icon={<Paperclip className="h-4 w-4" />} label="Dosya ekle" />
-            <ComposerButton icon={<MessageSquarePlus className="h-4 w-4" />} label="Not ekle" />
-            <ComposerButton icon={<AtSign className="h-4 w-4" />} label="Kisi etiketle" />
+            <ComposerButton icon={<Plus className="h-3.5 w-3.5" />} label="Ekle" />
+            <ComposerButton icon={<Paperclip className="h-3.5 w-3.5" />} label="Dosya ekle" />
+            <ComposerButton icon={<MessageSquarePlus className="h-3.5 w-3.5" />} label="Not ekle" />
+            <ComposerButton icon={<AtSign className="h-3.5 w-3.5" />} label="Kisi etiketle" />
             <button
               type="button"
               onClick={onOpenCommandPalette}
-              className="rounded-2xl bg-slate-100 px-4 py-2 text-sm font-black text-slate-700 transition hover:bg-blue-50 hover:text-blue-700"
+              className="rounded-xl bg-white/80 px-3 py-1.5 text-xs font-black text-slate-700 ring-1 ring-slate-200 transition hover:bg-blue-50 hover:text-blue-700"
             >
               /
             </button>
@@ -124,11 +124,11 @@ export default function MessageComposer({
           <button
             type="button"
             onClick={submit}
-            className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-2.5 text-sm font-black text-white shadow-[0_18px_40px_-24px_rgba(37,99,235,0.6)] transition hover:bg-blue-700"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-black text-white shadow-[0_18px_40px_-24px_rgba(37,99,235,0.6)] transition hover:bg-blue-700"
           >
-            <Sparkles className="h-4 w-4" />
+            <Sparkles className="h-3.5 w-3.5" />
             Gonder
-            <Send className="h-4 w-4" />
+            <Send className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
