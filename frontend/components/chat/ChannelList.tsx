@@ -19,7 +19,7 @@ export default function ChannelList({
   onSelectChannel,
 }: ChannelListProps) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-1.5">
       {channels.map((channel) => {
         const active = channel.id === activeChannelId;
 
@@ -28,7 +28,7 @@ export default function ChannelList({
             key={channel.id}
             type="button"
             onClick={() => onSelectChannel(channel.id)}
-            className={`flex w-full items-start gap-3 rounded-2xl border px-3 py-3 text-left transition ${
+            className={`flex w-full items-start gap-3 rounded-2xl border px-2 py-2 text-left transition ${
               active
                 ? "border-blue-200 bg-blue-600 text-white shadow-[0_18px_40px_-26px_rgba(37,99,235,0.55)]"
                 : "border-slate-200 bg-white text-slate-700 hover:border-blue-100 hover:bg-slate-50"

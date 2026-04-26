@@ -25,7 +25,7 @@ export default function DepartmentBadgeList({
   onSelectDepartment,
 }: DepartmentBadgeListProps) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       <button
         type="button"
         onClick={() => onSelectDepartment(null)}
@@ -36,12 +36,12 @@ export default function DepartmentBadgeList({
         }`}
       >
         <span className="flex items-center gap-3">
-          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-blue-100 to-indigo-50 text-sm font-bold text-blue-700">
+          <span className="flex h-3 w-3 items-center justify-center rounded-xl bg-gradient-to-br from-blue-100 to-indigo-50 text-sm font-bold text-blue-700">
             *
           </span>
-          <span className="text-sm font-semibold">Tum Birimler</span>
+          <span className="text-sm font-semibold">Tüm Birimler</span>
         </span>
-        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-500">
+        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[12px] font-bold text-slate-500">
           {departments.reduce((sum, item) => sum + item.onlineCount, 0)}
         </span>
       </button>
@@ -53,7 +53,7 @@ export default function DepartmentBadgeList({
             key={department.id}
             type="button"
             onClick={() => onSelectDepartment(active ? null : department.id)}
-            className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left transition ${
+            className={`flex w-full items-center justify-between rounded-xl border px-4 py-2 text-left transition ${
               active
                 ? "border-blue-200 bg-blue-50 text-slate-900"
                 : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
