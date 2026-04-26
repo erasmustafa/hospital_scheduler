@@ -28,7 +28,7 @@ export default function ChannelList({
             key={channel.id}
             type="button"
             onClick={() => onSelectChannel(channel.id)}
-            className={`flex w-full items-center gap-2.5 rounded-2xl border px-2 py-1.5 text-left transition ${
+            className={`flex w-full items-center gap-2.5 rounded-2xl border px-2 py-1 text-left transition ${
               active
                 ? "border-blue-200 bg-blue-600 text-white shadow-[0_18px_40px_-26px_rgba(37,99,235,0.55)]"
                 : "border-slate-200 bg-white text-slate-700 hover:border-blue-100 hover:bg-slate-50"

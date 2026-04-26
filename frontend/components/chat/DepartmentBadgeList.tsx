@@ -29,7 +29,7 @@ export default function DepartmentBadgeList({
       <button
         type="button"
         onClick={() => onSelectDepartment(null)}
-        className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left transition ${
+        className={`flex w-full items-center justify-between rounded-2xl border px-4 py-2 text-left transition ${
           !activeDepartmentId
             ? "border-blue-200 bg-blue-50 text-slate-900"
             : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
@@ -53,7 +53,7 @@ export default function DepartmentBadgeList({
             key={department.id}
             type="button"
             onClick={() => onSelectDepartment(active ? null : department.id)}
-            className={`flex w-full items-center justify-between rounded-xl border px-4 py-2 text-left transition ${
+            className={`flex w-full items-center justify-between rounded-xl border px-4 py-1.5 text-left transition ${
               active
                 ? "border-blue-200 bg-blue-50 text-slate-900"
                 : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"

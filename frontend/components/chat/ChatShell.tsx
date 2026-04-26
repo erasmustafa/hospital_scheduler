@@ -80,7 +80,7 @@ export default function ChatShell() {
     activeDepartmentId,
     setActiveDepartmentId,
   } = useDepartments();
-  const { channels, activeChannel, activeChannelId, setActiveChannelId, pinnedChannels } =
+  const { channels, activeChannel, activeChannelId, setActiveChannelId } =
     useChannels({ activeDepartmentId });
   const { messages, isLoading, typingUsers, sendMessage } = useChatMessages({
     channelId: activeChannelId,
@@ -205,7 +205,6 @@ export default function ChatShell() {
           departments={departments}
           activeDepartmentId={activeDepartmentId}
           onSelectDepartment={setActiveDepartmentId}
-          pinnedChannels={pinnedChannels}
         />
 
         <main className="relative flex min-w-0 min-h-0 flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white">
