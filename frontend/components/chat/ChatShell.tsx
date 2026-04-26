@@ -195,7 +195,7 @@ export default function ChatShell() {
 
   return (
     <div className="h-full min-h-0 overflow-hidden bg-[#F4F7FB] p-4 xl:p-5">
-      <div className="grid h-full min-h-0 grid-cols-1 gap-4 rounded-[30px] border border-slate-200 bg-white p-3 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.28)] xl:grid-cols-[290px_minmax(0,1fr)_340px]">
+      <div className="grid h-full min-h-0 grid-cols-1 gap-4 rounded-[30px] border border-slate-200 bg-white p-3 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.28)] xl:grid-cols-[261px_minmax(0,1fr)_340px]">
         <ChatSidebar
           search={search}
           onSearchChange={setSearch}
