@@ -538,7 +538,7 @@
 .selectFieldOption {
   position: relative;
   width: 100%;
-  min-height: 52px;
+  min-height: 48px;
   display: flex;
   align-items: center;
   gap: 12px;

@@ -22,14 +22,14 @@ type ApprovalRow = {
 };
 
 const requestTypeLabel: Record<string, string> = {
-  leave: "Izin",
-  unavailable: "Uygun Degil",
-  preferred_off: "Calismak Istemiyor",
+  leave: "İzin",
+  unavailable: "Uygun Değil",
+  preferred_off: "Çalışmak İstemiyor",
 };
 
 const statusLabel: Record<ApprovalStatus, string> = {
   pending: "Bekliyor",
-  approved: "Onaylandi",
+  approved: "Onaylandı",
   rejected: "Reddedildi",
 };
 
@@ -64,7 +64,7 @@ export default function ApprovalsPage() {
       setRows(data.availabilityRequests);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Talepler yuklenemedi.");
+      setError(err instanceof Error ? err.message : "Talepler yüklenemedi.");
     } finally {
       setLoading(false);
     }
@@ -85,7 +85,7 @@ export default function ApprovalsPage() {
       );
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Islem tamamlanamadi.");
+      setError(err instanceof Error ? err.message : "İşlem tamamlanamadı.");
     } finally {
       setSavingId(null);
     }
@@ -98,10 +98,10 @@ export default function ApprovalsPage() {
 
   return (
     <main style={styles.main}>
-      <h1 style={styles.pageTitle}>Izin ve Uygunluk Talepleri</h1>
+      <h1 style={styles.pageTitle}>İzin ve Uygunluk Talepleri</h1>
       <p style={styles.pageDesc}>
-        Personelin talep ettigi izin turlerini ve gun araliklarini burada
-        goruntuleyip onaylayabilir ya da reddedebilirsin.
+        Personelin talep ettiği izin türlerini ve gün aralıklarını burada
+        görüntüleyip onaylayabilir ya da reddedebilirsin.
       </p>
 
       <div style={styles.filterRow}>
@@ -110,7 +110,7 @@ export default function ApprovalsPage() {
           onChange={(event) => setFilterType(event.target.value as "" | ApprovalStatus)}
           style={styles.filterSelect}
         >
-          <option value="">Tum Talepler</option>
+          <option value="">Tüm Talepler</option>
           <option value="pending">Bekleyenler</option>
           <option value="approved">Onaylananlar</option>
           <option value="rejected">Reddedilenler</option>
@@ -124,7 +124,7 @@ export default function ApprovalsPage() {
 
       <section style={styles.tableSection}>
         {loading ? (
-          <p style={styles.loadingText}>Yukleniyor...</p>
+          <p style={styles.loadingText}>Yükleniyor...</p>
         ) : (
           <div style={styles.tableWrap}>
             <table style={styles.table}>
@@ -132,21 +132,21 @@ export default function ApprovalsPage() {
                 <tr>
                   <th style={styles.th}>Personel</th>
                   <th style={styles.th}>Birim</th>
-                  <th style={styles.th}>Talep Turu</th>
-                  <th style={styles.th}>Gunler</th>
+                  <th style={styles.th}>Talep Türü</th>
+                  <th style={styles.th}>Günler</th>
                   <th style={styles.th}>Vardiya</th>
                   <th style={styles.th}>Not</th>
-                  <th style={styles.th}>Olusturan</th>
+                  <th style={styles.th}>Oluşturan</th>
                   <th style={styles.th}>Durum</th>
-                  <th style={styles.th}>Inceleyen</th>
-                  <th style={{ ...styles.th, textAlign: "center" }}>Islem</th>
+                  <th style={styles.th}>İnceleyen</th>
+                  <th style={{ ...styles.th, textAlign: "center" }}>İşlem</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredRows.length === 0 ? (
                   <tr>
                     <td colSpan={10} style={styles.emptyCell}>
-                      Gosterilecek izin veya uygunluk talebi bulunamadi.
+                      Gösterilecek izin veya uygunluk talebi bulunamadı.
                     </td>
                   </tr>
                 ) : (
@@ -171,7 +171,7 @@ export default function ApprovalsPage() {
                           </span>
                         </td>
                         <td style={styles.td}>{formatDateRange(row.startDate, row.endDate)}</td>
-                        <td style={styles.td}>{row.shiftTypeName || "Tum Gun"}</td>
+                        <td style={styles.td}>{row.shiftTypeName || "Tüm Gün"}</td>
                         <td style={styles.td}>
                           <span style={styles.secondaryText}>{row.notes || "-"}</span>
                         </td>
@@ -227,7 +227,7 @@ export default function ApprovalsPage() {
                               </button>
                             </div>
                           ) : (
-                            <span style={styles.secondaryText}>Islem Tamamlandi</span>
+                            <span style={styles.secondaryText}>İşlem Tamamlandı</span>
                           )}
                         </td>
                       </tr>
