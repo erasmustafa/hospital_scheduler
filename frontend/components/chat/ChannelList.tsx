@@ -8,9 +8,9 @@ type ChannelListProps = {
 };
 
 function channelIcon(type: Channel["type"]) {
-  if (type === "private") return <Lock className="h-4 w-4" />;
-  if (type === "system") return <Radio className="h-4 w-4" />;
-  return <Hash className="h-4 w-4" />;
+  if (type === "private") return <Lock className="h-3.5 w-3.5" />;
+  if (type === "system") return <Radio className="h-3.5 w-3.5" />;
+  return <Hash className="h-3.5 w-3.5" />;
 }
 
 export default function ChannelList({
@@ -28,14 +28,14 @@ export default function ChannelList({
             key={channel.id}
             type="button"
             onClick={() => onSelectChannel(channel.id)}
-            className={`flex w-full items-start gap-3 rounded-2xl border px-2 py-2 text-left transition ${
+            className={`flex w-full items-center gap-2.5 rounded-2xl border px-2 py-1.5 text-left transition ${
               active
                 ? "border-blue-200 bg-blue-600 text-white shadow-[0_18px_40px_-26px_rgba(37,99,235,0.55)]"
                 : "border-slate-200 bg-white text-slate-700 hover:border-blue-100 hover:bg-slate-50"
             }`}
           >
             <span
-              className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${
                 active ? "bg-white/15 text-white" : "bg-slate-100 text-slate-500"
               }`}
             >
@@ -44,7 +44,9 @@ export default function ChannelList({
 
             <span className="min-w-0 flex-1">
               <span className="flex items-center justify-between gap-3">
-                <span className="truncate text-sm font-bold">{channel.name}</span>
+                <span className="truncate text-[13px] font-semibold italic leading-5">
+                  {channel.name}
+                </span>
                 {channel.unreadCount > 0 ? (
                   <span
                     className={`rounded-full px-2 py-0.5 text-[11px] font-black ${
