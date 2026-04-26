@@ -211,7 +211,7 @@ export default function MessageBubble({
                 ? "border-blue-100 bg-gradient-to-br from-blue-50 via-white to-indigo-50"
                 : isOwnMessage
                   ? "border-blue-100 bg-gradient-to-br from-white via-blue-50/80 to-blue-100/80"
-                  : "border-white/80 bg-white/96"
+                  : "border-slate-200 bg-white shadow-[0_12px_26px_rgba(148,163,184,0.22)]"
             } ${
               hasInteractiveCard ? "px-3 py-2" : "px-3 py-2.5"
             }`}
