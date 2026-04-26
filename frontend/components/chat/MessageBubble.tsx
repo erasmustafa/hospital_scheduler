@@ -24,7 +24,7 @@ export default function MessageBubble({
 
   return (
     <article
-      className={`group flex gap-1.5 ${isOwnMessage ? "justify-end" : "justify-start"} ${
+      className={`group flex gap-1 ${isOwnMessage ? "justify-end" : "justify-start"} ${
         isOwnMessage ? "flex-row-reverse" : ""
       }`}
     >
@@ -44,7 +44,7 @@ export default function MessageBubble({
       </div>
 
       <div
-        className={`max-w-[760px] rounded-[22px] border px-3 py-2.5 shadow-[0_16px_38px_-34px_rgba(15,23,42,0.28)] transition group-hover:shadow-[0_22px_50px_-36px_rgba(15,23,42,0.34)] ${
+        className={`max-w-[720px] rounded-[20px] border px-2.5 py-2 shadow-[0_14px_30px_-30px_rgba(15,23,42,0.24)] transition group-hover:shadow-[0_18px_38px_-30px_rgba(15,23,42,0.28)] ${
           isSystem
             ? "border-blue-100 bg-[linear-gradient(180deg,#f8fbff_0%,#edf5ff_100%)]"
             : isOwnMessage
@@ -52,12 +52,12 @@ export default function MessageBubble({
               : "border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)]"
         }`}
       >
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start justify-between gap-2.5">
           <div>
             <div className="flex items-center gap-1.5">
-              <p className="text-[13px] font-black text-slate-900">{message.sender.name}</p>
+              <p className="text-[12px] font-semibold text-slate-900">{message.sender.name}</p>
               {message.sender.role ? (
-                <span className="text-[11px] text-slate-500">/ {message.sender.role}</span>
+                <span className="text-[10px] text-slate-500">/ {message.sender.role}</span>
               ) : null}
               {message.isPinned ? <Pin className="h-3.5 w-3.5 text-blue-600" /> : null}
               {isSystem ? <Bot className="h-3.5 w-3.5 text-slate-400" /> : null}
@@ -70,7 +70,7 @@ export default function MessageBubble({
         </div>
 
         <p
-          className={`mt-2 text-[13px] leading-5 ${
+          className={`mt-1.5 text-[12px] leading-5 ${
             isSystem ? "text-slate-600" : "text-slate-700"
           }`}
         >
@@ -78,25 +78,25 @@ export default function MessageBubble({
         </p>
 
         {message.type === "task" && message.metadata ? (
-          <div className="mt-2.5">
+          <div className="mt-2">
             <TaskMiniCard task={message.metadata as unknown as Task} />
           </div>
         ) : null}
 
         {message.type === "reminder" && message.metadata ? (
-          <div className="mt-2.5">
+          <div className="mt-2">
             <ReminderMiniCard reminder={message.metadata as unknown as Reminder} />
           </div>
         ) : null}
 
         {message.type === "shift" && message.metadata ? (
-          <div className="mt-2.5">
+          <div className="mt-2">
             <ShiftMiniCard shift={message.metadata as unknown as ShiftCardItem} />
           </div>
         ) : null}
 
         {message.type === "decision" && message.metadata ? (
-          <div className="mt-2.5">
+          <div className="mt-2">
             <DecisionCard
               decision={{
                 id: message.id,

@@ -23,13 +23,13 @@ export default function MessageList({
       className="min-h-0 flex-1 overflow-y-auto px-3 py-4"
       style={{
         backgroundImage:
-          "linear-gradient(rgba(255,255,255,0.52), rgba(255,255,255,0.72)), url('/images/chat/chat-area-bg-v2.png')",
-        backgroundSize: "cover",
+          "linear-gradient(rgba(255,255,255,0.22), rgba(255,255,255,0.38)), url('/images/chat/chat-area-bg-v2.png')",
+        backgroundSize: "100% auto",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
       }}
     >
-      <div className="mx-auto max-w-5xl rounded-[24px] border border-white/50 bg-white/10 p-1.5 backdrop-blur-[1px]">
+      <div className="mx-auto max-w-5xl rounded-[24px] border border-white/35 bg-white/6 p-1 backdrop-blur-0">
         {isLoading ? (
           <div className="rounded-3xl border border-slate-200 bg-white p-6 text-sm font-medium text-slate-500">
             Mesajlar yukleniyor...
