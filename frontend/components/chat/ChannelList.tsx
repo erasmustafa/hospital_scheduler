@@ -55,15 +55,6 @@ export default function ChannelList({
                   </span>
                 ) : null}
               </span>
-              {channel.description ? (
-                <span
-                  className={`mt-1 line-clamp-2 block text-xs leading-5 ${
-                    active ? "text-blue-100" : "text-slate-500"
-                  }`}
-                >
-                  {channel.description}
-                </span>
-              ) : null}
             </span>
           </button>
         );
