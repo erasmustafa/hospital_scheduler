@@ -24,12 +24,12 @@ export default function MessageBubble({
 
   return (
     <article
-      className={`group flex gap-3 ${isOwnMessage ? "justify-end" : "justify-start"} ${
+      className={`group flex gap-1.5 ${isOwnMessage ? "justify-end" : "justify-start"} ${
         isOwnMessage ? "flex-row-reverse" : ""
       }`}
     >
       <div
-        className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-black shadow-sm ${
+        className={`relative mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[11px] font-black shadow-sm ${
           isSystem
             ? "bg-blue-600 text-white"
             : isOwnMessage
@@ -39,12 +39,12 @@ export default function MessageBubble({
       >
         {message.sender.initials ?? message.sender.name.slice(0, 2).toUpperCase()}
         {!isSystem && !isOwnMessage ? (
-          <span className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-emerald-500" />
+          <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border border-white bg-emerald-500" />
         ) : null}
       </div>
 
       <div
-        className={`max-w-[760px] rounded-[28px] border px-5 py-4 shadow-[0_20px_50px_-38px_rgba(15,23,42,0.35)] transition group-hover:shadow-[0_28px_64px_-40px_rgba(15,23,42,0.42)] ${
+        className={`max-w-[760px] rounded-[22px] border px-3 py-2.5 shadow-[0_16px_38px_-34px_rgba(15,23,42,0.28)] transition group-hover:shadow-[0_22px_50px_-36px_rgba(15,23,42,0.34)] ${
           isSystem
             ? "border-blue-100 bg-[linear-gradient(180deg,#f8fbff_0%,#edf5ff_100%)]"
             : isOwnMessage
@@ -52,17 +52,17 @@ export default function MessageBubble({
               : "border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)]"
         }`}
       >
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start justify-between gap-3">
           <div>
-            <div className="flex items-center gap-2">
-              <p className="text-[15px] font-black text-slate-900">{message.sender.name}</p>
+            <div className="flex items-center gap-1.5">
+              <p className="text-[13px] font-black text-slate-900">{message.sender.name}</p>
               {message.sender.role ? (
-                <span className="text-[13px] text-slate-500">/ {message.sender.role}</span>
+                <span className="text-[11px] text-slate-500">/ {message.sender.role}</span>
               ) : null}
               {message.isPinned ? <Pin className="h-3.5 w-3.5 text-blue-600" /> : null}
               {isSystem ? <Bot className="h-3.5 w-3.5 text-slate-400" /> : null}
             </div>
-            <p className="mt-1 text-[12px] text-slate-500">
+            <p className="mt-0.5 text-[10px] text-slate-500">
               {formatMessageTime(message.createdAt)}
             </p>
           </div>
@@ -70,7 +70,7 @@ export default function MessageBubble({
         </div>
 
         <p
-          className={`mt-4 text-[16px] leading-8 ${
+          className={`mt-2 text-[13px] leading-5 ${
             isSystem ? "text-slate-600" : "text-slate-700"
           }`}
         >
@@ -78,25 +78,25 @@ export default function MessageBubble({
         </p>
 
         {message.type === "task" && message.metadata ? (
-          <div className="mt-4">
+          <div className="mt-2.5">
             <TaskMiniCard task={message.metadata as unknown as Task} />
           </div>
         ) : null}
 
         {message.type === "reminder" && message.metadata ? (
-          <div className="mt-4">
+          <div className="mt-2.5">
             <ReminderMiniCard reminder={message.metadata as unknown as Reminder} />
           </div>
         ) : null}
 
         {message.type === "shift" && message.metadata ? (
-          <div className="mt-4">
+          <div className="mt-2.5">
             <ShiftMiniCard shift={message.metadata as unknown as ShiftCardItem} />
           </div>
         ) : null}
 
         {message.type === "decision" && message.metadata ? (
-          <div className="mt-4">
+          <div className="mt-2.5">
             <DecisionCard
               decision={{
                 id: message.id,

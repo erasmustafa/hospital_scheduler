@@ -20,16 +20,16 @@ export default function MessageList({
 
   return (
     <section
-      className="min-h-0 flex-1 overflow-y-auto px-6 py-6"
+      className="min-h-0 flex-1 overflow-y-auto px-3 py-4"
       style={{
         backgroundImage:
-          "linear-gradient(rgba(255,255,255,0.76), rgba(255,255,255,0.9)), url('/images/chat/chat-area-bg.png')",
+          "linear-gradient(rgba(255,255,255,0.52), rgba(255,255,255,0.72)), url('/images/chat/chat-area-bg-v2.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
       }}
     >
-      <div className="mx-auto max-w-5xl rounded-[30px] border border-white/60 bg-white/20 p-3 backdrop-blur-[2px]">
+      <div className="mx-auto max-w-5xl rounded-[24px] border border-white/50 bg-white/10 p-1.5 backdrop-blur-[1px]">
         {isLoading ? (
           <div className="rounded-3xl border border-slate-200 bg-white p-6 text-sm font-medium text-slate-500">
             Mesajlar yukleniyor...
@@ -42,14 +42,14 @@ export default function MessageList({
           </div>
         ) : null}
 
-        <div className="space-y-5">
+        <div className="space-y-3">
           {messages.map((message) => {
             const dayLabel = formatMessageDay(message.createdAt);
             const showDay = dayLabel !== lastDay;
             lastDay = dayLabel;
 
             return (
-              <div key={message.id} className="space-y-4">
+              <div key={message.id} className="space-y-2">
                 {showDay ? (
                   <div className="flex items-center gap-4">
                     <div className="h-px flex-1 bg-slate-200" />
