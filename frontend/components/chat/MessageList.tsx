@@ -19,8 +19,17 @@ export default function MessageList({
   let lastDay = "";
 
   return (
-    <section className="min-h-0 flex-1 overflow-y-auto bg-gradient-to-b from-slate-50/75 to-white px-6 py-6">
-      <div className="mx-auto max-w-5xl">
+    <section
+      className="min-h-0 flex-1 overflow-y-auto px-6 py-6"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(255,255,255,0.76), rgba(255,255,255,0.9)), url('/images/chat/chat-area-bg.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      <div className="mx-auto max-w-5xl rounded-[30px] border border-white/60 bg-white/20 p-3 backdrop-blur-[2px]">
         {isLoading ? (
           <div className="rounded-3xl border border-slate-200 bg-white p-6 text-sm font-medium text-slate-500">
             Mesajlar yukleniyor...

@@ -29,37 +29,40 @@ export default function MessageBubble({
       }`}
     >
       <div
-        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-black ${
+        className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-black shadow-sm ${
           isSystem
             ? "bg-blue-600 text-white"
             : isOwnMessage
               ? "bg-slate-900 text-white"
-              : "bg-white text-slate-900 ring-1 ring-slate-200"
+              : "bg-[#20284f] text-white"
         }`}
       >
         {message.sender.initials ?? message.sender.name.slice(0, 2).toUpperCase()}
+        {!isSystem && !isOwnMessage ? (
+          <span className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-emerald-500" />
+        ) : null}
       </div>
 
       <div
-        className={`max-w-[720px] rounded-[24px] border px-4 py-3 shadow-sm transition group-hover:shadow-md ${
+        className={`max-w-[760px] rounded-[28px] border px-5 py-4 shadow-[0_20px_50px_-38px_rgba(15,23,42,0.35)] transition group-hover:shadow-[0_28px_64px_-40px_rgba(15,23,42,0.42)] ${
           isSystem
-            ? "border-blue-100 bg-blue-50"
+            ? "border-blue-100 bg-[linear-gradient(180deg,#f8fbff_0%,#edf5ff_100%)]"
             : isOwnMessage
-              ? "border-blue-100 bg-blue-50"
-              : "border-slate-200 bg-white"
+              ? "border-blue-100 bg-[linear-gradient(180deg,#f7faff_0%,#eef4ff_100%)]"
+              : "border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)]"
         }`}
       >
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <p className="text-sm font-black text-slate-900">{message.sender.name}</p>
+              <p className="text-[15px] font-black text-slate-900">{message.sender.name}</p>
               {message.sender.role ? (
-                <span className="text-xs text-slate-500">/ {message.sender.role}</span>
+                <span className="text-[13px] text-slate-500">/ {message.sender.role}</span>
               ) : null}
               {message.isPinned ? <Pin className="h-3.5 w-3.5 text-blue-600" /> : null}
               {isSystem ? <Bot className="h-3.5 w-3.5 text-slate-400" /> : null}
             </div>
-            <p className="mt-0.5 text-[11px] text-slate-500">
+            <p className="mt-1 text-[12px] text-slate-500">
               {formatMessageTime(message.createdAt)}
             </p>
           </div>
@@ -67,7 +70,7 @@ export default function MessageBubble({
         </div>
 
         <p
-          className={`mt-2 text-sm leading-6 ${
+          className={`mt-4 text-[16px] leading-8 ${
             isSystem ? "text-slate-600" : "text-slate-700"
           }`}
         >
