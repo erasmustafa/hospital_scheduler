@@ -62,7 +62,10 @@ export default function MessageList({
 
                 <MessageBubble
                   message={message}
-                  isOwnMessage={message.sender.id === "current-user"}
+                  isOwnMessage={
+                    message.sender.id === "current-user" ||
+                    message.sender.name === "Mustafa Bedir"
+                  }
                   onAction={onMessageAction}
                 />
               </div>
