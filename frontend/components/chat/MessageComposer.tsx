@@ -68,8 +68,8 @@ export default function MessageComposer({
   };
 
   return (
-    <footer className="shrink-0 border-t border-slate-200 bg-white px-6 py-5">
-      <div className="mx-auto max-w-5xl rounded-[24px] border border-slate-200 bg-gradient-to-br from-slate-50 to-[#F7FAFF] p-3 shadow-[0_18px_42px_-34px_rgba(15,23,42,0.24)]">
+    <footer className="shrink-0 border-t border-slate-200 bg-white px-6 py-3">
+      <div className="mx-auto max-w-5xl rounded-[22px] border border-slate-200 bg-gradient-to-br from-slate-50 to-[#F7FAFF] p-2.5 shadow-[0_18px_42px_-34px_rgba(15,23,42,0.24)]">
         <textarea
           value={value}
           onChange={(event) => setValue(event.target.value)}
@@ -83,9 +83,9 @@ export default function MessageComposer({
               onOpenCommandPalette();
             }
           }}
-          rows={2}
+          rows={1}
           placeholder="Mesajinizi yazin veya / komut kullanin"
-          className="w-full resize-none bg-transparent text-sm leading-6 text-slate-700 outline-none placeholder:text-slate-400"
+          className="min-h-[34px] w-full resize-none bg-transparent text-sm leading-5 text-slate-700 outline-none placeholder:text-slate-400"
         />
 
         {commandSuggestions.length > 0 ? (
@@ -128,7 +128,7 @@ export default function MessageComposer({
               <button
                 type="button"
                 onClick={onOpenCommandPalette}
-                className="rounded-xl bg-white/80 px-3 py-1.5 text-xs font-black text-slate-700 ring-1 ring-slate-200 transition hover:bg-blue-50 hover:text-blue-700"
+                className="rounded-xl bg-white/80 px-3 py-1 text-xs font-black text-slate-700 ring-1 ring-slate-200 transition hover:bg-blue-50 hover:text-blue-700"
               >
                 /
               </button>
@@ -139,7 +139,7 @@ export default function MessageComposer({
             type="button"
             onClick={submit}
             aria-label="Gonder"
-            className="inline-flex items-center justify-center rounded-xl bg-blue-600 p-2.5 text-white shadow-[0_18px_40px_-24px_rgba(37,99,235,0.6)] transition hover:bg-blue-700"
+            className="inline-flex items-center justify-center rounded-xl bg-blue-600 p-2 text-white shadow-[0_18px_40px_-24px_rgba(37,99,235,0.6)] transition hover:bg-blue-700"
           >
             <Send className="h-4 w-4" />
           </button>

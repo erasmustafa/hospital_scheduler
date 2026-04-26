@@ -29,7 +29,7 @@ export default function MessageBubble({
       }`}
     >
       <div
-        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-sm font-black ${
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-black ${
           isSystem
             ? "bg-blue-600 text-white"
             : isOwnMessage
@@ -41,7 +41,7 @@ export default function MessageBubble({
       </div>
 
       <div
-        className={`max-w-[720px] rounded-[28px] border p-4 shadow-sm transition group-hover:shadow-md ${
+        className={`max-w-[720px] rounded-[24px] border px-4 py-3 shadow-sm transition group-hover:shadow-md ${
           isSystem
             ? "border-blue-100 bg-blue-50"
             : isOwnMessage
@@ -53,18 +53,21 @@ export default function MessageBubble({
           <div>
             <div className="flex items-center gap-2">
               <p className="text-sm font-black text-slate-900">{message.sender.name}</p>
+              {message.sender.role ? (
+                <span className="text-xs text-slate-500">/ {message.sender.role}</span>
+              ) : null}
               {message.isPinned ? <Pin className="h-3.5 w-3.5 text-blue-600" /> : null}
               {isSystem ? <Bot className="h-3.5 w-3.5 text-slate-400" /> : null}
             </div>
-            <p className="mt-1 text-xs text-slate-500">
-              {message.sender.role ?? "Kullanici"} · {formatMessageTime(message.createdAt)}
+            <p className="mt-0.5 text-[11px] text-slate-500">
+              {formatMessageTime(message.createdAt)}
             </p>
           </div>
           <MessageActionMenu onAction={(action) => onAction(message, action)} />
         </div>
 
         <p
-          className={`mt-3 text-sm leading-7 ${
+          className={`mt-2 text-sm leading-6 ${
             isSystem ? "text-slate-600" : "text-slate-700"
           }`}
         >
