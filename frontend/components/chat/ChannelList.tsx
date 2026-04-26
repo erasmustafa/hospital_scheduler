@@ -13,6 +13,10 @@ function channelIcon(type: Channel["type"]) {
   return <Hash className="h-3.5 w-3.5" />;
 }
 
+function formatChannelName(name: string) {
+  return name.replace(/\s+kanal[ıi]$/i, "").trim();
+}
+
 export default function ChannelList({
   channels,
   activeChannelId,
@@ -28,24 +32,23 @@ export default function ChannelList({
             key={channel.id}
             type="button"
             onClick={() => onSelectChannel(channel.id)}
-            className={`flex w-full items-center gap-2.5 rounded-2xl border px-2 py-1 text-left transition ${
+            className={`flex w-full items-center gap-2 rounded-2xl border px-2 py-1 text-left transition ${
               active
                 ? "border-blue-200 bg-blue-600 text-white shadow-[0_18px_40px_-26px_rgba(37,99,235,0.55)]"
                 : "border-slate-200 bg-white text-slate-700 hover:border-blue-100 hover:bg-slate-50"
             }`}
           >
-            <span
-              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${
-                active ? "bg-white/15 text-white" : "bg-slate-100 text-slate-500"
-              }`}
-            >
-              {channelIcon(channel.type)}
-            </span>
-
             <span className="min-w-0 flex-1">
               <span className="flex items-center justify-between gap-3">
-                <span className="truncate text-[13px] font-semibold italic leading-5">
-                  {channel.name}
+                <span className="inline-flex min-w-0 items-center gap-1.5 truncate text-[13px] font-semibold italic leading-5">
+                  <span className={`${active ? "text-white" : "text-slate-500"}`}>
+                    {channelIcon(channel.type)}
+                  </span>
+                  <span className="truncate">
+                    {channel.type === "general"
+                      ? `# ${formatChannelName(channel.name)}`
+                      : formatChannelName(channel.name)}
+                  </span>
                 </span>
                 {channel.unreadCount > 0 ? (
                   <span

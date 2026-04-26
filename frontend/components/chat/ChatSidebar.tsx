@@ -43,8 +43,8 @@ export default function ChatSidebar({
   onSelectDepartment,
 }: ChatSidebarProps) {
   return (
-    <aside className="hidden min-h-0 flex-col rounded-[28px] border border-slate-200 bg-white p-3.5 xl:flex">
-      <label className="flex h-8 items-center gap-2.5 rounded-2xl border border-slate-200 bg-white px-3.5 shadow-sm shadow-slate-200/60">
+    <aside className="hidden min-h-0 flex-col rounded-[28px] border border-slate-200 bg-white p-3 xl:flex">
+      <label className="flex h-8 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 shadow-sm shadow-slate-200/60">
         <Search className="h-4 w-4 text-slate-400" />
         <input
           value={search}
@@ -54,7 +54,7 @@ export default function ChatSidebar({
         />
       </label>
 
-      <div className="mt-3 flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto">
+      <div className="mt-3 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto">
         <section className="space-y-2">
           <SectionTitle title="Birimler" meta={String(departments.length)} />
           <DepartmentBadgeList
