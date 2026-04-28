@@ -619,7 +619,7 @@ export default function ShiftMarketPage() {
               </div>
             )}
             {viewMode === "grid" ? (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-5 gap-3">
                 {filteredListings.map((listing) => {
                   const isSaved = savedIds.has(listing.id);
                   return (
