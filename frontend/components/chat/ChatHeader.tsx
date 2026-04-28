@@ -55,7 +55,7 @@ export default function ChatHeader({
       <div className="min-w-0">
         <div className="flex items-center gap-2">
           <h2 className="truncate text-[20px] font-semibold tracking-[-0.02em] text-slate-950">
-            {activeChannel?.name ?? "Kanal secin"}
+            {activeChannel?.name ?? "Kanal seçin"}
           </h2>
           <Star className="h-3.5 w-3.5 shrink-0 text-slate-400" />
         </div>
@@ -78,7 +78,7 @@ export default function ChatHeader({
         <HeaderIconButton icon={<Search className="h-4 w-4" />} label="Sohbette ara" />
         <HeaderIconButton
           icon={<BellPlus className="h-4 w-4" />}
-          label="Hatirlatici"
+          label="Hatırlatıcı"
           onClick={onOpenReminder}
         />
         <HeaderIconButton
@@ -94,7 +94,7 @@ export default function ChatHeader({
         <button
           type="button"
           className="rounded-2xl p-2 text-blue-600 transition hover:bg-blue-50"
-          aria-label="Katilimci ekle"
+          aria-label="Katılımcı ekle"
         >
           <UserPlus className="h-4.5 w-4.5" />
         </button>

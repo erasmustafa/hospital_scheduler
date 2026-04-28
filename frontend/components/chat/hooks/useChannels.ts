@@ -6,7 +6,7 @@ import type { Channel } from "@/types/chat";
 const MOCK_CHANNELS: Channel[] = [
   {
     id: "ops-general",
-    name: "Genel Operasyon",
+    name: "Genel operasyon",
     type: "general",
     unreadCount: 4,
     description: "Günlük kurum içi koordinasyon",

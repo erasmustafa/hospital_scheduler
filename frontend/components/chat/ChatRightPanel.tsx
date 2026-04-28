@@ -67,7 +67,7 @@ function ReminderGridCard({ reminder }: { reminder: Reminder }) {
             {reminder.title}
           </p>
           <p className="mt-1 truncate text-[10px] font-medium text-slate-500">
-            {(reminder.targetNames ?? []).join(", ") || "Hedef kisi yok"}
+            {(reminder.targetNames ?? []).join(", ") || "Hedef kişi yok"}
           </p>
         </div>
         <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
@@ -104,7 +104,7 @@ function TaskRow({ task }: { task: Task }) {
         <div className="min-w-0">
           <p className="text-[13px] font-semibold text-slate-900">{task.title}</p>
           <p className="mt-0.5 text-[11px] font-medium text-slate-500">
-            {task.assigneeName ?? "Atanmadi"}
+            {task.assigneeName ?? "Atanmadı"}
           </p>
         </div>
         <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${priorityTone[task.priority]}`}>
@@ -156,7 +156,7 @@ export default function ChatRightPanel({
     <aside className="hidden min-h-0 overflow-y-auto rounded-[26px] border border-slate-200 bg-[#F8FAFD] p-2 xl:block">
       <div className="rounded-[22px] border border-slate-200 bg-white p-3 shadow-sm shadow-slate-200/60">
         <section>
-          <SectionHeader title="Bugunku Vardiyalar" link="Tumunu Gor" />
+          <SectionHeader title="Bugünkü Vardiyalar" link="Tümünü Gör" />
           <div className="grid grid-cols-2 gap-2">
             {shifts.slice(0, 4).map((shift) => (
               <ShiftGridCard key={shift.id} shift={shift} />
@@ -165,7 +165,7 @@ export default function ChatRightPanel({
         </section>
 
         <section className="mt-4 border-t border-slate-100 pt-4">
-          <SectionHeader title="Yaklasan Hatirlaticilar" link="Tumunu Gor" />
+          <SectionHeader title="Yaklaşan Hatırlatıcılar" link="Tümünü Gör" />
           <div className="space-y-2">
             {reminders.slice(0, 2).map((reminder) => (
               <ReminderGridCard key={reminder.id} reminder={reminder} />
@@ -174,7 +174,7 @@ export default function ChatRightPanel({
         </section>
 
         <section className="mt-4 border-t border-slate-100 pt-4">
-          <SectionHeader title="Acik Gorevler" link="Tum Gorevler" />
+          <SectionHeader title="Açık Görevler" link="Tüm Görevler" />
           <div className="space-y-2">
             {tasks.slice(0, 2).map((task) => (
               <TaskRow key={task.id} task={task} />
@@ -183,7 +183,7 @@ export default function ChatRightPanel({
         </section>
 
         <section className="mt-4 border-t border-slate-100 pt-4">
-          <SectionHeader title="Sabitlenen Kararlar" link="Tumunu Gor" />
+          <SectionHeader title="Sabitlenen Kararlar" link="Tümünü Gör" />
           <div className="space-y-2">
             {decisions.slice(0, 2).map((decision) => (
               <DecisionRow key={decision.id} decision={decision} />
