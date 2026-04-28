@@ -732,7 +732,7 @@ export default function ShiftMarketPage() {
         </div>
 
         {/* RIGHT SIDEBAR */}
-        <aside className="w-80 shrink-0 space-y-6">
+        <aside className="w-80 shrink-0 space-y-4">
           <button 
             onClick={() => setIsCreateModalOpen(true)}
             className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-4 font-bold text-white shadow-md transition hover:bg-blue-700 hover:shadow-lg"
@@ -789,8 +789,8 @@ export default function ShiftMarketPage() {
           </div>
 
           {/* Nasıl Çalışır */}
-          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 className="mb-4 text-base font-bold text-slate-900">Nasıl Çalışır?</h3>
+          <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+            <h3 className="mb-3 text-base font-bold text-slate-900">Nasıl Çalışır?</h3>
             <div className="space-y-0">
               {[
                 {
