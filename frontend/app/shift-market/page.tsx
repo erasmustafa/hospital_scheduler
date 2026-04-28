@@ -597,13 +597,13 @@ export default function ShiftMarketPage() {
               <div className="flex h-9 items-center rounded-lg border border-slate-200 bg-white p-0.5">
                 <button
                   onClick={() => setViewMode("grid")}
-                  className={`flex h-full w-9 items-center justify-center rounded-md transition ${viewMode === "grid" ? "bg-slate-800 text-white" : "text-slate-400 hover:bg-slate-50"}`}
+                  className={`flex h-full w-9 items-center justify-center rounded-md transition ${viewMode === "grid" ? "bg-blue-600 text-white shadow-sm shadow-blue-600/25" : "text-slate-400 hover:bg-slate-50"}`}
                 >
                   <LayoutGrid className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => setViewMode("list")}
-                  className={`flex h-full w-9 items-center justify-center rounded-md transition ${viewMode === "list" ? "bg-slate-800 text-white" : "text-slate-400 hover:bg-slate-50"}`}
+                  className={`flex h-full w-9 items-center justify-center rounded-md transition ${viewMode === "list" ? "bg-blue-600 text-white shadow-sm shadow-blue-600/25" : "text-slate-400 hover:bg-slate-50"}`}
                 >
                   <List className="h-4 w-4" />
                 </button>
