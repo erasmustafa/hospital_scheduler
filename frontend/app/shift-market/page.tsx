@@ -765,7 +765,7 @@ export default function ShiftMarketPage() {
 
           {/* Yaklaşan Vardiyalarım */}
           <div className="rounded-3xl border border-slate-200 bg-white p-3.5 shadow-sm">
-            <h3 className="mb-3 text-base font-bold text-slate-900">Yaklaşan Vardiyalarım</h3>
+            <h3 className="mb-3 text-[15px] font-bold text-slate-900">Yaklaşan Vardiyalarım</h3>
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center gap-2 rounded-xl border border-slate-100 bg-slate-50 px-2.5 py-2">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-500">
