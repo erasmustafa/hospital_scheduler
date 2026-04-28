@@ -597,13 +597,13 @@ export default function ShiftMarketPage() {
               <div className="flex h-9 items-center rounded-lg border border-slate-200 bg-white p-0.5">
                 <button
                   onClick={() => setViewMode("grid")}
-                  className={`flex h-full w-9 items-center justify-center rounded-md transition ${viewMode === "grid" ? "border border-blue-200/70 bg-blue-500/12 text-blue-600 shadow-[0_8px_18px_-12px_rgba(37,99,235,0.6)] backdrop-blur-md" : "text-slate-400 hover:bg-slate-50"}`}
+                  className={`flex h-full w-9 items-center justify-center rounded-md transition ${viewMode === "grid" ? "border border-blue-200/80 bg-sky-100/90 text-blue-600 shadow-[0_8px_18px_-12px_rgba(37,99,235,0.28)] backdrop-blur-md" : "text-slate-400 hover:bg-slate-50"}`}
                 >
                   <LayoutGrid className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => setViewMode("list")}
-                  className={`flex h-full w-9 items-center justify-center rounded-md transition ${viewMode === "list" ? "border border-blue-200/70 bg-blue-500/12 text-blue-600 shadow-[0_8px_18px_-12px_rgba(37,99,235,0.6)] backdrop-blur-md" : "text-slate-400 hover:bg-slate-50"}`}
+                  className={`flex h-full w-9 items-center justify-center rounded-md transition ${viewMode === "list" ? "border border-blue-200/80 bg-sky-100/90 text-blue-600 shadow-[0_8px_18px_-12px_rgba(37,99,235,0.28)] backdrop-blur-md" : "text-slate-400 hover:bg-slate-50"}`}
                 >
                   <List className="h-4 w-4" />
                 </button>
