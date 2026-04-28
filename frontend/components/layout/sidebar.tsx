@@ -16,6 +16,7 @@ import {
   Sparkles,
   Users,
   PlaneTakeoff,
+  Store,
 } from "lucide-react";
 import type { AuthUser } from "@/lib/auth";
 import { useUiStore } from "@/store/ui-store";
@@ -28,6 +29,7 @@ const generalLinks = [
   { href: "/staff", label: "Personel", icon: Users, managerOnly: true },
   { href: "/shift-types", label: "Vardiya Tipleri", icon: Settings2, managerOnly: true },
   { href: "/auto-schedule", label: "Otomatik Liste", icon: Sparkles, managerOnly: true },
+  { href: "/shift-market", label: "Vardiya Pazarı", icon: Store, managerOnly: false },
   { href: "/analytics", label: "Analiz", icon: BarChart3, managerOnly: true },
 ];
 
