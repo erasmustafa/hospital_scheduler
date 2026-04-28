@@ -19,3 +19,4 @@ staticfiles/
 coverage/
 .DS_Store
 Thumbs.db
+hospital_scheduler/
