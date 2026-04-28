@@ -741,31 +741,31 @@ export default function ShiftMarketPage() {
           </button>
 
           {/* Hızlı İşlemler */}
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h3 className="mb-4 text-lg font-bold text-slate-900">Hızlı İşlemler</h3>
-            <div className="grid grid-cols-2 gap-3">
-              <button onClick={() => setIsCreateModalOpen(true)} className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-slate-100 bg-slate-50 p-4 transition hover:border-blue-100 hover:bg-blue-50 hover:text-blue-600">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-600"><Plus className="h-4 w-4" /></div>
-                <span className="text-xs font-bold text-slate-600">İlan Oluştur</span>
+          <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+            <h3 className="mb-2 text-sm font-bold text-slate-900">Hızlı İşlemler</h3>
+            <div className="grid grid-cols-2 gap-1.5">
+              <button onClick={() => setIsCreateModalOpen(true)} className="flex flex-col items-center justify-center gap-1 rounded-xl border border-slate-100 bg-slate-50 px-2 py-2 transition hover:border-blue-100 hover:bg-blue-50 hover:text-blue-600">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-blue-600"><Plus className="h-3.5 w-3.5" /></div>
+                <span className="text-[11px] font-bold leading-tight text-slate-600">İlan Oluştur</span>
               </button>
-              <button onClick={() => setActiveTab("Benim İlanlarım")} className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-slate-100 bg-slate-50 p-4 transition hover:border-indigo-100 hover:bg-indigo-50 hover:text-indigo-600">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-600"><Store className="h-4 w-4" /></div>
-                <span className="text-xs font-bold text-slate-600">İlanlarım</span>
+              <button onClick={() => setActiveTab("Benim İlanlarım")} className="flex flex-col items-center justify-center gap-1 rounded-xl border border-slate-100 bg-slate-50 px-2 py-2 transition hover:border-indigo-100 hover:bg-indigo-50 hover:text-indigo-600">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 text-indigo-600"><Store className="h-3.5 w-3.5" /></div>
+                <span className="text-[11px] font-bold leading-tight text-slate-600">İlanlarım</span>
               </button>
-              <button onClick={() => setActiveTab("Talip Olduklarım")} className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-slate-100 bg-slate-50 p-4 transition hover:border-emerald-100 hover:bg-emerald-50 hover:text-emerald-600">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600"><User className="h-4 w-4" /></div>
-                <span className="text-xs font-bold text-slate-600 text-center leading-tight">Talip Olduklarım</span>
+              <button onClick={() => setActiveTab("Talip Olduklarım")} className="flex flex-col items-center justify-center gap-1 rounded-xl border border-slate-100 bg-slate-50 px-2 py-2 transition hover:border-emerald-100 hover:bg-emerald-50 hover:text-emerald-600">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-emerald-600"><User className="h-3.5 w-3.5" /></div>
+                <span className="text-center text-[11px] font-bold leading-tight text-slate-600">Talip Olduklarım</span>
               </button>
-              <button onClick={() => setActiveTab("Onay Bekleyenler")} className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-slate-100 bg-slate-50 p-4 transition hover:border-amber-100 hover:bg-amber-50 hover:text-amber-600 relative">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-amber-600"><Clock3 className="h-4 w-4" /></div>
-                <span className="text-xs font-bold text-slate-600 text-center leading-tight">Onay Bekleyenler</span>
+              <button onClick={() => setActiveTab("Onay Bekleyenler")} className="relative flex flex-col items-center justify-center gap-1 rounded-xl border border-slate-100 bg-slate-50 px-2 py-2 transition hover:border-amber-100 hover:bg-amber-50 hover:text-amber-600">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-100 text-amber-600"><Clock3 className="h-3.5 w-3.5" /></div>
+                <span className="text-center text-[11px] font-bold leading-tight text-slate-600">Onay Bekleyenler</span>
               </button>
             </div>
           </div>
 
           {/* Yaklaşan Vardiyalarım */}
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h3 className="mb-4 text-lg font-bold text-slate-900">Yaklaşan Vardiyalarım</h3>
+            <h3 className="mb-4 text-base font-bold text-slate-900">Yaklaşan Vardiyalarım</h3>
             <div className="flex flex-col gap-2.5">
               <div className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-500">
@@ -787,16 +787,59 @@ export default function ShiftMarketPage() {
                 </div>
                 <span className="shrink-0 rounded-md bg-amber-50 px-2 py-0.5 text-[9px] font-bold text-amber-600 uppercase">Devret</span>
               </div>
-              <div className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-500">
-                  <Repeat className="h-4 w-4" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-slate-800 truncate">5 Mayıs Gece Nöbeti</p>
-                  <p className="text-[11px] text-slate-500">Yoğun Bakım · 00:00-08:00</p>
-                </div>
-                <span className="shrink-0 rounded-md bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-600 uppercase">Takas</span>
-              </div>
+            </div>
+          </div>
+
+          {/* Nasıl Çalışır */}
+          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <h3 className="mb-4 text-base font-bold text-slate-900">Nasıl Çalışır?</h3>
+            <div className="space-y-0">
+              {[
+                {
+                  icon: Plus,
+                  title: "İlan Oluştur",
+                  description: "Devretmek istediğin nöbet veya mesai için ilan oluştur.",
+                  tone: "bg-blue-50 text-blue-600",
+                },
+                {
+                  icon: User,
+                  title: "Talip Bul",
+                  description: "Uygun personel ilanına talip olur.",
+                  tone: "bg-indigo-50 text-indigo-600",
+                },
+                {
+                  icon: Clock3,
+                  title: "Onay Süreci",
+                  description: "İlan sahibi ve yönetici onayı ile devir tamamlanır.",
+                  tone: "bg-violet-50 text-violet-600",
+                },
+                {
+                  icon: CheckCircle2,
+                  title: "Vardiya Aktarılır",
+                  description: "Vardiya takvime işlenir, tüm taraflara bildirim gider.",
+                  tone: "bg-emerald-50 text-emerald-600",
+                },
+              ].map((step, index, steps) => {
+                const StepIcon = step.icon;
+
+                return (
+                  <div key={step.title} className="relative flex gap-3 pb-4 last:pb-0">
+                    {index < steps.length - 1 ? (
+                      <div className="absolute bottom-0 left-5 top-10 w-px bg-slate-200" />
+                    ) : null}
+                    <div className={`relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${step.tone}`}>
+                      <StepIcon className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0 pt-0.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-slate-400">{index + 1}</span>
+                        <h4 className="text-sm font-bold text-slate-900">{step.title}</h4>
+                      </div>
+                      <p className="mt-1 text-xs leading-5 text-slate-500">{step.description}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </aside>
