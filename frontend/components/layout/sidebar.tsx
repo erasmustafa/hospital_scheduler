@@ -84,6 +84,16 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
     >
       <div style={styles.header}>
         <div style={{ display: "flex", gap: 12, alignItems: "center", overflow: "hidden" }}>
+          <button
+            type="button"
+            onClick={collapsed ? toggleSidebar : undefined}
+            style={{
+              ...styles.logoButton,
+              cursor: collapsed ? "pointer" : "default",
+            }}
+            title={collapsed ? "Sidebar ac" : undefined}
+            aria-label={collapsed ? "Sidebar ac" : undefined}
+          >
           <div style={styles.logoBox}>
             <Image
               src="/icons/medishift-brand.png"
@@ -94,21 +104,24 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
               style={styles.logoImage}
             />
           </div>
+          </button>
           {!collapsed && (
             <div style={{ display: "flex", flexDirection: "column" }}>
               <span style={styles.logoText}>MediShift</span>
             </div>
           )}
         </div>
-        <button
-          type="button"
-          onClick={toggleSidebar}
-          style={styles.menuButton}
-          title={collapsed ? "Sidebar ac" : "Sidebar daralt"}
-          aria-label={collapsed ? "Sidebar ac" : "Sidebar daralt"}
-        >
-          <Menu size={18} />
-        </button>
+        {!collapsed && (
+          <button
+            type="button"
+            onClick={toggleSidebar}
+            style={styles.menuButton}
+            title="Sidebar daralt"
+            aria-label="Sidebar daralt"
+          >
+            <Menu size={18} />
+          </button>
+        )}
       </div>
 
       <div style={styles.scrollArea}>
@@ -256,6 +269,15 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: "center",
     flexShrink: 0,
     overflow: "hidden",
+  },
+  logoButton: {
+    padding: 0,
+    margin: 0,
+    border: "none",
+    background: "transparent",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   logoImage: {
     width: 24,
