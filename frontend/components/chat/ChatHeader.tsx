@@ -14,6 +14,7 @@ type ChatHeaderProps = {
   activeChannel: Channel | null;
   activeDepartment: Department | null;
   onTogglePlanner: () => void;
+  plannerOpen: boolean;
   onOpenReminder: () => void;
   onOpenCommandPalette: () => void;
 };
@@ -22,10 +23,12 @@ function HeaderIconButton({
   icon,
   label,
   onClick,
+  active = false,
 }: {
   icon: React.ReactNode;
   label: string;
   onClick?: () => void;
+  active?: boolean;
 }) {
   return (
     <button
@@ -33,7 +36,11 @@ function HeaderIconButton({
       onClick={onClick}
       aria-label={label}
       title={label}
-      className="group relative flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-500 shadow-sm shadow-slate-200/60 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+      className={`group relative flex h-10 w-10 items-center justify-center rounded-2xl border shadow-sm transition ${
+        active
+          ? "border-blue-200 bg-blue-50 text-blue-700 shadow-blue-100/80"
+          : "border-slate-200 bg-white text-slate-500 shadow-slate-200/60 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+      }`}
     >
       {icon}
       <span className="pointer-events-none absolute -bottom-10 left-1/2 z-10 -translate-x-1/2 rounded-xl border border-slate-200 bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-slate-600 opacity-0 shadow-lg shadow-slate-200/70 transition group-hover:opacity-100">
@@ -47,6 +54,7 @@ export default function ChatHeader({
   activeChannel,
   activeDepartment,
   onTogglePlanner,
+  plannerOpen,
   onOpenReminder,
   onOpenCommandPalette,
 }: ChatHeaderProps) {
@@ -85,6 +93,7 @@ export default function ChatHeader({
           icon={<CalendarRange className="h-4 w-4" />}
           label="Ajanda"
           onClick={onTogglePlanner}
+          active={plannerOpen}
         />
         <HeaderIconButton
           icon={<Sparkles className="h-4 w-4" />}
