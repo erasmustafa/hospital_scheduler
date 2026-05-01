@@ -211,7 +211,7 @@ export default function ChatShell() {
           <ChatHeader
             activeChannel={activeChannel}
             activeDepartment={activeDepartment}
-            onOpenPlanner={planner.openPlanner}
+            onTogglePlanner={planner.togglePlanner}
             onOpenReminder={() =>
               setReminderDraft({
                 title: "",

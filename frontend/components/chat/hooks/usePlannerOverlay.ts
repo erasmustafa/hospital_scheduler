@@ -39,6 +39,7 @@ export default function usePlannerOverlay() {
 
   const openPlanner = () => setIsOpen(true);
   const closePlanner = () => setIsOpen(false);
+  const togglePlanner = () => setIsOpen((current) => !current);
 
   const todaysItems = useMemo(
     () =>
@@ -54,6 +55,7 @@ export default function usePlannerOverlay() {
     isOpen,
     openPlanner,
     closePlanner,
+    togglePlanner,
     selectedDate,
     setSelectedDate,
     plannerItems,

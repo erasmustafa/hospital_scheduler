@@ -13,7 +13,7 @@ import type { Department } from "@/types/department";
 type ChatHeaderProps = {
   activeChannel: Channel | null;
   activeDepartment: Department | null;
-  onOpenPlanner: () => void;
+  onTogglePlanner: () => void;
   onOpenReminder: () => void;
   onOpenCommandPalette: () => void;
 };
@@ -46,7 +46,7 @@ function HeaderIconButton({
 export default function ChatHeader({
   activeChannel,
   activeDepartment,
-  onOpenPlanner,
+  onTogglePlanner,
   onOpenReminder,
   onOpenCommandPalette,
 }: ChatHeaderProps) {
@@ -84,7 +84,7 @@ export default function ChatHeader({
         <HeaderIconButton
           icon={<CalendarRange className="h-4 w-4" />}
           label="Ajanda"
-          onClick={onOpenPlanner}
+          onClick={onTogglePlanner}
         />
         <HeaderIconButton
           icon={<Sparkles className="h-4 w-4" />}
