@@ -97,7 +97,6 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
           {!collapsed && (
             <div style={{ display: "flex", flexDirection: "column" }}>
               <span style={styles.logoText}>MediShift</span>
-              <span style={styles.logoSubtext}>Akilli vardiya planlama sistemi</span>
             </div>
           )}
         </div>
