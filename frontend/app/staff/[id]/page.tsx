@@ -281,25 +281,20 @@ export default function StaffDetailPage() {
   return (
     <main className="h-full overflow-auto bg-[radial-gradient(circle_at_top,#eff5ff,transparent_42%),linear-gradient(180deg,#f8fbff_0%,#f1f5f9_100%)] px-7 py-6">
       <div className="mx-auto flex max-w-[1680px] flex-col gap-6">
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-[30px] border border-white/70 bg-white/85 px-6 py-5 shadow-[0_28px_80px_-56px_rgba(15,23,42,0.35)] backdrop-blur">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/staff"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-500 transition hover:border-blue-200 hover:text-blue-600"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-500">
-                Personel Profil
-              </p>
-              <h1 className="mt-1 text-[34px] font-black tracking-[-0.05em] text-slate-900">
-                {staff.fullName}
-              </h1>
-            </div>
-          </div>
-          <div className="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-600">
-            {staff.isActive ? "Aktif personel" : "Pasif personel"}
+        <div className="flex items-center gap-3">
+          <Link
+            href="/staff"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white/90 text-slate-500 shadow-sm transition hover:border-blue-200 hover:text-blue-600"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-500">
+              Personel Profil
+            </p>
+            <h1 className="mt-1 text-[28px] font-black tracking-[-0.05em] text-slate-900">
+              {staff.fullName}
+            </h1>
           </div>
         </div>
 
@@ -333,6 +328,19 @@ export default function StaffDetailPage() {
             </div>
 
             <div className="mt-6 space-y-4 rounded-[26px] border border-slate-200 bg-slate-50/80 p-5">
+              <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                <span className="text-sm font-semibold text-slate-600">Personel durumu</span>
+                <span
+                  className={[
+                    "inline-flex rounded-full px-3 py-1 text-xs font-bold",
+                    staff.isActive
+                      ? "border border-emerald-200 bg-emerald-50 text-emerald-600"
+                      : "border border-slate-200 bg-slate-100 text-slate-500",
+                  ].join(" ")}
+                >
+                  {staff.isActive ? "Aktif personel" : "Pasif personel"}
+                </span>
+              </div>
               <div className="flex items-center gap-3 text-sm font-semibold text-slate-700">
                 <BadgeCheck className="h-4 w-4 text-blue-600" />
                 Sicil No: <span className="font-bold text-slate-900">{staff.employeeNo ?? staff.id}</span>
