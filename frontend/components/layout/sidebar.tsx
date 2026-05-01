@@ -77,7 +77,7 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
     <aside
       style={{
         ...styles.sidebar,
-        width: collapsed ? 80 : 280,
+        width: collapsed ? 80 : 252,
       }}
     >
       <div style={styles.header}>
