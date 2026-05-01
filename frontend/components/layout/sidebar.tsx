@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import {
   BarChart3,
   CalendarDays,
@@ -53,6 +54,7 @@ function roleLabel(user?: AuthUser | null) {
 
 export function Sidebar({ onLogout, isLoggingOut = false, user = null }: SidebarProps) {
   const pathname = usePathname();
+  const [hoveredHref, setHoveredHref] = useState<string | null>(null);
   const collapsed = useUiStore((state) => state.sidebarCollapsed);
   const toggleSidebar = useUiStore((state) => state.toggleSidebar);
   const hasManagerAccess = Boolean(user?.isSuperuser || user?.canManageDepartment);
@@ -117,20 +119,31 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
             {visibleGeneralLinks.map((link) => {
               const Icon = link.icon;
               const active = isActiveLink(link.href);
+              const hovered = hoveredHref === link.href;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
+                  onMouseEnter={() => setHoveredHref(link.href)}
+                  onMouseLeave={() => setHoveredHref((current) => (current === link.href ? null : current))}
                   style={{
                     ...styles.navItem,
-                    backgroundColor: active ? "#ffffff" : "transparent",
-                    color: active ? "#3B5BDB" : "rgba(255,255,255,0.8)",
+                    backgroundColor: active
+                      ? "#ffffff"
+                      : hovered
+                        ? "rgba(255,255,255,0.12)"
+                        : "transparent",
+                    color: active ? "#3B5BDB" : "rgba(255,255,255,0.88)",
                     justifyContent: collapsed ? "center" : "flex-start",
+                    border: hovered && !active ? "1px solid rgba(255,255,255,0.16)" : "1px solid transparent",
+                    boxShadow: hovered && !active ? "0 10px 20px rgba(30,64,175,0.14)" : "none",
+                    transform: hovered && !active ? "translateX(2px)" : "translateX(0)",
+                    backdropFilter: hovered && !active ? "blur(12px)" : "none",
                     ...(active && !collapsed ? styles.activeNavIndicator : {}),
                   }}
                   title={collapsed ? link.label : undefined}
                 >
-                  <Icon size={20} style={{ flexShrink: 0, opacity: active ? 1 : 0.8 }} />
+                  <Icon size={20} style={{ flexShrink: 0, opacity: active || hovered ? 1 : 0.82 }} />
                   {!collapsed && <span style={styles.navLabel}>{link.label}</span>}
                 </Link>
               );
@@ -144,20 +157,31 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
             {visibleUserLinks.map((link) => {
               const Icon = link.icon;
               const active = isActiveLink(link.href);
+              const hovered = hoveredHref === link.href;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
+                  onMouseEnter={() => setHoveredHref(link.href)}
+                  onMouseLeave={() => setHoveredHref((current) => (current === link.href ? null : current))}
                   style={{
                     ...styles.navItem,
-                    backgroundColor: active ? "#ffffff" : "transparent",
-                    color: active ? "#3B5BDB" : "rgba(255,255,255,0.8)",
+                    backgroundColor: active
+                      ? "#ffffff"
+                      : hovered
+                        ? "rgba(255,255,255,0.12)"
+                        : "transparent",
+                    color: active ? "#3B5BDB" : "rgba(255,255,255,0.88)",
                     justifyContent: collapsed ? "center" : "flex-start",
+                    border: hovered && !active ? "1px solid rgba(255,255,255,0.16)" : "1px solid transparent",
+                    boxShadow: hovered && !active ? "0 10px 20px rgba(30,64,175,0.14)" : "none",
+                    transform: hovered && !active ? "translateX(2px)" : "translateX(0)",
+                    backdropFilter: hovered && !active ? "blur(12px)" : "none",
                     ...(active && !collapsed ? styles.activeNavIndicator : {}),
                   }}
                   title={collapsed ? link.label : undefined}
                 >
-                  <Icon size={20} style={{ flexShrink: 0, opacity: active ? 1 : 0.8 }} />
+                  <Icon size={20} style={{ flexShrink: 0, opacity: active || hovered ? 1 : 0.82 }} />
                   {!collapsed && <span style={styles.navLabel}>{link.label}</span>}
                 </Link>
               );
