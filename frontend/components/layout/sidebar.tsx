@@ -76,6 +76,17 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
     href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(href);
 
   return (
+    <>
+    <style jsx global>{`
+      @keyframes medishiftSidebarSpin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `}</style>
     <aside
       style={{
         ...styles.sidebar,
@@ -94,12 +105,17 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
             title={collapsed ? "Sidebar ac" : undefined}
             aria-label={collapsed ? "Sidebar ac" : undefined}
           >
-          <div style={styles.logoBox}>
+          <div
+            style={{
+              ...styles.logoBox,
+              ...(collapsed ? styles.collapsedLogoBox : {}),
+            }}
+          >
             <Image
               src="/icons/medishift-brand.png"
               alt="MediShift"
-              width={24}
-              height={24}
+              width={30}
+              height={30}
               unoptimized
               style={styles.logoImage}
             />
@@ -234,6 +250,7 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
         </button>
       </div>
     </aside>
+    </>
   );
 }
 
@@ -260,8 +277,8 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: "space-between",
   },
   logoBox: {
-    width: 36,
-    height: 36,
+    width: 44,
+    height: 44,
     borderRadius: 8,
     display: "flex",
     alignItems: "center",
@@ -278,13 +295,17 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: "center",
     justifyContent: "center",
   },
+  collapsedLogoBox: {
+    animation: "medishiftSidebarSpin 6s linear infinite",
+    transformOrigin: "center",
+  },
   logoImage: {
-    width: 24,
-    height: 24,
+    width: 30,
+    height: 30,
     objectFit: "cover",
   },
   logoText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 800,
     letterSpacing: "-0.02em",
     lineHeight: 1.1,
