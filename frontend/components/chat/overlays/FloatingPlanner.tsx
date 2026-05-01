@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { CalendarDays, ChevronLeft, ChevronRight, Clock3, X, Building2, ClipboardList, Bell, FileText } from "lucide-react";
 import ShiftMiniCard from "@/components/chat/cards/ShiftMiniCard";
 import TaskMiniCard from "@/components/chat/cards/TaskMiniCard";
@@ -36,11 +36,6 @@ export default function FloatingPlanner({
 }: FloatingPlannerProps) {
   const [shouldRender, setShouldRender] = useState(open);
   const [animateIn, setAnimateIn] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: 24 });
-  const [isDragging, setIsDragging] = useState(false);
-  const plannerRef = useRef<HTMLDivElement | null>(null);
-  const dragOffsetRef = useRef({ x: 0, y: 0 });
-  const hasPositionRef = useRef(false);
 
   useEffect(() => {
     if (open) {
@@ -54,89 +49,21 @@ export default function FloatingPlanner({
     }
   }, [open]);
 
-  useEffect(() => {
-    if (!shouldRender || !open || hasPositionRef.current || typeof window === "undefined") {
-      return;
-    }
-
-    const updateInitialPosition = () => {
-      const panelWidth = plannerRef.current?.offsetWidth ?? 400;
-      const x = Math.max(16, window.innerWidth - panelWidth - 24);
-      setPosition({ x, y: 24 });
-      hasPositionRef.current = true;
-    };
-
-    updateInitialPosition();
-  }, [open, shouldRender]);
-
-  useEffect(() => {
-    if (!isDragging || typeof window === "undefined") {
-      return;
-    }
-
-    const handlePointerMove = (event: PointerEvent) => {
-      const panel = plannerRef.current;
-      const panelWidth = panel?.offsetWidth ?? 400;
-      const panelHeight = panel?.offsetHeight ?? 640;
-      const nextX = event.clientX - dragOffsetRef.current.x;
-      const nextY = event.clientY - dragOffsetRef.current.y;
-
-      setPosition({
-        x: Math.min(Math.max(16, nextX), Math.max(16, window.innerWidth - panelWidth - 16)),
-        y: Math.min(Math.max(16, nextY), Math.max(16, window.innerHeight - panelHeight - 16)),
-      });
-    };
-
-    const handlePointerUp = () => {
-      setIsDragging(false);
-    };
-
-    window.addEventListener("pointermove", handlePointerMove);
-    window.addEventListener("pointerup", handlePointerUp);
-
-    return () => {
-      window.removeEventListener("pointermove", handlePointerMove);
-      window.removeEventListener("pointerup", handlePointerUp);
-    };
-  }, [isDragging]);
-
-  const handleDragStart = (event: React.PointerEvent<HTMLDivElement>) => {
-    const panel = plannerRef.current;
-    if (!panel) {
-      return;
-    }
-
-    const rect = panel.getBoundingClientRect();
-    dragOffsetRef.current = {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
-    };
-    setIsDragging(true);
-  };
-
   if (!shouldRender) {
     return null;
   }
 
   return (
-    <div className={`pointer-events-none fixed inset-0 z-40 transition-opacity duration-200 ease-in-out ${animateIn ? 'opacity-100' : 'opacity-0'}`}>
+    <div className={`pointer-events-none fixed inset-0 z-40 flex items-start justify-end p-6 transition-opacity duration-200 ease-in-out ${animateIn ? 'opacity-100' : 'opacity-0'}`}>
       <div 
-        ref={plannerRef}
-        style={{
-          left: position.x,
-          top: position.y,
-        }}
-        className={`pointer-events-auto absolute w-[400px] max-w-[calc(100vw-32px)] origin-top-right rounded-[26px] border border-blue-100/80 bg-white/92 p-4 shadow-[0_30px_80px_-34px_rgba(15,23,42,0.42)] ring-1 ring-white/70 backdrop-blur-xl transition-all duration-200 ease-in-out ${
+        className={`pointer-events-auto w-[400px] max-w-[calc(100vw-48px)] origin-top-right rounded-[26px] border border-blue-100/80 bg-white/92 p-4 shadow-[0_30px_80px_-34px_rgba(15,23,42,0.42)] ring-1 ring-white/70 backdrop-blur-xl transition-all duration-200 ease-in-out ${
           animateIn ? 'scale-100 opacity-100 translate-y-0' : 'scale-[0.92] opacity-0 -translate-y-4'
         }`}
       >
         <div className="absolute inset-0 rounded-[26px] bg-gradient-to-br from-white/75 via-blue-50/35 to-slate-100/55" />
         <div className="absolute inset-[1px] rounded-[25px] border border-white/70" />
 
-        <div
-          onPointerDown={handleDragStart}
-          className={`relative flex items-center justify-between gap-3 rounded-[18px] border border-blue-100/70 bg-white/70 px-3 py-2.5 shadow-[0_12px_28px_-24px_rgba(37,99,235,0.55)] backdrop-blur ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
-        >
+        <div className="relative flex items-center justify-between gap-3 rounded-[18px] border border-blue-100/70 bg-white/70 px-3 py-2.5 shadow-[0_12px_28px_-24px_rgba(37,99,235,0.55)] backdrop-blur">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
               <CalendarDays className="h-5 w-5" />
