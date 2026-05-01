@@ -34,7 +34,6 @@ const generalLinks = [
 ];
 
 const userLinks = [
-  { href: "/messages", label: "Mesajlar", icon: MessageSquare, managerOnly: false },
   { href: "/dashboard/chat", label: "Kurumsal Chat", icon: MessageSquare, managerOnly: false },
   { href: "/calendar", label: "Takvim", icon: CalendarDays, managerOnly: false },
 ];

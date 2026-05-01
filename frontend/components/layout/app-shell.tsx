@@ -13,7 +13,7 @@ import { useUiStore } from "@/store/ui-store";
 const DASHBOARD_LOADING_KEY = "medishift-dashboard-loading";
 const DASHBOARD_MIN_VISIBLE_MS = 850;
 const LOGOUT_REDIRECT_DELAY_MS = 650;
-const STAFF_ALLOWED_PREFIXES = ["/dashboard", "/my-availability", "/messages", "/calendar"];
+const STAFF_ALLOWED_PREFIXES = ["/dashboard", "/my-availability", "/calendar"];
 
 const titleByPath: Record<string, { title: string; subtitle: string }> = {
   "/dashboard": {
