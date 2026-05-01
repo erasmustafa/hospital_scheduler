@@ -6,6 +6,12 @@ from common.mixins import TimestampMixin
 
 
 class StaffProfile(TimestampMixin):
+    class Gender(models.TextChoices):
+        FEMALE = "female", "Female"
+        MALE = "male", "Male"
+        OTHER = "other", "Other"
+        UNSPECIFIED = "unspecified", "Unspecified"
+
     class EmploymentType(models.TextChoices):
         PERMANENT = "permanent", "Permanent"
         CONTRACT = "contract", "Contract"
@@ -35,6 +41,13 @@ class StaffProfile(TimestampMixin):
     weekly_limit_hours = models.PositiveIntegerField(default=40)
     phone = models.CharField(max_length=20, blank=True)
     phone_internal = models.CharField(max_length=20, blank=True)
+    gender = models.CharField(
+        max_length=20,
+        choices=Gender.choices,
+        default=Gender.UNSPECIFIED,
+    )
+    cannot_work_night = models.BooleanField(default=False)
+    is_new_mother = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     can_manage_department = models.BooleanField(default=False)
 

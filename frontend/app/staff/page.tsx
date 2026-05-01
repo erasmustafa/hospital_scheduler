@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { apiClient } from "@/lib/api";
 import { Search, Plus, Settings, UserCheck } from "lucide-react";
 
@@ -87,6 +88,7 @@ const roleLabelTr: Record<string, string> = {
 };
 
 export default function StaffPage() {
+  const router = useRouter();
   const [staff, setStaff] = useState<StaffRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -237,9 +239,11 @@ export default function StaffPage() {
                     return (
                       <tr
                         key={row.id}
+                        onClick={() => router.push(`/staff/${row.id}`)}
                         style={{
                           ...styles.tableRow,
                           backgroundColor: idx % 2 === 0 ? "#ffffff" : "#f8fafc",
+                          cursor: "pointer",
                         }}
                       >
                         {/* Ad Soyad */}

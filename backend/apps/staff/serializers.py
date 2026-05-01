@@ -33,6 +33,16 @@ class StaffProfileSerializer(serializers.ModelSerializer):
     isActive = serializers.BooleanField(source="is_active")
     phoneInternal = serializers.CharField(source="phone_internal", required=False, allow_blank=True)
     canManageDepartment = serializers.BooleanField(source="can_manage_department", required=False)
+    email = serializers.EmailField(source="user.email", read_only=True)
+    gender = serializers.ChoiceField(
+        choices=StaffProfile.Gender.choices,
+        required=False,
+    )
+    cannotTakeNightShifts = serializers.BooleanField(
+        source="cannot_work_night",
+        required=False,
+    )
+    isNewMother = serializers.BooleanField(source="is_new_mother", required=False)
 
     class Meta:
         model = StaffProfile
@@ -48,6 +58,10 @@ class StaffProfileSerializer(serializers.ModelSerializer):
             "weeklyLimitHours",
             "phone",
             "phoneInternal",
+            "email",
+            "gender",
+            "cannotTakeNightShifts",
+            "isNewMother",
             "isActive",
             "canManageDepartment",
             "fullName",

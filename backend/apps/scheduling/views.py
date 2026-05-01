@@ -228,6 +228,10 @@ def _get_monthly_required_hours(target_date):
 
 
 def _night_shift_allowed(staff_profile: StaffProfile) -> bool:
+    if bool(getattr(staff_profile, "cannot_work_night", False)):
+        return False
+    if bool(getattr(staff_profile, "is_new_mother", False)):
+        return False
     constraint = getattr(staff_profile, "constraint", None)
     if constraint is not None:
         return bool(getattr(constraint, "can_work_night", True))
@@ -556,8 +560,14 @@ class StaffAvailabilityListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = StaffAvailability.objects.select_related("staff_profile__user").all()
         staff_profile_id = self.request.query_params.get("staffProfileId")
+        date_from = parse_date_safe(self.request.query_params.get("date_from", ""))
+        date_to = parse_date_safe(self.request.query_params.get("date_to", ""))
         if staff_profile_id:
             queryset = queryset.filter(staff_profile_id=staff_profile_id)
+        if date_from:
+            queryset = queryset.filter(date__gte=date_from)
+        if date_to:
+            queryset = queryset.filter(date__lte=date_to)
         return queryset
 
     def perform_create(self, serializer):

@@ -115,6 +115,10 @@ def exceeds_weekly_limit(staff_profile, date_obj, shift_type, respect_weekly_lim
 
 
 def night_shift_allowed(staff_profile):
+    if getattr(staff_profile, "cannot_work_night", False):
+        return False
+    if getattr(staff_profile, "is_new_mother", False):
+        return False
     constraint = getattr(staff_profile, "constraint", None)
     if constraint is not None:
         return bool(constraint.can_work_night)
