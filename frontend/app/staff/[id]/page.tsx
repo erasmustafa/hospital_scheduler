@@ -281,23 +281,6 @@ export default function StaffDetailPage() {
   return (
     <main className="h-full overflow-auto bg-[radial-gradient(circle_at_top,#eff5ff,transparent_42%),linear-gradient(180deg,#f8fbff_0%,#f1f5f9_100%)] px-7 py-6">
       <div className="mx-auto flex max-w-[1680px] flex-col gap-6">
-        <div className="flex items-center gap-3">
-          <Link
-            href="/staff"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white/90 text-slate-500 shadow-sm transition hover:border-blue-200 hover:text-blue-600"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-500">
-              Personel Profil
-            </p>
-            <h1 className="mt-1 text-[28px] font-black tracking-[-0.05em] text-slate-900">
-              {staff.fullName}
-            </h1>
-          </div>
-        </div>
-
         {banner ? (
           <div className="rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-700">
             {banner}
