@@ -188,9 +188,6 @@ export function StaffPreferenceSelectionPanel({
                       <p className="mt-1 text-sm font-medium text-slate-500">
                         {formatShortTime(shiftType.startTime)} - {formatShortTime(shiftType.endTime)}
                       </p>
-                      {shiftType.isNight ? (
-                        <p className="mt-2 text-xs font-bold text-amber-600">Gece / nobet kategorisi</p>
-                      ) : null}
                     </div>
 
                     <span
@@ -214,13 +211,13 @@ export function StaffPreferenceSelectionPanel({
       <div className="mt-6 rounded-[22px] bg-blue-50/70 px-4 py-4 text-sm leading-6 text-slate-600">
         <div className="flex items-start gap-3">
           <Info className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
-          <p>Isaretlediginiz vardiyalar, planlama sirasinda tercih edilmez.</p>
+          <p>İşaretlediğiniz vardiyalar, planlama sırasında tercih edilmez.</p>
         </div>
       </div>
 
       <div className="mt-8 flex items-center justify-between gap-3 border-t border-slate-200 pt-5">
         <span className="text-sm font-semibold text-slate-500">
-          {selectedDatePreferences.length} vardiya secildi
+          {selectedDatePreferences.length} vardiya seçildi
         </span>
         <button
           type="button"
@@ -270,7 +267,7 @@ export default function StaffPreferenceCalendar({
               {getMonthTitle(monthDate)}
             </h3>
             <div className="rounded-full bg-blue-50 px-4 py-2 text-sm font-bold text-blue-600">
-              {preferences.length} tercih kaydi
+              {preferences.length} tercih kaydı
             </div>
           </div>
 
@@ -283,7 +280,7 @@ export default function StaffPreferenceCalendar({
               onClick={onToday}
               className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-blue-600 transition hover:border-blue-200 hover:bg-blue-50"
             >
-              Bugun
+              Bugün
             </button>
             <button
               type="button"

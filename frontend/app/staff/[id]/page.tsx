@@ -96,6 +96,7 @@ export default function StaffDetailPage() {
     gender: "unspecified" as StaffDetail["gender"],
     cannotTakeNightShifts: false,
     isNewMother: false,
+    isActive: false,
   });
 
   const loadAvailability = useCallback(
@@ -132,6 +133,7 @@ export default function StaffDetailPage() {
         gender: staffResponse.gender,
         cannotTakeNightShifts: staffResponse.cannotTakeNightShifts,
         isNewMother: staffResponse.isNewMother,
+        isActive: staffResponse.isActive,
       });
       setShiftTypes(shiftTypeResponse.shiftTypes ?? []);
       await loadAvailability(initialMonth);
@@ -180,6 +182,7 @@ export default function StaffDetailPage() {
         gender: profileForm.gender,
         cannotTakeNightShifts: profileForm.cannotTakeNightShifts || profileForm.isNewMother,
         isNewMother: profileForm.gender === "female" ? profileForm.isNewMother : false,
+        isActive: profileForm.isActive,
       };
       const response = await apiClient.patch<StaffDetail>(`/staff/${staff.id}/`, payload);
       setStaff(response);
@@ -187,6 +190,7 @@ export default function StaffDetailPage() {
         gender: response.gender,
         cannotTakeNightShifts: response.cannotTakeNightShifts,
         isNewMother: response.isNewMother,
+        isActive: response.isActive,
       });
       setBanner("Personel çalışma kuralları güncellendi.");
       setError(null);
@@ -292,9 +296,44 @@ export default function StaffDetailPage() {
               <p className="mt-2 text-sm font-semibold text-slate-500">
                 {staff.departmentName ?? "Birim atanamadi"} · {staff.title || staff.profession || "Personel"}
               </p>
-                <div className="mt-5 inline-flex rounded-full bg-[linear-gradient(135deg,#4A6CF7_0%,#3B5BDB_100%)] px-5 py-2 text-sm font-bold text-white shadow-[0_18px_38px_-24px_rgba(37,99,235,0.55)]">
-                  {staff.isActive ? "Aktif personel" : "Pasif personel"}
+              <div className="mt-5 flex justify-center">
+                <div className="inline-flex rounded-full border border-slate-200 bg-slate-100/90 p-1 shadow-[0_14px_34px_-26px_rgba(15,23,42,0.35)]">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setProfileForm((current) => ({
+                        ...current,
+                        isActive: true,
+                      }))
+                    }
+                    className={[
+                      "rounded-full px-4 py-2 text-sm font-bold transition",
+                      profileForm.isActive
+                        ? "bg-[#edfdf5] text-emerald-700 shadow-[0_12px_26px_-18px_rgba(16,185,129,0.28)]"
+                        : "text-slate-500 hover:text-emerald-700",
+                    ].join(" ")}
+                  >
+                    Aktif
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setProfileForm((current) => ({
+                        ...current,
+                        isActive: false,
+                      }))
+                    }
+                    className={[
+                      "rounded-full px-4 py-2 text-sm font-bold transition",
+                      !profileForm.isActive
+                        ? "bg-[#fff1f3] text-rose-700 shadow-[0_12px_26px_-18px_rgba(244,63,94,0.24)]"
+                        : "text-slate-500 hover:text-rose-700",
+                    ].join(" ")}
+                  >
+                    Pasif
+                  </button>
                 </div>
+              </div>
               </div>
 
             <div className="mt-6 space-y-4 rounded-[26px] border border-slate-200 bg-slate-50/80 p-5">
@@ -315,9 +354,9 @@ export default function StaffDetailPage() {
                 Meslek: <span className="font-bold text-slate-900">{staff.profession || "Belirtilmedi"}</span>
               </div>
 
-              <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-400">Cinsiyet</p>
-                <div className="mt-3 grid grid-cols-2 gap-3">
+              <div className="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+                <span className="shrink-0">Cinsiyet:</span>
+                <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() =>
@@ -327,13 +366,13 @@ export default function StaffDetailPage() {
                       }))
                     }
                     className={[
-                      "flex items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-semibold transition",
+                      "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition",
                       profileForm.gender === "female"
-                        ? "border-pink-200 bg-pink-50 text-pink-600 shadow-[0_14px_30px_-24px_rgba(236,72,153,0.45)]"
-                        : "border-slate-200 bg-slate-50 text-slate-500 hover:border-pink-200 hover:bg-pink-50/70",
+                        ? "border-pink-200 bg-pink-50 text-pink-600"
+                        : "border-slate-200 bg-white text-slate-500 hover:border-pink-200 hover:bg-pink-50/70",
                     ].join(" ")}
                   >
-                    <span className="text-base leading-none">♀</span>
+                    <span className={["flex h-4 w-4 items-center justify-center rounded-full border text-[10px] leading-none", profileForm.gender === "female" ? "border-pink-500 bg-pink-500 text-white" : "border-slate-300 bg-white text-transparent",].join(" ")}>•</span><span className="text-base leading-none">♀</span>
                     Kadın
                   </button>
                   <button
@@ -346,12 +385,22 @@ export default function StaffDetailPage() {
                       }))
                     }
                     className={[
-                      "flex items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-semibold transition",
+                      "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition",
                       profileForm.gender === "male"
-                        ? "border-blue-200 bg-blue-50 text-blue-600 shadow-[0_14px_30px_-24px_rgba(37,99,235,0.4)]"
-                        : "border-slate-200 bg-slate-50 text-slate-500 hover:border-blue-200 hover:bg-blue-50/70",
+                        ? "border-blue-200 bg-blue-50 text-blue-600"
+                        : "border-slate-200 bg-white text-slate-500 hover:border-blue-200 hover:bg-blue-50/70",
                     ].join(" ")}
                   >
+                    <span
+                      className={[
+                        "flex h-4 w-4 items-center justify-center rounded-full border text-[10px] leading-none",
+                        profileForm.gender === "male"
+                          ? "border-blue-500 bg-blue-500 text-white"
+                          : "border-slate-300 bg-white text-transparent",
+                      ].join(" ")}
+                    >
+                      •
+                    </span>
                     <span className="text-base leading-none">♂</span>
                     Erkek
                   </button>
@@ -369,13 +418,13 @@ export default function StaffDetailPage() {
                     }))
                   }
                   className={[
-                    "group relative flex min-h-[140px] w-full flex-col items-start justify-between overflow-hidden rounded-[26px] border px-4 py-4 text-left transition",
+                    "group relative flex min-h-[140px] w-full flex-col items-center justify-center overflow-hidden rounded-[26px] border px-4 py-4 text-center transition",
                     profileForm.cannotTakeNightShifts
                       ? "border-blue-200 bg-[linear-gradient(135deg,rgba(59,91,219,0.1),rgba(74,108,247,0.08))] shadow-[0_20px_46px_-34px_rgba(37,99,235,0.4)]"
                       : "border-slate-200 bg-white/80 hover:border-blue-200 hover:bg-blue-50/40",
                   ].join(" ")}
                 >
-                  <div className="flex w-full items-start justify-between gap-3">
+                  <div className="mb-4 flex w-full items-start justify-center gap-3">
                     <span
                       className={[
                         "mt-0.5 flex h-5 w-5 items-center justify-center rounded-md border text-[12px] font-black transition",
@@ -387,8 +436,8 @@ export default function StaffDetailPage() {
                       ✓
                     </span>
                   </div>
-                  <div className="pr-1">
-                    <p className="text-sm font-bold text-slate-900">Nobet tutamaz</p>
+                  <div className="pr-0">
+                    <p className="text-sm font-bold text-slate-900">Nöbet tutamaz</p>
                     <p className="mt-1 text-xs font-medium leading-5 text-slate-500">
                       24 saat çalışamaz
                     </p>
@@ -409,7 +458,7 @@ export default function StaffDetailPage() {
                     }));
                   }}
                   className={[
-                    "flex min-h-[140px] w-full flex-col items-start justify-between rounded-[24px] border px-4 py-4 text-left transition",
+                    "flex min-h-[140px] w-full flex-col items-center justify-center rounded-[24px] border px-4 py-4 text-center transition",
                     profileForm.gender !== "female"
                       ? "cursor-not-allowed border-slate-200 bg-slate-100/90 opacity-60"
                       : profileForm.isNewMother
@@ -417,7 +466,7 @@ export default function StaffDetailPage() {
                         : "border-slate-200 bg-slate-50 hover:border-pink-200 hover:bg-pink-50/60",
                   ].join(" ")}
                 >
-                  <div className="flex w-full items-start justify-between gap-3">
+                  <div className="mb-4 flex w-full items-start justify-center gap-3">
                     <span
                       className={[
                         "mt-0.5 flex h-5 w-5 items-center justify-center rounded-md border text-[12px] font-black transition",
@@ -432,7 +481,7 @@ export default function StaffDetailPage() {
                   <div>
                     <p className="text-sm font-bold text-slate-900">Yeni anne</p>
                     <p className="mt-1 text-xs font-medium leading-5 text-slate-500">
-                      Yalnızca 08:00-12:00 arasında çalışır
+                      08:00-12:00 arasında çalışır
                     </p>
                   </div>
                 </button>
@@ -443,7 +492,7 @@ export default function StaffDetailPage() {
               disabled={savingProfile}
               className="mt-6 w-full rounded-2xl bg-[linear-gradient(135deg,#4A6CF7_0%,#3B5BDB_100%)] px-4 py-3 text-sm font-bold text-white shadow-[0_18px_38px_-24px_rgba(37,99,235,0.52)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {savingProfile ? "Kaydediliyor..." : "Profil kurallarini kaydet"}
+              {savingProfile ? "Kaydediliyor..." : "Profil kurallarını kaydet"}
             </button>
           </aside>
 
@@ -512,3 +561,4 @@ export default function StaffDetailPage() {
     </main>
   );
 }
+
