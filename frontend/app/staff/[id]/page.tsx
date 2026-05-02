@@ -264,7 +264,7 @@ export default function StaffDetailPage() {
 
   return (
     <main className="h-full overflow-auto bg-[radial-gradient(circle_at_top,#eff5ff,transparent_42%),linear-gradient(180deg,#f8fbff_0%,#f1f5f9_100%)] px-7 py-6">
-      <div className="mx-auto flex max-w-[1680px] flex-col gap-6">
+      <div className="mx-auto flex max-w-[1680px] flex-col gap-4">
         {banner ? (
           <div className="rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-700">
             {banner}
@@ -277,7 +277,7 @@ export default function StaffDetailPage() {
           </div>
         ) : null}
 
-        <section className="grid min-h-[calc(100vh-10.5rem)] gap-6 xl:grid-cols-[320px_minmax(0,1fr)_336px] xl:items-stretch">
+        <section className="grid min-h-[calc(100vh-10.5rem)] gap-4 xl:grid-cols-[320px_minmax(0,1fr)_336px] xl:items-stretch">
           <aside className="flex h-full flex-col rounded-[32px] border border-slate-200 bg-white/95 p-6 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.35)]">
             <div className="rounded-[28px] bg-[linear-gradient(180deg,#eef4ff_0%,#ffffff_100%)] px-5 pb-6 pt-7 text-center">
               <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-[linear-gradient(135deg,#4A6CF7_0%,#3151d8_100%)] text-3xl font-black text-white shadow-[0_18px_38px_-22px_rgba(37,99,235,0.65)]">
@@ -428,7 +428,7 @@ export default function StaffDetailPage() {
             </div>
           </aside>
 
-          <div className="flex h-full flex-col gap-6">
+          <div className="flex h-full flex-col gap-4">
             <StaffPreferenceCalendar
               monthDate={monthDate}
               selectedDate={selectedDate}
