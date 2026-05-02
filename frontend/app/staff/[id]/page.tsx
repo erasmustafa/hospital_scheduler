@@ -355,7 +355,10 @@ export default function StaffDetailPage() {
               </div>
 
               <div className="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
-                <span className="shrink-0">Cinsiyet:</span>
+                <span className="inline-flex shrink-0 items-center gap-2">
+                  <img src="/icons/venus-and-mars.svg" alt="" className="h-4 w-4 object-contain" />
+                  Cinsiyet:
+                </span>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
@@ -372,7 +375,8 @@ export default function StaffDetailPage() {
                         : "border-slate-200 bg-white text-slate-500 hover:border-pink-200 hover:bg-pink-50/70",
                     ].join(" ")}
                   >
-                    <span className={["flex h-4 w-4 items-center justify-center rounded-full border text-[10px] leading-none", profileForm.gender === "female" ? "border-pink-500 bg-pink-500 text-white" : "border-slate-300 bg-white text-transparent",].join(" ")}>•</span><span className="text-base leading-none">♀</span>
+                    <span className={["flex h-4 w-4 items-center justify-center rounded-full border text-[10px] leading-none", profileForm.gender === "female" ? "border-pink-500 bg-pink-500 text-white" : "border-slate-300 bg-white text-transparent",].join(" ")}>•</span>
+                    <img src="/icons/venus.svg" alt="" className="h-4 w-4 object-contain" />
                     Kadın
                   </button>
                   <button
@@ -401,7 +405,7 @@ export default function StaffDetailPage() {
                     >
                       •
                     </span>
-                    <span className="text-base leading-none">♂</span>
+                    <img src="/icons/mars.svg" alt="" className="h-4 w-4 object-contain" />
                     Erkek
                   </button>
                 </div>
@@ -561,4 +565,3 @@ export default function StaffDetailPage() {
     </main>
   );
 }
-
