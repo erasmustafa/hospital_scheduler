@@ -8,12 +8,14 @@ import { Search, Plus, Settings, UserCheck } from "lucide-react";
 type StaffRow = {
   id: number;
   fullName: string;
+  photoUrl?: string | null;
   role: string;
   employeeNo: string | null;
   title: string;
   profession: string;
   departmentName: string | null;
   weeklyLimitHours: number;
+  gender?: "female" | "male" | "other" | "unspecified";
   isActive: boolean;
 };
 
@@ -56,27 +58,11 @@ function getBadgeColor(
   return map[key] ?? { bg: "#F1F5F9", text: "#475569" };
 }
 
-function getInitial(name: string) {
-  return name.charAt(0).toUpperCase();
-}
-
-const avatarGradients = [
-  "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-  "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-  "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-  "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
-  "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
-  "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)",
-  "linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)",
-  "linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)",
-];
-
-function getAvatarGradient(name: string) {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+function getDefaultAvatarSrc(gender?: StaffRow["gender"]) {
+  if (gender === "female") {
+    return "/images/staff-avatar-female.svg";
   }
-  return avatarGradients[Math.abs(hash) % avatarGradients.length];
+  return "/images/staff-avatar-male.svg";
 }
 
 /* ── role label mapping (EN → TR) ───────────────────────── */
@@ -227,8 +213,6 @@ export default function StaffPage() {
                   </tr>
                 ) : (
                   filteredStaff.map((row, idx) => {
-                    const initial = getInitial(row.fullName);
-                    const avatarBg = getAvatarGradient(row.fullName);
                     const titleLabel = row.title || (roleLabelTr[row.role] ?? row.role);
                     const professionLabel = row.profession || (roleLabelTr[row.role] ?? row.role);
                     const dept = row.departmentName ?? "Tanımsız";
@@ -249,14 +233,11 @@ export default function StaffPage() {
                         {/* Ad Soyad */}
                         <td style={styles.td}>
                           <div style={styles.nameCell}>
-                            <div
-                              style={{
-                                ...styles.avatar,
-                                background: avatarBg,
-                              }}
-                            >
-                              {initial}
-                            </div>
+                            <img
+                              src={row.photoUrl || getDefaultAvatarSrc(row.gender)}
+                              alt={row.fullName}
+                              style={styles.avatar}
+                            />
                             <div>
                               <p style={styles.nameText}>{row.fullName}</p>
                               <p style={styles.nameSubtext}>
@@ -560,15 +541,12 @@ const styles: Record<string, React.CSSProperties> = {
   avatar: {
     width: 38,
     height: 38,
-    borderRadius: 10,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#ffffff",
-    fontSize: 15,
-    fontWeight: 800,
+    borderRadius: "50%",
+    objectFit: "cover" as const,
     flexShrink: 0,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+    background: "#eff6ff",
+    border: "1px solid rgba(148, 163, 184, 0.18)",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
   },
   nameText: {
     fontSize: 14,

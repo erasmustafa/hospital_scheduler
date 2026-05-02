@@ -23,6 +23,7 @@ import StaffPreferenceCalendar, {
 type StaffDetail = {
   id: number;
   fullName: string;
+  photoUrl?: string | null;
   departmentName: string | null;
   employeeNo: string | null;
   title: string;
@@ -48,13 +49,11 @@ type ShiftTypeResponse = {
   shiftTypes: StaffShiftType[];
 };
 
-function getInitials(fullName: string) {
-  return fullName
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
-    .join("");
+function getDefaultAvatarSrc(gender: StaffDetail["gender"]) {
+  if (gender === "female") {
+    return "/images/staff-avatar-female.svg";
+  }
+  return "/images/staff-avatar-male.svg";
 }
 
 function getMonthRange(date: Date) {
@@ -138,7 +137,7 @@ export default function StaffDetailPage() {
       await loadAvailability(initialMonth);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Personel profili yuklenemedi.");
+      setError(err instanceof Error ? err.message : "Personel profili yüklenemedi.");
     } finally {
       setLoading(false);
     }
@@ -165,7 +164,7 @@ export default function StaffDetailPage() {
       return "08:00-12:00 yeni anne modeli";
     }
     if (profileForm.cannotTakeNightShifts) {
-      return "Gece veya nobet disi planlama";
+      return "Gece veya nöbet dışı planlama";
     }
     return "Standart vardiya modeli";
   }, [profileForm]);
@@ -189,10 +188,10 @@ export default function StaffDetailPage() {
         cannotTakeNightShifts: response.cannotTakeNightShifts,
         isNewMother: response.isNewMother,
       });
-      setBanner("Personel calisma kurallari guncellendi.");
+      setBanner("Personel çalışma kuralları güncellendi.");
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Profil ayarlari guncellenemedi.");
+      setError(err instanceof Error ? err.message : "Profil ayarları güncellenemedi.");
     } finally {
       setSavingProfile(false);
     }
@@ -211,21 +210,21 @@ export default function StaffDetailPage() {
         if (existing) {
           await apiClient.delete(`/availability/${existing.id}/`);
           setPreferences((current) => current.filter((item) => item.id !== existing.id));
-          setBanner(`${shiftType.name} tercihi kaldirildi.`);
+          setBanner(`${shiftType.name} tercihi kaldırıldı.`);
         } else {
           const created = await apiClient.post<StaffShiftPreference>("/availability/", {
             staffProfileId: staff.id,
             shiftTypeId: shiftType.id,
             date: selectedDate,
             status: "unavailable",
-            reason: "Personel profilinden calismak istemedigi mesai olarak isaretlendi.",
+            reason: "Personel profilinden çalışmak istemediği mesai olarak işaretlendi.",
           });
           setPreferences((current) => [created, ...current]);
-          setBanner(`${shiftType.name} mesaisi tercih disi olarak isaretlendi.`);
+          setBanner(`${shiftType.name} mesaisi tercih dışı olarak işaretlendi.`);
         }
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Mesai tercihi guncellenemedi.");
+        setError(err instanceof Error ? err.message : "Mesai tercihi güncellenemedi.");
       } finally {
         setSavingShiftIds((current) => current.filter((value) => value !== shiftType.id));
       }
@@ -236,7 +235,7 @@ export default function StaffDetailPage() {
   if (loading) {
     return (
       <main className="flex h-full items-center justify-center bg-slate-50 text-sm font-semibold text-slate-500">
-        Personel profili hazirlaniyor...
+        Personel profili hazırlanıyor...
       </main>
     );
   }
@@ -251,7 +250,7 @@ export default function StaffDetailPage() {
             className="mt-4 inline-flex items-center gap-2 rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600"
           >
             <ArrowLeft className="h-4 w-4" />
-            Personel listesine don
+            Personel listesine dön
           </Link>
         </div>
       </main>
@@ -280,8 +279,12 @@ export default function StaffDetailPage() {
         <section className="grid min-h-0 flex-1 gap-4 xl:grid-cols-[320px_minmax(0,1fr)_336px] xl:items-stretch">
           <aside className="flex h-full min-h-0 flex-col overflow-auto rounded-[32px] border border-slate-200 bg-white/95 p-6 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.35)]">
             <div className="rounded-[28px] bg-[linear-gradient(180deg,#eef4ff_0%,#ffffff_100%)] px-5 pb-6 pt-7 text-center">
-              <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-[linear-gradient(135deg,#4A6CF7_0%,#3151d8_100%)] text-3xl font-black text-white shadow-[0_18px_38px_-22px_rgba(37,99,235,0.65)]">
-                {getInitials(staff.fullName)}
+              <div className="mx-auto h-28 w-28 overflow-hidden rounded-full border-4 border-white bg-slate-100 shadow-[0_18px_38px_-22px_rgba(37,99,235,0.38)]">
+                <img
+                  src={staff.photoUrl || getDefaultAvatarSrc(staff.gender)}
+                  alt={staff.fullName}
+                  className="h-full w-full object-cover"
+                />
               </div>
               <h2 className="mt-5 text-[32px] font-black tracking-[-0.04em] text-slate-900">
                 {staff.fullName}
@@ -331,7 +334,7 @@ export default function StaffDetailPage() {
                     ].join(" ")}
                   >
                     <span className="text-base leading-none">♀</span>
-                    Kadin
+                    Kadın
                   </button>
                   <button
                     type="button"
@@ -387,7 +390,7 @@ export default function StaffDetailPage() {
                   <div className="pr-1">
                     <p className="text-sm font-bold text-slate-900">Nobet tutamaz</p>
                     <p className="mt-1 text-xs font-medium leading-5 text-slate-500">
-                      Gece veya nobet kategorisindeki mesailerde planlama disi tutulur.
+                      24 saat çalışamaz
                     </p>
                   </div>
                 </button>
@@ -429,7 +432,7 @@ export default function StaffDetailPage() {
                   <div>
                     <p className="text-sm font-bold text-slate-900">Yeni anne</p>
                     <p className="mt-1 text-xs font-medium leading-5 text-slate-500">
-                      Bu profil 08:00-12:00 arasinda gunluk calisma cercevesiyle isaretlenir.
+                      Yalnızca 08:00-12:00 arasında çalışır
                     </p>
                   </div>
                 </button>
@@ -470,7 +473,7 @@ export default function StaffDetailPage() {
                 <div className="mt-3 text-[28px] font-black leading-none tracking-[-0.05em] text-slate-900">
                   {staff.weeklyLimitHours}
                 </div>
-                <p className="mt-1 text-[11px] font-semibold leading-4 text-slate-500">Haftalik limit saat</p>
+                <p className="mt-1 text-[11px] font-semibold leading-4 text-slate-500">Haftalık limit saat</p>
               </article>
 
               <article className="rounded-[22px] border border-slate-200 bg-white/95 p-3 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
@@ -480,7 +483,7 @@ export default function StaffDetailPage() {
                 <div className="mt-3 text-sm font-black tracking-[-0.03em] text-slate-900">
                   {profileForm.cannotTakeNightShifts || profileForm.isNewMother ? "Kisitli" : "Uygun"}
                 </div>
-                <p className="mt-1 text-[11px] font-semibold leading-4 text-slate-500">Gece / nobet planlamasi</p>
+                <p className="mt-1 text-[11px] font-semibold leading-4 text-slate-500">Gece / Nöbet planlaması</p>
               </article>
 
               <article className="rounded-[22px] border border-slate-200 bg-white/95 p-3 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
@@ -490,7 +493,7 @@ export default function StaffDetailPage() {
                 <div className="mt-3 text-sm font-black leading-5 tracking-[-0.03em] text-slate-900">
                   {workingModelLabel}
                 </div>
-                <p className="mt-1 text-[11px] font-semibold leading-4 text-slate-500">Aktif calisma modeli</p>
+                <p className="mt-1 text-[11px] font-semibold leading-4 text-slate-500">Aktif çalışma modeli</p>
               </article>
             </div>
 
