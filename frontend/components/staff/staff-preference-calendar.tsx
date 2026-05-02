@@ -178,11 +178,7 @@ export function StaffPreferenceSelectionPanel({
                     color: shiftType.color,
                   }}
                 >
-                  {shiftType.isNight ? (
-                    <MoonStar className="h-5 w-5" />
-                  ) : (
-                    <Clock3 className="h-5 w-5" />
-                  )}
+                  {shiftType.isNight ? <MoonStar className="h-5 w-5" /> : <Clock3 className="h-5 w-5" />}
                 </div>
 
                 <div className="min-w-0 flex-1">
@@ -259,7 +255,7 @@ export default function StaffPreferenceCalendar({
 
   return (
     <section className="rounded-[30px] border border-slate-200 bg-white/95 p-6 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.38)]">
-      <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+      <div className="flex flex-col gap-4">
         <div>
           <span className="inline-flex px-0 py-1 text-[13px] font-extrabold uppercase tracking-[0.18em] text-blue-600">
             Personel Takvimi
@@ -273,32 +269,6 @@ export default function StaffPreferenceCalendar({
             </span>
           </div>
         </div>
-
-        <div className="flex items-center gap-2 self-start">
-          <button
-            type="button"
-            onClick={onToday}
-            className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-blue-600 transition hover:border-blue-200 hover:bg-blue-50"
-          >
-            Bugun
-          </button>
-          <button
-            type="button"
-            onClick={onPrevMonth}
-            className="flex h-12 w-12 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:border-blue-200 hover:text-blue-600"
-            aria-label="Onceki ay"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            onClick={onNextMonth}
-            className="flex h-12 w-12 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:border-blue-200 hover:text-blue-600"
-            aria-label="Sonraki ay"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        </div>
       </div>
 
       <div className="mt-6 overflow-hidden rounded-[26px] border border-slate-200 bg-white">
@@ -311,8 +281,34 @@ export default function StaffPreferenceCalendar({
               {preferences.length} tercih kaydi
             </div>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600">
-            Ay
+
+          <div className="flex items-center gap-2">
+            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600">
+              Ay
+            </div>
+            <button
+              type="button"
+              onClick={onToday}
+              className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-blue-600 transition hover:border-blue-200 hover:bg-blue-50"
+            >
+              Bugun
+            </button>
+            <button
+              type="button"
+              onClick={onPrevMonth}
+              className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:border-blue-200 hover:text-blue-600"
+              aria-label="Onceki ay"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={onNextMonth}
+              className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:border-blue-200 hover:text-blue-600"
+              aria-label="Sonraki ay"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
           </div>
         </div>
 
@@ -338,7 +334,7 @@ export default function StaffPreferenceCalendar({
                 type="button"
                 onClick={() => onSelectDate(cell.date)}
                 className={[
-                  "min-h-[108px] border-b border-r border-slate-200 px-3 py-3 text-left transition last:border-r-0",
+                  "min-h-[116px] border-b border-r border-slate-200 px-3 py-3 text-left transition last:border-r-0",
                   cell.isCurrentMonth ? "bg-white" : "bg-slate-50/70",
                   isSelected ? "bg-blue-50 shadow-[inset_0_0_0_2px_#2563eb]" : "",
                   !cell.isCurrentMonth ? "text-slate-300" : "text-slate-900",
@@ -372,29 +368,14 @@ export default function StaffPreferenceCalendar({
                     );
                   })}
                   {items.length > 2 ? (
-                    <div className="text-[11px] font-semibold text-slate-400">+{items.length - 2} tercih daha</div>
+                    <div className="text-[11px] font-semibold text-slate-400">
+                      +{items.length - 2} tercih daha
+                    </div>
                   ) : null}
                 </div>
               </button>
             );
           })}
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3 border-t border-slate-200 px-5 py-4">
-          <div className="inline-flex items-center gap-2 rounded-full bg-slate-50 px-4 py-2 text-sm font-medium text-slate-600">
-            <span className="h-3 w-3 rounded-full bg-violet-400" />
-            Nobet
-            <span className="text-slate-400">08:00 - 08:00</span>
-          </div>
-          <div className="inline-flex items-center gap-2 rounded-full bg-slate-50 px-4 py-2 text-sm font-medium text-slate-600">
-            <span className="h-3 w-3 rounded-full bg-blue-500" />
-            Mesai
-            <span className="text-slate-400">08:00 - 16:00</span>
-          </div>
-          <div className="inline-flex items-center gap-2 rounded-full bg-slate-50 px-4 py-2 text-sm font-medium text-slate-600">
-            <span className="text-base leading-none text-slate-400">∅</span>
-            Kayit yok
-          </div>
         </div>
       </div>
     </section>

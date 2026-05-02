@@ -459,35 +459,37 @@ export default function StaffDetailPage() {
           </div>
 
           <div className="space-y-4">
-            <article className="rounded-[24px] border border-slate-200 bg-white/95 p-4 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
-                <CalendarClock className="h-5 w-5" />
-              </div>
-              <div className="mt-4 text-3xl font-black tracking-[-0.05em] text-slate-900">
-                {staff.weeklyLimitHours}
-              </div>
-              <p className="mt-1 text-sm font-semibold text-slate-500">Haftalik limit saat</p>
-            </article>
+            <div className="grid grid-cols-3 gap-3">
+              <article className="rounded-[22px] border border-slate-200 bg-white/95 p-3 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
+                <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+                  <CalendarClock className="h-4 w-4" />
+                </div>
+                <div className="mt-3 text-[28px] font-black leading-none tracking-[-0.05em] text-slate-900">
+                  {staff.weeklyLimitHours}
+                </div>
+                <p className="mt-1 text-[11px] font-semibold leading-4 text-slate-500">Haftalik limit saat</p>
+              </article>
 
-            <article className="rounded-[24px] border border-slate-200 bg-white/95 p-4 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-amber-500">
-                <MoonStar className="h-5 w-5" />
-              </div>
-              <div className="mt-4 text-base font-black tracking-[-0.03em] text-slate-900">
-                {profileForm.cannotTakeNightShifts || profileForm.isNewMother ? "Kisitli" : "Uygun"}
-              </div>
-              <p className="mt-1 text-sm font-semibold text-slate-500">Gece / nobet planlamasi</p>
-            </article>
+              <article className="rounded-[22px] border border-slate-200 bg-white/95 p-3 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
+                <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-amber-50 text-amber-500">
+                  <MoonStar className="h-4 w-4" />
+                </div>
+                <div className="mt-3 text-sm font-black tracking-[-0.03em] text-slate-900">
+                  {profileForm.cannotTakeNightShifts || profileForm.isNewMother ? "Kisitli" : "Uygun"}
+                </div>
+                <p className="mt-1 text-[11px] font-semibold leading-4 text-slate-500">Gece / nobet planlamasi</p>
+              </article>
 
-            <article className="rounded-[24px] border border-slate-200 bg-white/95 p-4 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500">
-                <ShieldCheck className="h-5 w-5" />
-              </div>
-              <div className="mt-4 text-base font-black tracking-[-0.03em] text-slate-900">
-                {workingModelLabel}
-              </div>
-              <p className="mt-1 text-sm font-semibold text-slate-500">Aktif calisma modeli</p>
-            </article>
+              <article className="rounded-[22px] border border-slate-200 bg-white/95 p-3 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
+                <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500">
+                  <ShieldCheck className="h-4 w-4" />
+                </div>
+                <div className="mt-3 text-sm font-black leading-5 tracking-[-0.03em] text-slate-900">
+                  {workingModelLabel}
+                </div>
+                <p className="mt-1 text-[11px] font-semibold leading-4 text-slate-500">Aktif calisma modeli</p>
+              </article>
+            </div>
 
             <StaffPreferenceSelectionPanel
               selectedDate={selectedDate}
