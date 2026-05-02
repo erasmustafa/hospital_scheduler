@@ -326,24 +326,22 @@ export default function StaffPreferenceCalendar({
                 type="button"
                 onClick={() => onSelectDate(cell.date)}
                 className={[
-                  "min-h-[116px] border-b border-r border-slate-200 px-3 py-3 text-left transition last:border-r-0",
+                  "relative min-h-[116px] border-b border-r border-slate-200 px-3 py-3 text-left transition last:border-r-0",
                   cell.isCurrentMonth ? "bg-white" : "bg-slate-50/70",
                   isSelected ? "bg-blue-50 shadow-[inset_0_0_0_2px_#2563eb]" : "",
                   !cell.isCurrentMonth ? "text-slate-300" : "text-slate-900",
                 ].join(" ")}
               >
-                <div className="flex items-start justify-end">
-                  <span
-                    className={[
-                      "text-[11px] font-bold",
-                      cell.isToday ? "rounded-full bg-blue-600 px-2.5 py-1.5 text-white" : "",
-                    ].join(" ")}
-                  >
-                    {cell.dayNumber}
-                  </span>
-                </div>
+                <span
+                  className={[
+                    "absolute right-3 top-3 text-[11px] font-bold",
+                    cell.isToday ? "rounded-full bg-blue-600 px-2.5 py-1.5 text-white" : "",
+                  ].join(" ")}
+                >
+                  {cell.dayNumber}
+                </span>
 
-                <div className="mt-3 space-y-1.5">
+                <div className="mt-7 space-y-1.5">
                   {items.slice(0, 2).map((item) => {
                     const shiftType = shiftTypes.find((shift) => shift.id === item.shiftTypeId);
                     if (!shiftType) {
