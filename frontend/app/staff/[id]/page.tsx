@@ -8,7 +8,6 @@ import {
   BadgeCheck,
   BriefcaseBusiness,
   CalendarClock,
-  Heart,
   Mail,
   MoonStar,
   Phone,
@@ -16,6 +15,7 @@ import {
 } from "lucide-react";
 import { apiClient } from "@/lib/api";
 import StaffPreferenceCalendar, {
+  StaffPreferenceSelectionPanel,
   type StaffShiftPreference,
   type StaffShiftType,
 } from "@/components/staff/staff-preference-calendar";
@@ -55,25 +55,6 @@ function getInitials(fullName: string) {
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase() ?? "")
     .join("");
-}
-
-function formatEmploymentType(value: string) {
-  const map: Record<string, string> = {
-    permanent: "Kadrolu",
-    contract: "Sözleşmeli",
-    intern: "Stajyer",
-  };
-  return map[value] ?? value;
-}
-
-function formatGender(value: StaffDetail["gender"]) {
-  const map: Record<StaffDetail["gender"], string> = {
-    female: "Kadın",
-    male: "Erkek",
-    other: "Diğer",
-    unspecified: "Belirtilmedi",
-  };
-  return map[value];
 }
 
 function getMonthRange(date: Date) {
@@ -118,20 +99,23 @@ export default function StaffDetailPage() {
     isNewMother: false,
   });
 
-  const loadAvailability = useCallback(async (targetMonth: Date) => {
-    if (!staffId) {
-      return;
-    }
-    const { date_from, date_to } = getMonthRange(targetMonth);
-    const response = await apiClient.get<AvailabilityResponse>(
-      `/availability/?staffProfileId=${staffId}&date_from=${date_from}&date_to=${date_to}`
-    );
-    setPreferences(response.availability ?? []);
-  }, [staffId]);
+  const loadAvailability = useCallback(
+    async (targetMonth: Date) => {
+      if (!staffId) {
+        return;
+      }
+      const { date_from, date_to } = getMonthRange(targetMonth);
+      const response = await apiClient.get<AvailabilityResponse>(
+        `/availability/?staffProfileId=${staffId}&date_from=${date_from}&date_to=${date_to}`
+      );
+      setPreferences(response.availability ?? []);
+    },
+    [staffId]
+  );
 
   const loadPage = useCallback(async () => {
     if (!staffId) {
-      setError("Geçersiz personel kaydı.");
+      setError("Gecersiz personel kaydi.");
       setLoading(false);
       return;
     }
@@ -154,7 +138,7 @@ export default function StaffDetailPage() {
       await loadAvailability(initialMonth);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Personel profili yüklenemedi.");
+      setError(err instanceof Error ? err.message : "Personel profili yuklenemedi.");
     } finally {
       setLoading(false);
     }
@@ -178,12 +162,12 @@ export default function StaffDetailPage() {
 
   const workingModelLabel = useMemo(() => {
     if (profileForm.isNewMother && profileForm.gender === "female") {
-      return "Yeni anne profili: 08:00-12:00 çalışma çerçevesi";
+      return "08:00-12:00 yeni anne modeli";
     }
     if (profileForm.cannotTakeNightShifts) {
-      return "Gece / nöbet mesaileri hariç planlanmalı";
+      return "Gece veya nobet disi planlama";
     }
-    return "Standart vardiya çerçevesi";
+    return "Standart vardiya modeli";
   }, [profileForm]);
 
   const saveProfileSettings = useCallback(async () => {
@@ -205,10 +189,10 @@ export default function StaffDetailPage() {
         cannotTakeNightShifts: response.cannotTakeNightShifts,
         isNewMother: response.isNewMother,
       });
-      setBanner("Personel çalışma kuralları güncellendi.");
+      setBanner("Personel calisma kurallari guncellendi.");
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Profil ayarları güncellenemedi.");
+      setError(err instanceof Error ? err.message : "Profil ayarlari guncellenemedi.");
     } finally {
       setSavingProfile(false);
     }
@@ -227,21 +211,21 @@ export default function StaffDetailPage() {
         if (existing) {
           await apiClient.delete(`/availability/${existing.id}/`);
           setPreferences((current) => current.filter((item) => item.id !== existing.id));
-          setBanner(`${shiftType.name} tercihi kaldırıldı.`);
+          setBanner(`${shiftType.name} tercihi kaldirildi.`);
         } else {
           const created = await apiClient.post<StaffShiftPreference>("/availability/", {
             staffProfileId: staff.id,
             shiftTypeId: shiftType.id,
             date: selectedDate,
             status: "unavailable",
-            reason: "Personel profilinden çalışmak istemediği mesai olarak işaretlendi.",
+            reason: "Personel profilinden calismak istemedigi mesai olarak isaretlendi.",
           });
           setPreferences((current) => [created, ...current]);
-          setBanner(`${shiftType.name} mesaisi tercih dışı olarak işaretlendi.`);
+          setBanner(`${shiftType.name} mesaisi tercih disi olarak isaretlendi.`);
         }
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Mesai tercihi güncellenemedi.");
+        setError(err instanceof Error ? err.message : "Mesai tercihi guncellenemedi.");
       } finally {
         setSavingShiftIds((current) => current.filter((value) => value !== shiftType.id));
       }
@@ -252,7 +236,7 @@ export default function StaffDetailPage() {
   if (loading) {
     return (
       <main className="flex h-full items-center justify-center bg-slate-50 text-sm font-semibold text-slate-500">
-        Personel profili hazırlanıyor...
+        Personel profili hazirlaniyor...
       </main>
     );
   }
@@ -267,7 +251,7 @@ export default function StaffDetailPage() {
             className="mt-4 inline-flex items-center gap-2 rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600"
           >
             <ArrowLeft className="h-4 w-4" />
-            Personel listesine dön
+            Personel listesine don
           </Link>
         </div>
       </main>
@@ -293,7 +277,7 @@ export default function StaffDetailPage() {
           </div>
         ) : null}
 
-        <section className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)_320px]">
+        <section className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)_420px]">
           <aside className="rounded-[32px] border border-slate-200 bg-white/95 p-6 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.35)]">
             <div className="rounded-[28px] bg-[linear-gradient(180deg,#eef4ff_0%,#ffffff_100%)] px-5 pb-6 pt-7 text-center">
               <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-[linear-gradient(135deg,#4A6CF7_0%,#3151d8_100%)] text-3xl font-black text-white shadow-[0_18px_38px_-22px_rgba(37,99,235,0.65)]">
@@ -303,7 +287,7 @@ export default function StaffDetailPage() {
                 {staff.fullName}
               </h2>
               <p className="mt-2 text-sm font-semibold text-slate-500">
-                {staff.departmentName ?? "Birim atanmadı"} · {staff.title || staff.profession || "Personel"}
+                {staff.departmentName ?? "Birim atanamadi"} · {staff.title || staff.profession || "Personel"}
               </p>
               <div className="mt-5 inline-flex rounded-full bg-[linear-gradient(135deg,#4A6CF7_0%,#3B5BDB_100%)] px-5 py-2 text-sm font-bold text-white shadow-[0_18px_38px_-24px_rgba(37,99,235,0.55)]">
                 {staff.canManageDepartment ? "Birim yetkilisi" : "Operasyon personeli"}
@@ -341,74 +325,13 @@ export default function StaffDetailPage() {
                 Meslek: <span className="font-bold text-slate-900">{staff.profession || "Belirtilmedi"}</span>
               </div>
             </div>
-          </aside>
 
-          <div className="flex flex-col gap-6">
-            <div className="grid gap-4 md:grid-cols-3">
-              <article className="rounded-[28px] border border-slate-200 bg-white/95 p-5 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
-                  <CalendarClock className="h-5 w-5" />
-                </div>
-                <div className="mt-5 text-4xl font-black tracking-[-0.05em] text-slate-900">
-                  {staff.weeklyLimitHours}
-                </div>
-                <p className="mt-2 text-sm font-semibold text-slate-500">Haftalık limit saat</p>
-              </article>
+            <div className="mt-6 rounded-[26px] border border-slate-200 bg-white p-5">
+              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-slate-400">
+                Calisma Kurallari
+              </p>
 
-              <article className="rounded-[28px] border border-slate-200 bg-white/95 p-5 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-500">
-                  <MoonStar className="h-5 w-5" />
-                </div>
-                <div className="mt-5 text-lg font-black tracking-[-0.03em] text-slate-900">
-                  {profileForm.cannotTakeNightShifts || profileForm.isNewMother ? "Kısıtlı" : "Uygun"}
-                </div>
-                <p className="mt-2 text-sm font-semibold text-slate-500">Gece / nöbet planlaması</p>
-              </article>
-
-              <article className="rounded-[28px] border border-slate-200 bg-white/95 p-5 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500">
-                  <ShieldCheck className="h-5 w-5" />
-                </div>
-                <div className="mt-5 text-lg font-black tracking-[-0.03em] text-slate-900">{workingModelLabel}</div>
-                <p className="mt-2 text-sm font-semibold text-slate-500">Aktif çalışma modeli</p>
-              </article>
-            </div>
-
-            <StaffPreferenceCalendar
-              monthDate={monthDate}
-              selectedDate={selectedDate}
-              shiftTypes={shiftTypes}
-              preferences={preferences}
-              savingShiftIds={savingShiftIds}
-              onPrevMonth={() =>
-                setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1))
-              }
-              onNextMonth={() =>
-                setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1))
-              }
-              onToday={() => setMonthDate(new Date())}
-              onSelectDate={setSelectedDate}
-              onToggleShift={handleToggleShift}
-            />
-          </div>
-
-          <aside className="space-y-6">
-            <section className="rounded-[30px] border border-slate-200 bg-white/95 p-6 shadow-[0_28px_80px_-56px_rgba(15,23,42,0.38)]">
-              <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-pink-50 text-pink-500">
-                  <Heart className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-slate-400">
-                    Çalışma Kuralları
-                  </p>
-                  <h2 className="mt-1 text-[24px] font-black tracking-[-0.04em] text-slate-900">
-                    Profil Kısıtları
-                  </h2>
-                </div>
-              </div>
-
-              <div className="mt-6 space-y-5">
+              <div className="mt-5 space-y-5">
                 <label className="block">
                   <span className="mb-2 block text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
                     Cinsiyet
@@ -419,16 +342,15 @@ export default function StaffDetailPage() {
                       setProfileForm((current) => ({
                         ...current,
                         gender: event.target.value as StaffDetail["gender"],
-                        isNewMother:
-                          event.target.value === "female" ? current.isNewMother : false,
+                        isNewMother: event.target.value === "female" ? current.isNewMother : false,
                       }))
                     }
                     className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none transition focus:border-blue-300 focus:bg-white"
                   >
                     <option value="unspecified">Belirtilmedi</option>
-                    <option value="female">Kadın</option>
+                    <option value="female">Kadin</option>
                     <option value="male">Erkek</option>
-                    <option value="other">Diğer</option>
+                    <option value="other">Diger</option>
                   </select>
                 </label>
 
@@ -448,9 +370,9 @@ export default function StaffDetailPage() {
                   ].join(" ")}
                 >
                   <div>
-                    <p className="text-sm font-bold text-slate-900">Nöbet tutamaz</p>
+                    <p className="text-sm font-bold text-slate-900">Nobet tutamaz</p>
                     <p className="mt-1 text-xs font-medium leading-5 text-slate-500">
-                      Gece veya nöbet kategorisindeki mesailerde planlama dışı tutulur.
+                      Gece veya nobet kategorisindeki mesailerde planlama disi tutulur.
                     </p>
                   </div>
                   <span
@@ -488,7 +410,7 @@ export default function StaffDetailPage() {
                     <div>
                       <p className="text-sm font-bold text-slate-900">Yeni anne</p>
                       <p className="mt-1 text-xs font-medium leading-5 text-slate-500">
-                        Bu profil 08:00-12:00 arasında günlük çalışma çerçevesiyle işaretlenir.
+                        Bu profil 08:00-12:00 arasinda gunluk calisma cercevesiyle isaretlenir.
                       </p>
                     </div>
                     <span
@@ -514,40 +436,67 @@ export default function StaffDetailPage() {
                 disabled={savingProfile}
                 className="mt-6 w-full rounded-2xl bg-[linear-gradient(135deg,#4A6CF7_0%,#3B5BDB_100%)] px-4 py-3 text-sm font-bold text-white shadow-[0_18px_38px_-24px_rgba(37,99,235,0.52)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {savingProfile ? "Kaydediliyor..." : "Profil Kurallarını Kaydet"}
+                {savingProfile ? "Kaydediliyor..." : "Profil kurallarini kaydet"}
               </button>
-            </section>
-
-            <section className="rounded-[30px] border border-slate-200 bg-white/95 p-6 shadow-[0_28px_80px_-56px_rgba(15,23,42,0.38)]">
-              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-slate-400">
-                Özet
-              </p>
-              <h2 className="mt-2 text-[24px] font-black tracking-[-0.04em] text-slate-900">
-                Profil Detayları
-              </h2>
-
-              <div className="mt-5 space-y-3">
-                {[
-                  ["Birim", staff.departmentName ?? "Tanımsız"],
-                  ["Unvan", staff.title || "Belirtilmedi"],
-                  ["Meslek", staff.profession || "Belirtilmedi"],
-                  ["İstihdam", formatEmploymentType(staff.employmentType)],
-                  ["Cinsiyet", formatGender(profileForm.gender)],
-                  ["Dahili", staff.phoneInternal || "Belirtilmedi"],
-                ].map(([label, value]) => (
-                  <div
-                    key={label}
-                    className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
-                  >
-                    <span className="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">
-                      {label}
-                    </span>
-                    <span className="text-sm font-semibold text-slate-700">{value}</span>
-                  </div>
-                ))}
-              </div>
-            </section>
+            </div>
           </aside>
+
+          <div className="flex flex-col gap-6">
+            <div className="grid gap-4 md:grid-cols-3">
+              <article className="rounded-[28px] border border-slate-200 bg-white/95 p-5 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+                  <CalendarClock className="h-5 w-5" />
+                </div>
+                <div className="mt-5 text-4xl font-black tracking-[-0.05em] text-slate-900">
+                  {staff.weeklyLimitHours}
+                </div>
+                <p className="mt-2 text-sm font-semibold text-slate-500">Haftalik limit saat</p>
+              </article>
+
+              <article className="rounded-[28px] border border-slate-200 bg-white/95 p-5 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-500">
+                  <MoonStar className="h-5 w-5" />
+                </div>
+                <div className="mt-5 text-lg font-black tracking-[-0.03em] text-slate-900">
+                  {profileForm.cannotTakeNightShifts || profileForm.isNewMother ? "Kisitli" : "Uygun"}
+                </div>
+                <p className="mt-2 text-sm font-semibold text-slate-500">Gece / nobet planlamasi</p>
+              </article>
+
+              <article className="rounded-[28px] border border-slate-200 bg-white/95 p-5 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500">
+                  <ShieldCheck className="h-5 w-5" />
+                </div>
+                <div className="mt-5 text-lg font-black tracking-[-0.03em] text-slate-900">
+                  {workingModelLabel}
+                </div>
+                <p className="mt-2 text-sm font-semibold text-slate-500">Aktif calisma modeli</p>
+              </article>
+            </div>
+
+            <StaffPreferenceCalendar
+              monthDate={monthDate}
+              selectedDate={selectedDate}
+              shiftTypes={shiftTypes}
+              preferences={preferences}
+              onPrevMonth={() =>
+                setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1))
+              }
+              onNextMonth={() =>
+                setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1))
+              }
+              onToday={() => setMonthDate(new Date())}
+              onSelectDate={setSelectedDate}
+            />
+          </div>
+
+          <StaffPreferenceSelectionPanel
+            selectedDate={selectedDate}
+            shiftTypes={shiftTypes}
+            selectedDatePreferences={selectedPreferences}
+            savingShiftIds={savingShiftIds}
+            onToggleShift={handleToggleShift}
+          />
         </section>
       </div>
     </main>
