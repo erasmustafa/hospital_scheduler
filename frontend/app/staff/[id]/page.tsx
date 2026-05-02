@@ -356,7 +356,7 @@ export default function StaffDetailPage() {
               </div>
             </div>
 
-            <div className="mt-6 space-y-4">
+            <div className="mt-6 grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() =>
@@ -366,33 +366,30 @@ export default function StaffDetailPage() {
                     }))
                   }
                   className={[
-                    "group relative flex w-full items-center justify-between overflow-hidden rounded-[26px] border px-5 py-4 text-left transition",
+                    "group relative flex min-h-[140px] w-full flex-col items-start justify-between overflow-hidden rounded-[26px] border px-4 py-4 text-left transition",
                     profileForm.cannotTakeNightShifts
                       ? "border-blue-200 bg-[linear-gradient(135deg,rgba(59,91,219,0.1),rgba(74,108,247,0.08))] shadow-[0_20px_46px_-34px_rgba(37,99,235,0.4)]"
                       : "border-slate-200 bg-white/80 hover:border-blue-200 hover:bg-blue-50/40",
                   ].join(" ")}
                 >
-                  <div className="pr-4">
+                  <div className="flex w-full items-start justify-between gap-3">
+                    <span
+                      className={[
+                        "mt-0.5 flex h-5 w-5 items-center justify-center rounded-md border text-[12px] font-black transition",
+                        profileForm.cannotTakeNightShifts
+                          ? "border-blue-500 bg-blue-500 text-white"
+                          : "border-slate-300 bg-white text-transparent",
+                      ].join(" ")}
+                    >
+                      ✓
+                    </span>
+                  </div>
+                  <div className="pr-1">
                     <p className="text-sm font-bold text-slate-900">Nobet tutamaz</p>
                     <p className="mt-1 text-xs font-medium leading-5 text-slate-500">
                       Gece veya nobet kategorisindeki mesailerde planlama disi tutulur.
                     </p>
                   </div>
-                  <span
-                    className={[
-                      "relative flex h-8 w-14 rounded-full border transition",
-                      profileForm.cannotTakeNightShifts
-                        ? "border-blue-500 bg-blue-600"
-                        : "border-slate-300 bg-slate-200",
-                    ].join(" ")}
-                  >
-                    <span
-                      className={[
-                        "absolute left-1 top-1 h-6 w-6 rounded-full bg-white shadow-sm transition",
-                        profileForm.cannotTakeNightShifts ? "opacity-100" : "opacity-90",
-                      ].join(" ")}
-                    />
-                  </span>
                 </button>
 
                 <button
@@ -409,7 +406,7 @@ export default function StaffDetailPage() {
                     }));
                   }}
                   className={[
-                    "flex w-full items-center justify-between rounded-[24px] border px-5 py-4 text-left transition",
+                    "flex min-h-[140px] w-full flex-col items-start justify-between rounded-[24px] border px-4 py-4 text-left transition",
                     profileForm.gender !== "female"
                       ? "cursor-not-allowed border-slate-200 bg-slate-100/90 opacity-60"
                       : profileForm.isNewMother
@@ -417,35 +414,34 @@ export default function StaffDetailPage() {
                         : "border-slate-200 bg-slate-50 hover:border-pink-200 hover:bg-pink-50/60",
                   ].join(" ")}
                 >
+                  <div className="flex w-full items-start justify-between gap-3">
+                    <span
+                      className={[
+                        "mt-0.5 flex h-5 w-5 items-center justify-center rounded-md border text-[12px] font-black transition",
+                        profileForm.isNewMother
+                          ? "border-pink-500 bg-pink-500 text-white"
+                          : "border-slate-300 bg-white text-transparent",
+                      ].join(" ")}
+                    >
+                      ✓
+                    </span>
+                  </div>
                   <div>
                     <p className="text-sm font-bold text-slate-900">Yeni anne</p>
                     <p className="mt-1 text-xs font-medium leading-5 text-slate-500">
                       Bu profil 08:00-12:00 arasinda gunluk calisma cercevesiyle isaretlenir.
                     </p>
                   </div>
-                  <span
-                    className={[
-                      "relative flex h-7 w-12 rounded-full transition",
-                      profileForm.isNewMother ? "bg-pink-500" : "bg-slate-300",
-                    ].join(" ")}
-                  >
-                    <span
-                      className={[
-                        "absolute top-1 h-5 w-5 rounded-full bg-white transition",
-                        profileForm.isNewMother ? "left-6" : "left-1",
-                      ].join(" ")}
-                    />
-                  </span>
                 </button>
-              <button
-                type="button"
-                onClick={saveProfileSettings}
-                disabled={savingProfile}
-                className="mt-6 w-full rounded-2xl bg-[linear-gradient(135deg,#4A6CF7_0%,#3B5BDB_100%)] px-4 py-3 text-sm font-bold text-white shadow-[0_18px_38px_-24px_rgba(37,99,235,0.52)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {savingProfile ? "Kaydediliyor..." : "Profil kurallarini kaydet"}
-              </button>
             </div>
+            <button
+              type="button"
+              onClick={saveProfileSettings}
+              disabled={savingProfile}
+              className="mt-6 w-full rounded-2xl bg-[linear-gradient(135deg,#4A6CF7_0%,#3B5BDB_100%)] px-4 py-3 text-sm font-bold text-white shadow-[0_18px_38px_-24px_rgba(37,99,235,0.52)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {savingProfile ? "Kaydediliyor..." : "Profil kurallarini kaydet"}
+            </button>
           </aside>
 
           <div className="flex h-full min-h-0 flex-col gap-4">
