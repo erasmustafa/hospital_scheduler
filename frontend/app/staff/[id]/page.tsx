@@ -277,7 +277,7 @@ export default function StaffDetailPage() {
           </div>
         ) : null}
 
-        <section className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)_420px]">
+        <section className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)_336px]">
           <aside className="rounded-[32px] border border-slate-200 bg-white/95 p-6 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.35)]">
             <div className="rounded-[28px] bg-[linear-gradient(180deg,#eef4ff_0%,#ffffff_100%)] px-5 pb-6 pt-7 text-center">
               <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-[linear-gradient(135deg,#4A6CF7_0%,#3151d8_100%)] text-3xl font-black text-white shadow-[0_18px_38px_-22px_rgba(37,99,235,0.65)]">
@@ -442,38 +442,6 @@ export default function StaffDetailPage() {
           </aside>
 
           <div className="flex flex-col gap-6">
-            <div className="grid gap-4 md:grid-cols-3">
-              <article className="rounded-[28px] border border-slate-200 bg-white/95 p-5 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
-                  <CalendarClock className="h-5 w-5" />
-                </div>
-                <div className="mt-5 text-4xl font-black tracking-[-0.05em] text-slate-900">
-                  {staff.weeklyLimitHours}
-                </div>
-                <p className="mt-2 text-sm font-semibold text-slate-500">Haftalik limit saat</p>
-              </article>
-
-              <article className="rounded-[28px] border border-slate-200 bg-white/95 p-5 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-500">
-                  <MoonStar className="h-5 w-5" />
-                </div>
-                <div className="mt-5 text-lg font-black tracking-[-0.03em] text-slate-900">
-                  {profileForm.cannotTakeNightShifts || profileForm.isNewMother ? "Kisitli" : "Uygun"}
-                </div>
-                <p className="mt-2 text-sm font-semibold text-slate-500">Gece / nobet planlamasi</p>
-              </article>
-
-              <article className="rounded-[28px] border border-slate-200 bg-white/95 p-5 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500">
-                  <ShieldCheck className="h-5 w-5" />
-                </div>
-                <div className="mt-5 text-lg font-black tracking-[-0.03em] text-slate-900">
-                  {workingModelLabel}
-                </div>
-                <p className="mt-2 text-sm font-semibold text-slate-500">Aktif calisma modeli</p>
-              </article>
-            </div>
-
             <StaffPreferenceCalendar
               monthDate={monthDate}
               selectedDate={selectedDate}
@@ -490,13 +458,45 @@ export default function StaffDetailPage() {
             />
           </div>
 
-          <StaffPreferenceSelectionPanel
-            selectedDate={selectedDate}
-            shiftTypes={shiftTypes}
-            selectedDatePreferences={selectedPreferences}
-            savingShiftIds={savingShiftIds}
-            onToggleShift={handleToggleShift}
-          />
+          <div className="space-y-4">
+            <article className="rounded-[24px] border border-slate-200 bg-white/95 p-4 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+                <CalendarClock className="h-5 w-5" />
+              </div>
+              <div className="mt-4 text-3xl font-black tracking-[-0.05em] text-slate-900">
+                {staff.weeklyLimitHours}
+              </div>
+              <p className="mt-1 text-sm font-semibold text-slate-500">Haftalik limit saat</p>
+            </article>
+
+            <article className="rounded-[24px] border border-slate-200 bg-white/95 p-4 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-amber-500">
+                <MoonStar className="h-5 w-5" />
+              </div>
+              <div className="mt-4 text-base font-black tracking-[-0.03em] text-slate-900">
+                {profileForm.cannotTakeNightShifts || profileForm.isNewMother ? "Kisitli" : "Uygun"}
+              </div>
+              <p className="mt-1 text-sm font-semibold text-slate-500">Gece / nobet planlamasi</p>
+            </article>
+
+            <article className="rounded-[24px] border border-slate-200 bg-white/95 p-4 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500">
+                <ShieldCheck className="h-5 w-5" />
+              </div>
+              <div className="mt-4 text-base font-black tracking-[-0.03em] text-slate-900">
+                {workingModelLabel}
+              </div>
+              <p className="mt-1 text-sm font-semibold text-slate-500">Aktif calisma modeli</p>
+            </article>
+
+            <StaffPreferenceSelectionPanel
+              selectedDate={selectedDate}
+              shiftTypes={shiftTypes}
+              selectedDatePreferences={selectedPreferences}
+              savingShiftIds={savingShiftIds}
+              onToggleShift={handleToggleShift}
+            />
+          </div>
         </section>
       </div>
     </main>
