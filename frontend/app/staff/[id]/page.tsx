@@ -277,8 +277,8 @@ export default function StaffDetailPage() {
           </div>
         ) : null}
 
-        <section className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)_336px]">
-          <aside className="rounded-[32px] border border-slate-200 bg-white/95 p-6 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.35)]">
+        <section className="grid min-h-[calc(100vh-10.5rem)] gap-6 xl:grid-cols-[320px_minmax(0,1fr)_336px] xl:items-stretch">
+          <aside className="flex h-full flex-col rounded-[32px] border border-slate-200 bg-white/95 p-6 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.35)]">
             <div className="rounded-[28px] bg-[linear-gradient(180deg,#eef4ff_0%,#ffffff_100%)] px-5 pb-6 pt-7 text-center">
               <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-[linear-gradient(135deg,#4A6CF7_0%,#3151d8_100%)] text-3xl font-black text-white shadow-[0_18px_38px_-22px_rgba(37,99,235,0.65)]">
                 {getInitials(staff.fullName)}
@@ -289,25 +289,12 @@ export default function StaffDetailPage() {
               <p className="mt-2 text-sm font-semibold text-slate-500">
                 {staff.departmentName ?? "Birim atanamadi"} · {staff.title || staff.profession || "Personel"}
               </p>
-              <div className="mt-5 inline-flex rounded-full bg-[linear-gradient(135deg,#4A6CF7_0%,#3B5BDB_100%)] px-5 py-2 text-sm font-bold text-white shadow-[0_18px_38px_-24px_rgba(37,99,235,0.55)]">
-                {staff.canManageDepartment ? "Birim yetkilisi" : "Operasyon personeli"}
-              </div>
-            </div>
-
-            <div className="mt-6 space-y-4 rounded-[26px] border border-slate-200 bg-slate-50/80 p-5">
-              <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                <span className="text-sm font-semibold text-slate-600">Personel durumu</span>
-                <span
-                  className={[
-                    "inline-flex rounded-full px-3 py-1 text-xs font-bold",
-                    staff.isActive
-                      ? "border border-emerald-200 bg-emerald-50 text-emerald-600"
-                      : "border border-slate-200 bg-slate-100 text-slate-500",
-                  ].join(" ")}
-                >
+                <div className="mt-5 inline-flex rounded-full bg-[linear-gradient(135deg,#4A6CF7_0%,#3B5BDB_100%)] px-5 py-2 text-sm font-bold text-white shadow-[0_18px_38px_-24px_rgba(37,99,235,0.55)]">
                   {staff.isActive ? "Aktif personel" : "Pasif personel"}
-                </span>
+                </div>
               </div>
+
+              <div className="mt-6 space-y-4 rounded-[26px] border border-slate-200 bg-slate-50/80 p-5">
               <div className="flex items-center gap-3 text-sm font-semibold text-slate-700">
                 <BadgeCheck className="h-4 w-4 text-blue-600" />
                 Sicil No: <span className="font-bold text-slate-900">{staff.employeeNo ?? staff.id}</span>
@@ -441,7 +428,7 @@ export default function StaffDetailPage() {
             </div>
           </aside>
 
-          <div className="flex flex-col gap-6">
+          <div className="flex h-full flex-col gap-6">
             <StaffPreferenceCalendar
               monthDate={monthDate}
               selectedDate={selectedDate}
@@ -458,7 +445,7 @@ export default function StaffDetailPage() {
             />
           </div>
 
-          <div className="space-y-4">
+          <div className="flex h-full flex-col gap-4">
             <div className="grid grid-cols-3 gap-3">
               <article className="rounded-[22px] border border-slate-200 bg-white/95 p-3 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
                 <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
@@ -491,13 +478,15 @@ export default function StaffDetailPage() {
               </article>
             </div>
 
-            <StaffPreferenceSelectionPanel
-              selectedDate={selectedDate}
-              shiftTypes={shiftTypes}
-              selectedDatePreferences={selectedPreferences}
-              savingShiftIds={savingShiftIds}
-              onToggleShift={handleToggleShift}
-            />
+            <div className="flex-1">
+              <StaffPreferenceSelectionPanel
+                selectedDate={selectedDate}
+                shiftTypes={shiftTypes}
+                selectedDatePreferences={selectedPreferences}
+                savingShiftIds={savingShiftIds}
+                onToggleShift={handleToggleShift}
+              />
+            </div>
           </div>
         </section>
       </div>

@@ -125,7 +125,7 @@ export function StaffPreferenceSelectionPanel({
   onToggleShift,
 }: SelectionPanelProps) {
   return (
-    <aside className="rounded-[28px] border border-slate-200 bg-white/95 p-6 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.28)]">
+    <aside className="flex h-full flex-col rounded-[28px] border border-slate-200 bg-white/95 p-6 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.28)]">
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-[13px] font-extrabold uppercase tracking-[0.18em] text-slate-400">
@@ -254,24 +254,19 @@ export default function StaffPreferenceCalendar({
   }, {});
 
   return (
-    <section className="rounded-[30px] border border-slate-200 bg-white/95 p-6 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.38)]">
+    <section className="flex h-full flex-col rounded-[30px] border border-slate-200 bg-white/95 p-6 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.38)]">
       <div className="flex flex-col gap-4">
-        <div>
-          <span className="inline-flex px-0 py-1 text-[13px] font-extrabold uppercase tracking-[0.18em] text-blue-600">
-            Personel Takvimi
+        <div className="flex items-center gap-3">
+          <h2 className="text-[30px] font-black tracking-[-0.04em] text-slate-900">
+            Personel Takvimi / Calismak Istemedigi Mesaileri Sec
+          </h2>
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400">
+            <Info className="h-4 w-4" />
           </span>
-          <div className="mt-3 flex items-center gap-3">
-            <h2 className="text-[30px] font-black tracking-[-0.04em] text-slate-900">
-              Calismak Istemedigi Mesaileri Sec
-            </h2>
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400">
-              <Info className="h-4 w-4" />
-            </span>
-          </div>
         </div>
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-[26px] border border-slate-200 bg-white">
+      <div className="mt-6 flex flex-1 flex-col overflow-hidden rounded-[26px] border border-slate-200 bg-white">
         <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
           <div className="flex items-center gap-4">
             <h3 className="text-[28px] font-black tracking-[-0.03em] text-slate-900">
@@ -323,7 +318,7 @@ export default function StaffPreferenceCalendar({
           ))}
         </div>
 
-        <div className="grid grid-cols-7">
+        <div className="grid flex-1 grid-cols-7 auto-rows-fr">
           {grid.map((cell) => {
             const items = preferenceMap[cell.date] ?? [];
             const isSelected = selectedDate === cell.date;
