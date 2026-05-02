@@ -388,51 +388,55 @@ export default function StaffDetailPage() {
                   >
                     <span
                       className={[
-                        "absolute top-1 h-6 w-6 rounded-full bg-white shadow-sm transition",
-                        profileForm.cannotTakeNightShifts ? "left-7" : "left-1",
+                        "absolute left-1 top-1 h-6 w-6 rounded-full bg-white shadow-sm transition",
+                        profileForm.cannotTakeNightShifts ? "opacity-100" : "opacity-90",
                       ].join(" ")}
                     />
                   </span>
                 </button>
 
-                {profileForm.gender === "female" ? (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setProfileForm((current) => ({
-                        ...current,
-                        isNewMother: !current.isNewMother,
-                        cannotTakeNightShifts: !current.isNewMother ? true : current.cannotTakeNightShifts,
-                      }))
+                <button
+                  type="button"
+                  disabled={profileForm.gender !== "female"}
+                  onClick={() => {
+                    if (profileForm.gender !== "female") {
+                      return;
                     }
-                    className={[
-                      "flex w-full items-center justify-between rounded-[24px] border px-5 py-4 text-left transition",
-                      profileForm.isNewMother
+                    setProfileForm((current) => ({
+                      ...current,
+                      isNewMother: !current.isNewMother,
+                      cannotTakeNightShifts: !current.isNewMother ? true : current.cannotTakeNightShifts,
+                    }));
+                  }}
+                  className={[
+                    "flex w-full items-center justify-between rounded-[24px] border px-5 py-4 text-left transition",
+                    profileForm.gender !== "female"
+                      ? "cursor-not-allowed border-slate-200 bg-slate-100/90 opacity-60"
+                      : profileForm.isNewMother
                         ? "border-pink-200 bg-pink-50"
                         : "border-slate-200 bg-slate-50 hover:border-pink-200 hover:bg-pink-50/60",
+                  ].join(" ")}
+                >
+                  <div>
+                    <p className="text-sm font-bold text-slate-900">Yeni anne</p>
+                    <p className="mt-1 text-xs font-medium leading-5 text-slate-500">
+                      Bu profil 08:00-12:00 arasinda gunluk calisma cercevesiyle isaretlenir.
+                    </p>
+                  </div>
+                  <span
+                    className={[
+                      "relative flex h-7 w-12 rounded-full transition",
+                      profileForm.isNewMother ? "bg-pink-500" : "bg-slate-300",
                     ].join(" ")}
                   >
-                    <div>
-                      <p className="text-sm font-bold text-slate-900">Yeni anne</p>
-                      <p className="mt-1 text-xs font-medium leading-5 text-slate-500">
-                        Bu profil 08:00-12:00 arasinda gunluk calisma cercevesiyle isaretlenir.
-                      </p>
-                    </div>
                     <span
                       className={[
-                        "relative flex h-7 w-12 rounded-full transition",
-                        profileForm.isNewMother ? "bg-pink-500" : "bg-slate-300",
+                        "absolute top-1 h-5 w-5 rounded-full bg-white transition",
+                        profileForm.isNewMother ? "left-6" : "left-1",
                       ].join(" ")}
-                    >
-                      <span
-                        className={[
-                          "absolute top-1 h-5 w-5 rounded-full bg-white transition",
-                          profileForm.isNewMother ? "left-6" : "left-1",
-                        ].join(" ")}
-                      />
-                    </span>
-                  </button>
-                ) : null}
+                    />
+                  </span>
+                </button>
               <button
                 type="button"
                 onClick={saveProfileSettings}
