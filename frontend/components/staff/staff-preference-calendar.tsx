@@ -260,14 +260,6 @@ export default function StaffPreferenceCalendar({
           <span className="inline-flex px-0 py-1 text-[13px] font-extrabold uppercase tracking-[0.18em] text-blue-600">
             Personel Takvimi
           </span>
-          <div className="mt-3 flex items-center gap-3">
-            <h2 className="text-[30px] font-black tracking-[-0.04em] text-slate-900">
-              Calismak Istemedigi Mesaileri Sec
-            </h2>
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400">
-              <Info className="h-4 w-4" />
-            </span>
-          </div>
         </div>
       </div>
 

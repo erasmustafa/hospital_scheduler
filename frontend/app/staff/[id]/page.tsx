@@ -294,7 +294,7 @@ export default function StaffDetailPage() {
                 </div>
               </div>
 
-              <div className="mt-6 space-y-4 rounded-[26px] border border-slate-200 bg-slate-50/80 p-5">
+            <div className="mt-6 space-y-4 rounded-[26px] border border-slate-200 bg-slate-50/80 p-5">
               <div className="flex items-center gap-3 text-sm font-semibold text-slate-700">
                 <BadgeCheck className="h-4 w-4 text-blue-600" />
                 Sicil No: <span className="font-bold text-slate-900">{staff.employeeNo ?? staff.id}</span>
@@ -311,36 +311,52 @@ export default function StaffDetailPage() {
                 <BriefcaseBusiness className="h-4 w-4 text-blue-600" />
                 Meslek: <span className="font-bold text-slate-900">{staff.profession || "Belirtilmedi"}</span>
               </div>
-            </div>
 
-            <div className="mt-6 rounded-[26px] border border-slate-200 bg-white p-5">
-              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-slate-400">
-                Calisma Kurallari
-              </p>
-
-              <div className="mt-5 space-y-5">
-                <label className="block">
-                  <span className="mb-2 block text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
-                    Cinsiyet
-                  </span>
-                  <select
-                    value={profileForm.gender}
-                    onChange={(event) =>
+              <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-400">Cinsiyet</p>
+                <div className="mt-3 grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() =>
                       setProfileForm((current) => ({
                         ...current,
-                        gender: event.target.value as StaffDetail["gender"],
-                        isNewMother: event.target.value === "female" ? current.isNewMother : false,
+                        gender: "female",
                       }))
                     }
-                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none transition focus:border-blue-300 focus:bg-white"
+                    className={[
+                      "flex items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-semibold transition",
+                      profileForm.gender === "female"
+                        ? "border-pink-200 bg-pink-50 text-pink-600 shadow-[0_14px_30px_-24px_rgba(236,72,153,0.45)]"
+                        : "border-slate-200 bg-slate-50 text-slate-500 hover:border-pink-200 hover:bg-pink-50/70",
+                    ].join(" ")}
                   >
-                    <option value="unspecified">Belirtilmedi</option>
-                    <option value="female">Kadin</option>
-                    <option value="male">Erkek</option>
-                    <option value="other">Diger</option>
-                  </select>
-                </label>
+                    <span className="text-base leading-none">♀</span>
+                    Kadin
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setProfileForm((current) => ({
+                        ...current,
+                        gender: "male",
+                        isNewMother: false,
+                      }))
+                    }
+                    className={[
+                      "flex items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-semibold transition",
+                      profileForm.gender === "male"
+                        ? "border-blue-200 bg-blue-50 text-blue-600 shadow-[0_14px_30px_-24px_rgba(37,99,235,0.4)]"
+                        : "border-slate-200 bg-slate-50 text-slate-500 hover:border-blue-200 hover:bg-blue-50/70",
+                    ].join(" ")}
+                  >
+                    <span className="text-base leading-none">♂</span>
+                    Erkek
+                  </button>
+                </div>
+              </div>
+            </div>
 
+            <div className="mt-6 space-y-4">
                 <button
                   type="button"
                   onClick={() =>
@@ -350,13 +366,13 @@ export default function StaffDetailPage() {
                     }))
                   }
                   className={[
-                    "flex w-full items-center justify-between rounded-[22px] border px-4 py-4 text-left transition",
+                    "group relative flex w-full items-center justify-between overflow-hidden rounded-[26px] border px-5 py-4 text-left transition",
                     profileForm.cannotTakeNightShifts
-                      ? "border-blue-200 bg-blue-50"
-                      : "border-slate-200 bg-slate-50 hover:border-blue-200 hover:bg-blue-50/60",
+                      ? "border-blue-200 bg-[linear-gradient(135deg,rgba(59,91,219,0.1),rgba(74,108,247,0.08))] shadow-[0_20px_46px_-34px_rgba(37,99,235,0.4)]"
+                      : "border-slate-200 bg-white/80 hover:border-blue-200 hover:bg-blue-50/40",
                   ].join(" ")}
                 >
-                  <div>
+                  <div className="pr-4">
                     <p className="text-sm font-bold text-slate-900">Nobet tutamaz</p>
                     <p className="mt-1 text-xs font-medium leading-5 text-slate-500">
                       Gece veya nobet kategorisindeki mesailerde planlama disi tutulur.
@@ -364,14 +380,16 @@ export default function StaffDetailPage() {
                   </div>
                   <span
                     className={[
-                      "relative flex h-7 w-12 rounded-full transition",
-                      profileForm.cannotTakeNightShifts ? "bg-blue-600" : "bg-slate-300",
+                      "relative flex h-8 w-14 rounded-full border transition",
+                      profileForm.cannotTakeNightShifts
+                        ? "border-blue-500 bg-blue-600"
+                        : "border-slate-300 bg-slate-200",
                     ].join(" ")}
                   >
                     <span
                       className={[
-                        "absolute top-1 h-5 w-5 rounded-full bg-white transition",
-                        profileForm.cannotTakeNightShifts ? "left-6" : "left-1",
+                        "absolute top-1 h-6 w-6 rounded-full bg-white shadow-sm transition",
+                        profileForm.cannotTakeNightShifts ? "left-7" : "left-1",
                       ].join(" ")}
                     />
                   </span>
@@ -388,7 +406,7 @@ export default function StaffDetailPage() {
                       }))
                     }
                     className={[
-                      "flex w-full items-center justify-between rounded-[22px] border px-4 py-4 text-left transition",
+                      "flex w-full items-center justify-between rounded-[24px] border px-5 py-4 text-left transition",
                       profileForm.isNewMother
                         ? "border-pink-200 bg-pink-50"
                         : "border-slate-200 bg-slate-50 hover:border-pink-200 hover:bg-pink-50/60",
@@ -415,8 +433,6 @@ export default function StaffDetailPage() {
                     </span>
                   </button>
                 ) : null}
-              </div>
-
               <button
                 type="button"
                 onClick={saveProfileSettings}
