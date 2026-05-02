@@ -125,7 +125,7 @@ export function StaffPreferenceSelectionPanel({
   onToggleShift,
 }: SelectionPanelProps) {
   return (
-    <aside className="flex h-full flex-col rounded-[28px] border border-slate-200 bg-white/95 p-6 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.28)]">
+    <aside className="flex h-full min-h-0 flex-col overflow-auto rounded-[28px] border border-slate-200 bg-white/95 p-6 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.28)]">
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-[13px] font-extrabold uppercase tracking-[0.18em] text-slate-400">
