@@ -332,11 +332,11 @@ export default function StaffPreferenceCalendar({
                   !cell.isCurrentMonth ? "text-slate-300" : "text-slate-900",
                 ].join(" ")}
               >
-                <div className="flex items-center justify-between">
+                <div className="flex items-start justify-end">
                   <span
                     className={[
-                      "text-[13px] font-extrabold",
-                      cell.isToday ? "rounded-full bg-blue-600 px-3 py-2 text-white" : "",
+                      "text-[11px] font-bold",
+                      cell.isToday ? "rounded-full bg-blue-600 px-2.5 py-1.5 text-white" : "",
                     ].join(" ")}
                   >
                     {cell.dayNumber}
