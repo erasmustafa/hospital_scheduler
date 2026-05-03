@@ -252,11 +252,11 @@ export default function StaffPreferenceCalendar({
   }, {});
 
   return (
-    <section className="flex h-full flex-col rounded-[30px] border border-slate-200 bg-white/95 p-4 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.38)]">
-      <div className="flex flex-1 flex-col overflow-hidden rounded-[26px] border border-slate-200 bg-white">
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-[26px] border border-slate-200 bg-white">
         <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
           <div className="flex items-center gap-3">
-            <h3 className="text-[23px] font-bold tracking-[-0.02em] text-slate-900">
+            <h3 className="text-[20px] font-bold tracking-[-0.02em] text-slate-900">
               {getMonthTitle(monthDate)}
             </h3>
             <div className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-600">
@@ -305,10 +305,11 @@ export default function StaffPreferenceCalendar({
           ))}
         </div>
 
-        <div
-          className="grid flex-1 grid-cols-7"
-          style={{ gridTemplateRows: `repeat(${weekCount}, minmax(0, 1fr))` }}
-        >
+        <div className="min-h-0 flex-1">
+          <div
+            className="grid h-full grid-cols-7"
+            style={{ gridTemplateRows: `repeat(${weekCount}, minmax(0, 1fr))` }}
+          >
           {grid.map((cell) => {
             const items = preferenceMap[cell.date] ?? [];
             const isSelected = selectedDate === cell.date;
@@ -319,7 +320,7 @@ export default function StaffPreferenceCalendar({
                 type="button"
                 onClick={() => onSelectDate(cell.date)}
                 className={[
-                  "relative h-full min-h-0 border-b border-r border-slate-200 px-3 py-3 text-left transition last:border-r-0",
+                  "relative h-full min-h-0 overflow-hidden border-b border-r border-slate-200 px-3 py-3 text-left transition last:border-r-0",
                   cell.isCurrentMonth ? "bg-white" : "bg-slate-50/70",
                   isSelected ? "bg-blue-50 shadow-[inset_0_0_0_2px_#2563eb]" : "",
                   !cell.isCurrentMonth ? "text-slate-300" : "text-slate-900",
@@ -360,8 +361,9 @@ export default function StaffPreferenceCalendar({
               </button>
             );
           })}
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
