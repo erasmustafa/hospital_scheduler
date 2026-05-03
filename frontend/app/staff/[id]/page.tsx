@@ -281,8 +281,9 @@ export default function StaffDetailPage() {
           </div>
         ) : null}
 
-        <section className="grid min-h-0 flex-1 gap-3 xl:grid-cols-[272px_minmax(0,1fr)_336px] xl:items-stretch">
-          <aside className="flex h-full min-h-0 flex-col overflow-auto rounded-[28px] border border-slate-200 bg-white/95 p-4 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.35)]">
+        <section className="min-h-0 flex-1 rounded-[32px] border border-slate-200 bg-white/95 p-4 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.35)]">
+          <div className="grid h-full min-h-0 gap-3 xl:grid-cols-[272px_minmax(0,1fr)_336px] xl:items-stretch">
+          <aside className="flex h-full min-h-0 flex-col overflow-auto rounded-[24px] bg-transparent p-0">
             <div className="rounded-[24px] bg-[linear-gradient(180deg,#eef4ff_0%,#ffffff_100%)] px-4 pb-5 pt-5 text-center">
               <div className="mx-auto h-24 w-24 overflow-hidden rounded-full border-4 border-white bg-slate-100 shadow-[0_18px_38px_-22px_rgba(37,99,235,0.38)]">
                 <img
@@ -497,7 +498,7 @@ export default function StaffDetailPage() {
             </button>
           </aside>
 
-          <div className="flex h-full min-h-0 flex-col gap-4">
+          <div className="flex h-full min-h-0 flex-col gap-4 rounded-[24px] bg-transparent">
             <StaffPreferenceCalendar
               monthDate={monthDate}
               selectedDate={selectedDate}
@@ -514,7 +515,7 @@ export default function StaffDetailPage() {
             />
           </div>
 
-          <div className="flex h-full min-h-0 flex-col gap-4">
+          <div className="flex h-full min-h-0 flex-col gap-4 rounded-[24px] bg-transparent">
             <div className="grid grid-cols-3 gap-2.5">
               <article className="flex min-h-[124px] flex-col items-center justify-center rounded-[20px] border border-slate-200 bg-white/95 px-3 py-3 text-center shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
                 <div className="flex h-8 w-8 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
@@ -556,6 +557,7 @@ export default function StaffDetailPage() {
                 onToggleShift={handleToggleShift}
               />
             </div>
+          </div>
           </div>
         </section>
       </div>
