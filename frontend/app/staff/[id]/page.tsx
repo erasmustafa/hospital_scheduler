@@ -167,9 +167,9 @@ export default function StaffDetailPage() {
       return "08:00-12:00 yeni anne modeli";
     }
     if (profileForm.cannotTakeNightShifts) {
-      return "Gece veya nöbet dışı planlama";
+      return "Nöbet dışı";
     }
-    return "Standart vardiya modeli";
+    return "Standart";
   }, [profileForm]);
 
   const saveProfileSettings = useCallback(async () => {
@@ -298,7 +298,7 @@ export default function StaffDetailPage() {
                 {staff.departmentName ?? "Birim atanamadı"} · {staff.title || staff.profession || "Personel"}
               </p>
               <div className="mt-5 flex justify-center">
-                <div className="relative inline-flex w-[192px] rounded-full border border-slate-200 bg-slate-100/90 p-1 shadow-[0_14px_34px_-26px_rgba(15,23,42,0.35)]">
+                <div className="relative inline-flex w-[172px] rounded-full border border-slate-200 bg-slate-100/90 p-1 shadow-[0_14px_34px_-26px_rgba(15,23,42,0.35)]">
                   <span
                     className={[
                       "pointer-events-none absolute inset-y-1 w-[calc(50%-4px)] rounded-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
@@ -317,7 +317,7 @@ export default function StaffDetailPage() {
                       }))
                     }
                     className={[
-                      "relative z-10 flex-1 rounded-full px-4 py-2 text-sm font-bold transition duration-300",
+                      "relative z-10 flex-1 rounded-full px-3 py-1.5 text-[13px] font-bold transition duration-300",
                       profileForm.isActive
                         ? "text-white"
                         : "text-slate-500 hover:text-emerald-700",
@@ -334,7 +334,7 @@ export default function StaffDetailPage() {
                       }))
                     }
                     className={[
-                      "relative z-10 flex-1 rounded-full px-4 py-2 text-sm font-bold transition duration-300",
+                      "relative z-10 flex-1 rounded-full px-3 py-1.5 text-[13px] font-bold transition duration-300",
                       !profileForm.isActive
                         ? "text-white"
                         : "text-slate-500 hover:text-rose-700",
@@ -515,35 +515,35 @@ export default function StaffDetailPage() {
           </div>
 
           <div className="flex h-full min-h-0 flex-col gap-4">
-            <div className="grid grid-cols-3 gap-3">
-              <article className="rounded-[22px] border border-slate-200 bg-white/95 p-3 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
-                <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+            <div className="grid grid-cols-3 gap-2.5">
+              <article className="flex min-h-[124px] flex-col items-center justify-center rounded-[20px] border border-slate-200 bg-white/95 px-3 py-3 text-center shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
+                <div className="flex h-8 w-8 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
                   <CalendarClock className="h-4 w-4" />
                 </div>
-                <div className="mt-3 text-[28px] font-black leading-none tracking-[-0.05em] text-slate-900">
+                <div className="mt-2 text-[24px] font-black leading-none tracking-[-0.05em] text-slate-900">
                   {staff.weeklyLimitHours}
                 </div>
-                <p className="mt-1 text-[11px] font-semibold leading-4 text-slate-500">Haftalık limit saat</p>
+                <p className="mt-1 text-[10px] font-semibold leading-4 text-slate-500">Haftalık limit saat</p>
               </article>
 
-              <article className="rounded-[22px] border border-slate-200 bg-white/95 p-3 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
-                <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-amber-50 text-amber-500">
+              <article className="flex min-h-[124px] flex-col items-center justify-center rounded-[20px] border border-slate-200 bg-white/95 px-3 py-3 text-center shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
+                <div className="flex h-8 w-8 items-center justify-center rounded-2xl bg-amber-50 text-amber-500">
                   <MoonStar className="h-4 w-4" />
                 </div>
-                <div className="mt-3 text-sm font-black tracking-[-0.03em] text-slate-900">
+                <div className="mt-2 text-sm font-black tracking-[-0.03em] text-slate-900">
                   {profileForm.cannotTakeNightShifts || profileForm.isNewMother ? "Kısıtlı" : "Uygun"}
                 </div>
-                <p className="mt-1 text-[11px] font-semibold leading-4 text-slate-500">Gece / Nöbet planlaması</p>
+                <p className="mt-1 text-[10px] font-semibold leading-4 text-slate-500">Gece / Nöbet planlaması</p>
               </article>
 
-              <article className="rounded-[22px] border border-slate-200 bg-white/95 p-3 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
-                <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500">
+              <article className="flex min-h-[124px] flex-col items-center justify-center rounded-[20px] border border-slate-200 bg-white/95 px-3 py-3 text-center shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
+                <div className="flex h-8 w-8 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500">
                   <ShieldCheck className="h-4 w-4" />
                 </div>
-                <div className="mt-3 text-sm font-black leading-5 tracking-[-0.03em] text-slate-900">
+                <div className="mt-2 text-sm font-black leading-5 tracking-[-0.03em] text-slate-900">
                   {workingModelLabel}
                 </div>
-                <p className="mt-1 text-[11px] font-semibold leading-4 text-slate-500">Aktif çalışma modeli</p>
+                <p className="mt-1 text-[10px] font-semibold leading-4 text-slate-500">Aktif çalışma modeli</p>
               </article>
             </div>
 
