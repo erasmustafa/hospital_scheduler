@@ -33,6 +33,7 @@ type StaffPreferenceCalendarProps = {
   onToday: () => void;
   onSelectDate: (date: string | null) => void;
   onToggleShift: (shiftType: StaffShiftType, targetDate?: string) => void;
+  onToggleMonthShift: (shiftType: StaffShiftType, targetDates: string[]) => void;
 };
 
 type SelectionMenuProps = {
@@ -40,6 +41,7 @@ type SelectionMenuProps = {
   selectedDatePreferences: StaffShiftPreference[];
   savingShiftIds: number[];
   onToggleShift: (shiftType: StaffShiftType) => void;
+  title?: string | null;
 };
 
 type CalendarCell = {
@@ -108,13 +110,15 @@ function ShiftSelectionMenu({
   selectedDatePreferences,
   savingShiftIds,
   onToggleShift,
+  title,
 }: SelectionMenuProps) {
   return (
     <div className="w-[228px] rounded-[18px] border border-slate-200 bg-white/95 p-2 shadow-[0_26px_54px_-34px_rgba(15,23,42,0.36)] backdrop-blur-sm">
-      <div className="mb-2 px-1 pb-2 text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">
-        Vardiyaları Engelle
-      </div>
-
+      {title ? (
+        <div className="mb-2 px-1 text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">
+          {title}
+        </div>
+      ) : null}
       <div className="space-y-1.5">
         {shiftTypes.map((shiftType) => {
           const activePreference = selectedDatePreferences.find(
@@ -150,9 +154,12 @@ function ShiftSelectionMenu({
                   {shiftType.isNight ? <MoonStar className="h-3.5 w-3.5" /> : <Clock3 className="h-3.5 w-3.5" />}
                 </div>
                 <div>
-                  <p className="text-[11px] font-bold text-slate-900">{shiftType.name}</p>
-                  <p className="mt-0.5 text-[10px] font-medium text-slate-500">
-                    {formatShortTime(shiftType.startTime)} - {formatShortTime(shiftType.endTime)}
+                  <p className="text-[11px] font-bold text-slate-900">
+                    {shiftType.name}
+                    <span className="font-semibold text-slate-500">
+                      {" / "}
+                      {formatShortTime(shiftType.startTime)} - {formatShortTime(shiftType.endTime)}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -187,13 +194,18 @@ export default function StaffPreferenceCalendar({
   onToday,
   onSelectDate,
   onToggleShift,
+  onToggleMonthShift,
 }: StaffPreferenceCalendarProps) {
   const calendarRef = useRef<HTMLDivElement | null>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const bulkCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [renderedMenuDate, setRenderedMenuDate] = useState<string | null>(selectedDate);
   const [menuOpen, setMenuOpen] = useState(Boolean(selectedDate));
+  const [renderedBulkMenu, setRenderedBulkMenu] = useState(false);
+  const [bulkMenuOpen, setBulkMenuOpen] = useState(false);
   const grid = getMonthGrid(monthDate);
   const weekCount = Math.max(1, grid.length / 7);
+  const currentMonthDates = grid.filter((cell) => cell.isCurrentMonth).map((cell) => cell.date);
   const preferenceMap = preferences.reduce<Record<string, StaffShiftPreference[]>>((acc, item) => {
     if (!acc[item.date]) {
       acc[item.date] = [];
@@ -224,13 +236,33 @@ export default function StaffPreferenceCalendar({
   }, [renderedMenuDate, selectedDate]);
 
   useEffect(() => {
-    if (!selectedDate) {
+    if (bulkCloseTimerRef.current) {
+      clearTimeout(bulkCloseTimerRef.current);
+      bulkCloseTimerRef.current = null;
+    }
+
+    if (bulkMenuOpen) {
+      setRenderedBulkMenu(true);
+      return;
+    }
+
+    if (renderedBulkMenu) {
+      bulkCloseTimerRef.current = setTimeout(() => {
+        setRenderedBulkMenu(false);
+        bulkCloseTimerRef.current = null;
+      }, 180);
+    }
+  }, [bulkMenuOpen, renderedBulkMenu]);
+
+  useEffect(() => {
+    if (!selectedDate && !bulkMenuOpen) {
       return;
     }
 
     const handlePointerDown = (event: MouseEvent) => {
       if (!calendarRef.current?.contains(event.target as Node)) {
         onSelectDate(null);
+        setBulkMenuOpen(false);
       }
     };
 
@@ -238,12 +270,15 @@ export default function StaffPreferenceCalendar({
     return () => {
       document.removeEventListener("mousedown", handlePointerDown);
     };
-  }, [onSelectDate, selectedDate]);
+  }, [bulkMenuOpen, onSelectDate, selectedDate]);
 
   useEffect(() => {
     return () => {
       if (closeTimerRef.current) {
         clearTimeout(closeTimerRef.current);
+      }
+      if (bulkCloseTimerRef.current) {
+        clearTimeout(bulkCloseTimerRef.current);
       }
     };
   }, []);
@@ -262,8 +297,49 @@ export default function StaffPreferenceCalendar({
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600">
-              Ay
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setBulkMenuOpen((current) => !current)}
+                className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 hover:bg-blue-50"
+              >
+                Tümünü Seç
+              </button>
+              {renderedBulkMenu ? (
+                <div
+                  className={[
+                    "absolute right-0 top-[calc(100%+10px)] z-[90] transition-all duration-200 ease-out",
+                    bulkMenuOpen
+                      ? "translate-y-0 scale-100 opacity-100"
+                      : "pointer-events-none -translate-y-1 scale-95 opacity-0",
+                  ].join(" ")}
+                >
+                  <ShiftSelectionMenu
+                    shiftTypes={shiftTypes}
+                    selectedDatePreferences={shiftTypes
+                      .filter((shiftType) =>
+                        currentMonthDates.every((date) =>
+                          preferences.some(
+                            (item) => item.date === date && item.shiftTypeId === shiftType.id
+                          )
+                        )
+                      )
+                      .map((shiftType) => ({
+                        id: -shiftType.id,
+                        staffProfileId: -1,
+                        shiftTypeId: shiftType.id,
+                        date: currentMonthDates[0] ?? "",
+                        status: "unavailable",
+                        reason: "Ay boyu bloklu",
+                      }))}
+                    savingShiftIds={savingShiftIds}
+                    onToggleShift={(shiftType) => {
+                      onToggleMonthShift(shiftType, currentMonthDates);
+                      setBulkMenuOpen(false);
+                    }}
+                  />
+                </div>
+              ) : null}
             </div>
             <button
               type="button"
@@ -368,9 +444,6 @@ export default function StaffPreferenceCalendar({
                             <p className="truncate text-[11px] font-bold text-rose-700">
                               {shiftType.name}
                             </p>
-                            <p className="mt-0.5 text-[10px] font-semibold text-rose-600">
-                              {formatShortTime(shiftType.startTime)} - {formatShortTime(shiftType.endTime)}
-                            </p>
                           </div>
                           <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-150 group-hover/blocked:opacity-100">
                             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500 text-white shadow-[0_16px_28px_-18px_rgba(16,185,129,0.65)]">
@@ -393,7 +466,8 @@ export default function StaffPreferenceCalendar({
                         type="button"
                         onClick={(event) => {
                           event.stopPropagation();
-                          onSelectDate(isSelected ? null : cell.date);
+                        onSelectDate(isSelected ? null : cell.date);
+                          setBulkMenuOpen(false);
                         }}
                         className={[
                           "z-10 flex h-12 w-12 cursor-pointer items-center justify-center rounded-[18px] border transition duration-200 ease-out",
@@ -424,6 +498,7 @@ export default function StaffPreferenceCalendar({
                         selectedDatePreferences={selectedDatePreferences}
                         savingShiftIds={savingShiftIds}
                         onToggleShift={onToggleShift}
+                        title={null}
                       />
                     </div>
                   ) : null}

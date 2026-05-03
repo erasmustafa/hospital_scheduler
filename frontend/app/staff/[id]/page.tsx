@@ -235,6 +235,58 @@ export default function StaffDetailPage() {
     [preferences, selectedDate, staff]
   );
 
+  const handleToggleMonthShift = useCallback(
+    async (shiftType: StaffShiftType, targetDates: string[]) => {
+      if (!staff || targetDates.length === 0) {
+        return;
+      }
+
+      const monthDates = Array.from(new Set(targetDates));
+      const existingForShift = preferences.filter(
+        (item) => item.shiftTypeId === shiftType.id && monthDates.includes(item.date)
+      );
+      const existingDates = new Set(existingForShift.map((item) => item.date));
+      const allBlocked = monthDates.every((date) => existingDates.has(date));
+
+      setSavingShiftIds((current) => [...current, shiftType.id]);
+
+      try {
+        if (allBlocked) {
+          await Promise.all(
+            existingForShift.map((item) => apiClient.delete(`/availability/${item.id}/`))
+          );
+          setPreferences((current) =>
+            current.filter(
+              (item) => !(item.shiftTypeId === shiftType.id && monthDates.includes(item.date))
+            )
+          );
+        } else {
+          const missingDates = monthDates.filter((date) => !existingDates.has(date));
+          const createdItems = await Promise.all(
+            missingDates.map((date) =>
+              apiClient.post<StaffShiftPreference>("/availability/", {
+                staffProfileId: staff.id,
+                shiftTypeId: shiftType.id,
+                date,
+                status: "unavailable",
+                reason: "Personel profilinden ay geneli çalışmak istemediği mesai olarak işaretlendi.",
+              })
+            )
+          );
+
+          setPreferences((current) => [...createdItems, ...current]);
+        }
+
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Toplu mesai tercihi güncellenemedi.");
+      } finally {
+        setSavingShiftIds((current) => current.filter((value) => value !== shiftType.id));
+      }
+    },
+    [preferences, staff]
+  );
+
   if (loading) {
     return (
       <main className="flex h-full items-center justify-center bg-slate-50 text-sm font-semibold text-slate-500">
@@ -274,7 +326,7 @@ export default function StaffDetailPage() {
         ) : null}
 
         <section className="min-h-0 flex-1 rounded-[32px] border border-slate-200 bg-white/95 p-4 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.35)]">
-          <div className="grid h-full min-h-0 gap-3 xl:grid-cols-[272px_minmax(0,1fr)_152px] xl:items-stretch">
+          <div className="grid h-full min-h-0 gap-3 xl:grid-cols-[272px_minmax(0,1fr)_137px] xl:items-stretch">
           <aside className="flex h-full min-h-0 flex-col overflow-auto rounded-[24px] bg-transparent p-0">
             <div className="rounded-[24px] bg-[linear-gradient(180deg,#eef4ff_0%,#ffffff_100%)] px-4 pb-5 pt-5 text-center">
               <div className="mx-auto h-24 w-24 overflow-hidden rounded-full border-4 border-white bg-slate-100 shadow-[0_18px_38px_-22px_rgba(37,99,235,0.38)]">
@@ -509,6 +561,7 @@ export default function StaffDetailPage() {
                 setSelectedDate((current) => (current === date ? null : date))
               }
               onToggleShift={handleToggleShift}
+              onToggleMonthShift={handleToggleMonthShift}
             />
           </div>
 
