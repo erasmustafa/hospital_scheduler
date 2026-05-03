@@ -264,13 +264,22 @@ export default function StaffPreferenceCalendar({
               return (
                 <div
                   key={cell.date}
+                  onClick={() => {
+                    if (cell.isCurrentMonth && hasBlockedShifts) {
+                      onSelectDate(isSelected ? null : cell.date);
+                    }
+                  }}
                   className={[
                     "group relative h-full min-h-0 overflow-visible border-b border-r border-slate-200 px-3 py-3 text-left transition-colors duration-300 last:border-r-0",
                     cell.isCurrentMonth ? "bg-white" : "bg-slate-50/70",
                     hasBlockedShifts
-                      ? "bg-rose-50/85 hover:bg-emerald-50/90"
+                      ? "cursor-pointer hover:bg-emerald-50/90"
                       : "",
-                    isSelected ? "bg-rose-50/80 shadow-[inset_0_0_0_2px_rgba(244,63,94,0.34)]" : "",
+                    isSelected
+                      ? hasBlockedShifts
+                        ? "shadow-[inset_0_0_0_2px_rgba(244,63,94,0.34)]"
+                        : "bg-rose-50/80 shadow-[inset_0_0_0_2px_rgba(244,63,94,0.34)]"
+                      : "",
                     !cell.isCurrentMonth ? "text-slate-300" : "text-slate-900",
                   ].join(" ")}
                 >
@@ -291,15 +300,17 @@ export default function StaffPreferenceCalendar({
                       }
 
                       return (
-                        <p
+                        <div
                           key={item.id}
-                          className="truncate text-[11px] font-bold text-rose-700"
+                          className="rounded-xl border border-dashed border-rose-300 bg-rose-50 px-2.5 py-2 text-left"
                         >
-                          {shiftType.name}{" "}
-                          <span className="font-semibold text-slate-500">
-                            / {formatShortTime(shiftType.startTime)} - {formatShortTime(shiftType.endTime)}
-                          </span>
-                        </p>
+                          <p className="truncate text-[11px] font-bold text-rose-700">
+                            {shiftType.name}
+                          </p>
+                          <p className="mt-1 text-[10px] font-semibold text-rose-600">
+                            {formatShortTime(shiftType.startTime)} - {formatShortTime(shiftType.endTime)}
+                          </p>
+                        </div>
                       );
                     })}
                     {items.length > 2 ? (
