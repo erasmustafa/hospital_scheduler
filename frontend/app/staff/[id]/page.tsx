@@ -281,24 +281,24 @@ export default function StaffDetailPage() {
           </div>
         ) : null}
 
-        <section className="grid min-h-0 flex-1 gap-3 xl:grid-cols-[320px_minmax(0,1fr)_336px] xl:items-stretch">
-          <aside className="flex h-full min-h-0 flex-col overflow-auto rounded-[32px] border border-slate-200 bg-white/95 p-6 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.35)]">
-            <div className="rounded-[28px] bg-[linear-gradient(180deg,#eef4ff_0%,#ffffff_100%)] px-5 pb-6 pt-7 text-center">
-              <div className="mx-auto h-28 w-28 overflow-hidden rounded-full border-4 border-white bg-slate-100 shadow-[0_18px_38px_-22px_rgba(37,99,235,0.38)]">
+        <section className="grid min-h-0 flex-1 gap-3 xl:grid-cols-[272px_minmax(0,1fr)_336px] xl:items-stretch">
+          <aside className="flex h-full min-h-0 flex-col overflow-auto rounded-[28px] border border-slate-200 bg-white/95 p-4 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.35)]">
+            <div className="rounded-[24px] bg-[linear-gradient(180deg,#eef4ff_0%,#ffffff_100%)] px-4 pb-5 pt-5 text-center">
+              <div className="mx-auto h-24 w-24 overflow-hidden rounded-full border-4 border-white bg-slate-100 shadow-[0_18px_38px_-22px_rgba(37,99,235,0.38)]">
                 <img
                   src={staff.photoUrl || getDefaultAvatarSrc(staff.gender)}
                   alt={staff.fullName}
                   className="h-full w-full object-cover"
                 />
               </div>
-              <h2 className="mt-5 text-[32px] font-black tracking-[-0.04em] text-slate-900">
+              <h2 className="mt-4 text-[28px] font-black tracking-[-0.04em] text-slate-900">
                 {staff.fullName}
               </h2>
-              <p className="mt-2 text-sm font-semibold text-slate-500">
+              <p className="mt-2 text-[13px] font-semibold text-slate-500">
                 {staff.departmentName ?? "Birim atanamadı"} · {staff.title || staff.profession || "Personel"}
               </p>
-              <div className="mt-5 flex justify-center">
-                <div className="relative inline-flex w-[172px] rounded-full border border-slate-200 bg-slate-100/90 p-1 shadow-[0_14px_34px_-26px_rgba(15,23,42,0.35)]">
+              <div className="mt-4 flex justify-center">
+                <div className="relative inline-flex w-[160px] rounded-full border border-slate-200 bg-slate-100/90 p-1 shadow-[0_14px_34px_-26px_rgba(15,23,42,0.35)]">
                   <span
                     className={[
                       "pointer-events-none absolute inset-y-1 w-[calc(50%-4px)] rounded-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
@@ -317,7 +317,7 @@ export default function StaffDetailPage() {
                       }))
                     }
                     className={[
-                      "relative z-10 flex-1 rounded-full px-3 py-1.5 text-[13px] font-bold transition duration-300",
+                      "relative z-10 flex-1 rounded-full px-2.5 py-1.5 text-[12px] font-bold transition duration-300",
                       profileForm.isActive
                         ? "text-white"
                         : "text-slate-500 hover:text-emerald-700",
@@ -334,7 +334,7 @@ export default function StaffDetailPage() {
                       }))
                     }
                     className={[
-                      "relative z-10 flex-1 rounded-full px-3 py-1.5 text-[13px] font-bold transition duration-300",
+                      "relative z-10 flex-1 rounded-full px-2.5 py-1.5 text-[12px] font-bold transition duration-300",
                       !profileForm.isActive
                         ? "text-white"
                         : "text-slate-500 hover:text-rose-700",
@@ -346,29 +346,29 @@ export default function StaffDetailPage() {
               </div>
             </div>
 
-            <div className="mt-6 space-y-4 rounded-[26px] border border-slate-200 bg-slate-50/80 p-5">
-              <div className="flex items-center gap-3 text-sm font-semibold text-slate-700">
+            <div className="mt-4 space-y-3 rounded-[22px] border border-slate-200 bg-slate-50/80 p-4">
+              <div className="flex items-center gap-2.5 text-[13px] font-semibold text-slate-700">
                 <BadgeCheck className="h-4 w-4 text-blue-600" />
                 Sicil No: <span className="font-bold text-slate-900">{staff.employeeNo ?? staff.id}</span>
               </div>
-              <div className="flex items-center gap-3 text-sm font-semibold text-slate-700">
+              <div className="flex items-center gap-2.5 text-[13px] font-semibold text-slate-700">
                 <Phone className="h-4 w-4 text-blue-600" />
                 Telefon: <span className="font-bold text-slate-900">{staff.phone || "Belirtilmedi"}</span>
               </div>
-              <div className="flex items-center gap-3 text-sm font-semibold text-slate-700">
+              <div className="flex items-center gap-2.5 text-[13px] font-semibold text-slate-700">
                 <Mail className="h-4 w-4 text-blue-600" />
                 E-posta: <span className="break-all font-bold text-slate-900">{staff.email || "Belirtilmedi"}</span>
               </div>
-              <div className="flex items-center gap-3 text-sm font-semibold text-slate-700">
+              <div className="flex items-center gap-2.5 text-[13px] font-semibold text-slate-700">
                 <BriefcaseBusiness className="h-4 w-4 text-blue-600" />
                 Meslek: <span className="font-bold text-slate-900">{staff.profession || "Belirtilmedi"}</span>
               </div>
-              <div className="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+              <div className="flex items-center justify-between gap-2.5 text-[13px] font-semibold text-slate-700">
                 <span className="inline-flex shrink-0 items-center gap-2">
                   <img src="/icons/venus-and-mars.svg" alt="" className="h-4 w-4 object-contain" />
                   Cinsiyet:
                 </span>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   <button
                     type="button"
                     onClick={() =>
@@ -378,7 +378,7 @@ export default function StaffDetailPage() {
                       }))
                     }
                     className={[
-                      "inline-flex items-center justify-center rounded-2xl border p-2 transition",
+                      "inline-flex items-center justify-center rounded-xl border p-1.5 transition",
                       profileForm.gender === "female"
                         ? "border-pink-200 bg-pink-50 shadow-[0_12px_24px_-20px_rgba(236,72,153,0.45)]"
                         : "border-slate-200 bg-white hover:border-pink-200 hover:bg-pink-50/70",
@@ -398,7 +398,7 @@ export default function StaffDetailPage() {
                       }))
                     }
                     className={[
-                      "inline-flex items-center justify-center rounded-2xl border p-2 transition",
+                      "inline-flex items-center justify-center rounded-xl border p-1.5 transition",
                       profileForm.gender === "male"
                         ? "border-blue-200 bg-blue-50 shadow-[0_12px_24px_-20px_rgba(37,99,235,0.42)]"
                         : "border-slate-200 bg-white hover:border-blue-200 hover:bg-blue-50/70",
@@ -412,7 +412,7 @@ export default function StaffDetailPage() {
               </div>
             </div>
 
-            <div className="mt-6 grid grid-cols-2 gap-3">
+            <div className="mt-4 grid grid-cols-2 gap-2.5">
               <button
                 type="button"
                 onClick={() =>
@@ -422,13 +422,13 @@ export default function StaffDetailPage() {
                   }))
                 }
                 className={[
-                  "group relative flex min-h-[140px] w-full flex-col items-center justify-center overflow-hidden rounded-[26px] border px-4 py-4 text-center transition",
+                  "group relative flex min-h-[122px] w-full flex-col items-center justify-center overflow-hidden rounded-[22px] border px-3 py-3 text-center transition",
                   profileForm.cannotTakeNightShifts
                     ? "border-blue-200 bg-[linear-gradient(135deg,rgba(59,91,219,0.1),rgba(74,108,247,0.08))] shadow-[0_20px_46px_-34px_rgba(37,99,235,0.4)]"
                     : "border-slate-200 bg-white/80 hover:border-blue-200 hover:bg-blue-50/40",
                 ].join(" ")}
               >
-                <div className="mb-4 flex w-full items-start justify-center gap-3">
+                  <div className="mb-3 flex w-full items-start justify-center gap-3">
                   <span
                     className={[
                       "mt-0.5 flex h-5 w-5 items-center justify-center rounded-md border text-[12px] font-black transition",
@@ -441,8 +441,8 @@ export default function StaffDetailPage() {
                   </span>
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-slate-900">Nöbet tutamaz</p>
-                  <p className="mt-1 text-xs font-medium leading-5 text-slate-500">24 saat çalışamaz</p>
+                  <p className="text-[13px] font-bold text-slate-900">Nöbet tutamaz</p>
+                  <p className="mt-1 text-[11px] font-medium leading-4 text-slate-500">24 saat çalışamaz</p>
                 </div>
               </button>
 
@@ -460,7 +460,7 @@ export default function StaffDetailPage() {
                   }));
                 }}
                 className={[
-                  "flex min-h-[140px] w-full flex-col items-center justify-center rounded-[24px] border px-4 py-4 text-center transition",
+                  "flex min-h-[122px] w-full flex-col items-center justify-center rounded-[22px] border px-3 py-3 text-center transition",
                   profileForm.gender !== "female"
                     ? "cursor-not-allowed border-slate-200 bg-slate-100/90 opacity-60"
                     : profileForm.isNewMother
@@ -468,7 +468,7 @@ export default function StaffDetailPage() {
                       : "border-slate-200 bg-slate-50 hover:border-pink-200 hover:bg-pink-50/60",
                 ].join(" ")}
               >
-                <div className="mb-4 flex w-full items-start justify-center gap-3">
+                  <div className="mb-3 flex w-full items-start justify-center gap-3">
                   <span
                     className={[
                       "mt-0.5 flex h-5 w-5 items-center justify-center rounded-md border text-[12px] font-black transition",
@@ -481,8 +481,8 @@ export default function StaffDetailPage() {
                   </span>
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-slate-900">Yeni anne</p>
-                  <p className="mt-1 text-xs font-medium leading-5 text-slate-500">08:00-12:00 arasında çalışır</p>
+                  <p className="text-[13px] font-bold text-slate-900">Yeni anne</p>
+                  <p className="mt-1 text-[11px] font-medium leading-4 text-slate-500">08:00-12:00 arasında çalışır</p>
                 </div>
               </button>
             </div>
@@ -491,7 +491,7 @@ export default function StaffDetailPage() {
               type="button"
               onClick={saveProfileSettings}
               disabled={savingProfile}
-              className="mt-6 w-full rounded-2xl bg-[linear-gradient(135deg,#4A6CF7_0%,#3B5BDB_100%)] px-4 py-3 text-sm font-bold text-white shadow-[0_18px_38px_-24px_rgba(37,99,235,0.52)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-5 w-full rounded-2xl bg-[linear-gradient(135deg,#4A6CF7_0%,#3B5BDB_100%)] px-4 py-3 text-sm font-bold text-white shadow-[0_18px_38px_-24px_rgba(37,99,235,0.52)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {savingProfile ? "Kaydediliyor..." : "Profil kurallarını kaydet"}
             </button>
