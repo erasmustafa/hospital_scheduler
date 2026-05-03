@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { apiClient } from "@/lib/api";
 import StaffPreferenceCalendar, {
-  StaffPreferenceSelectionPanel,
   type StaffShiftPreference,
   type StaffShiftType,
 } from "@/components/staff/staff-preference-calendar";
@@ -504,6 +503,8 @@ export default function StaffDetailPage() {
               selectedDate={selectedDate}
               shiftTypes={shiftTypes}
               preferences={preferences}
+              selectedDatePreferences={selectedPreferences}
+              savingShiftIds={savingShiftIds}
               onPrevMonth={() =>
                 setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1))
               }
@@ -512,6 +513,8 @@ export default function StaffDetailPage() {
               }
               onToday={() => setMonthDate(new Date())}
               onSelectDate={setSelectedDate}
+              onToggleShift={handleToggleShift}
+              onClearSelection={() => setSelectedDate(null)}
             />
           </div>
 
@@ -546,16 +549,6 @@ export default function StaffDetailPage() {
                 </div>
                 <p className="mt-1 text-[10px] font-semibold leading-4 text-slate-500">Aktif çalışma modeli</p>
               </article>
-            </div>
-
-            <div className="min-h-0 flex-1">
-              <StaffPreferenceSelectionPanel
-                selectedDate={selectedDate}
-                shiftTypes={shiftTypes}
-                selectedDatePreferences={selectedPreferences}
-                savingShiftIds={savingShiftIds}
-                onToggleShift={handleToggleShift}
-              />
             </div>
           </div>
           </div>
