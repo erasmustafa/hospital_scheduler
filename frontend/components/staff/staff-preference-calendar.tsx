@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Ban, ChevronLeft, ChevronRight, Clock3, MoonStar } from "lucide-react";
 
 export type StaffShiftPreference = {
@@ -189,6 +189,9 @@ export default function StaffPreferenceCalendar({
   onToggleShift,
 }: StaffPreferenceCalendarProps) {
   const calendarRef = useRef<HTMLDivElement | null>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [renderedMenuDate, setRenderedMenuDate] = useState<string | null>(selectedDate);
+  const [menuOpen, setMenuOpen] = useState(Boolean(selectedDate));
   const grid = getMonthGrid(monthDate);
   const weekCount = Math.max(1, grid.length / 7);
   const preferenceMap = preferences.reduce<Record<string, StaffShiftPreference[]>>((acc, item) => {
@@ -198,6 +201,27 @@ export default function StaffPreferenceCalendar({
     acc[item.date].push(item);
     return acc;
   }, {});
+
+  useEffect(() => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+
+    if (selectedDate) {
+      setRenderedMenuDate(selectedDate);
+      setMenuOpen(true);
+      return;
+    }
+
+    if (renderedMenuDate) {
+      setMenuOpen(false);
+      closeTimerRef.current = setTimeout(() => {
+        setRenderedMenuDate(null);
+        closeTimerRef.current = null;
+      }, 180);
+    }
+  }, [renderedMenuDate, selectedDate]);
 
   useEffect(() => {
     if (!selectedDate) {
@@ -215,6 +239,14 @@ export default function StaffPreferenceCalendar({
       document.removeEventListener("mousedown", handlePointerDown);
     };
   }, [onSelectDate, selectedDate]);
+
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current) {
+        clearTimeout(closeTimerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div ref={calendarRef} className="flex h-full min-h-0 flex-col">
@@ -278,6 +310,7 @@ export default function StaffPreferenceCalendar({
             {grid.map((cell) => {
               const items = preferenceMap[cell.date] ?? [];
               const isSelected = selectedDate === cell.date;
+              const isMenuRendered = renderedMenuDate === cell.date;
               const hasBlockedShifts = items.length > 0;
 
               return (
@@ -290,6 +323,7 @@ export default function StaffPreferenceCalendar({
                   }}
                   className={[
                     "group relative h-full min-h-0 overflow-visible border-b border-r border-slate-200 px-3 py-3 text-left transition-colors duration-300 last:border-r-0",
+                    isMenuRendered ? "z-20" : "",
                     cell.isCurrentMonth ? "bg-white" : "bg-slate-50/70",
                     hasBlockedShifts
                       ? "cursor-pointer hover:bg-emerald-50/90"
@@ -357,8 +391,15 @@ export default function StaffPreferenceCalendar({
                     </div>
                   ) : null}
 
-                  {isSelected && cell.isCurrentMonth ? (
-                    <div className="absolute left-1/2 top-[calc(50%+34px)] z-30 -translate-x-1/2">
+                  {isMenuRendered && cell.isCurrentMonth ? (
+                    <div
+                      className={[
+                        "absolute left-1/2 top-[calc(50%+34px)] z-[80] -translate-x-1/2 transition-all duration-200 ease-out",
+                        menuOpen
+                          ? "translate-y-0 scale-100 opacity-100"
+                          : "pointer-events-none -translate-y-1 scale-95 opacity-0",
+                      ].join(" ")}
+                    >
                       <ShiftSelectionMenu
                         shiftTypes={shiftTypes}
                         selectedDatePreferences={selectedDatePreferences}
