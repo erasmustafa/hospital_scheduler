@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { Ban, ChevronLeft, ChevronRight, Clock3, MoonStar } from "lucide-react";
 
 export type StaffShiftPreference = {
@@ -187,6 +188,7 @@ export default function StaffPreferenceCalendar({
   onSelectDate,
   onToggleShift,
 }: StaffPreferenceCalendarProps) {
+  const calendarRef = useRef<HTMLDivElement | null>(null);
   const grid = getMonthGrid(monthDate);
   const weekCount = Math.max(1, grid.length / 7);
   const preferenceMap = preferences.reduce<Record<string, StaffShiftPreference[]>>((acc, item) => {
@@ -197,8 +199,25 @@ export default function StaffPreferenceCalendar({
     return acc;
   }, {});
 
+  useEffect(() => {
+    if (!selectedDate) {
+      return;
+    }
+
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!calendarRef.current?.contains(event.target as Node)) {
+        onSelectDate(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+    };
+  }, [onSelectDate, selectedDate]);
+
   return (
-    <div className="flex h-full min-h-0 flex-col">
+    <div ref={calendarRef} className="flex h-full min-h-0 flex-col">
       <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-[26px] border border-slate-200 bg-white">
         <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
           <div className="flex items-center gap-3">
@@ -302,13 +321,10 @@ export default function StaffPreferenceCalendar({
                       return (
                         <div
                           key={item.id}
-                          className="rounded-xl border border-dashed border-rose-300 bg-rose-50 px-2.5 py-2 text-left"
+                          className="rounded-lg border border-dashed border-rose-300 bg-rose-50 px-2 py-1.5 text-left"
                         >
                           <p className="truncate text-[11px] font-bold text-rose-700">
                             {shiftType.name}
-                          </p>
-                          <p className="mt-1 text-[10px] font-semibold text-rose-600">
-                            {formatShortTime(shiftType.startTime)} - {formatShortTime(shiftType.endTime)}
                           </p>
                         </div>
                       );
