@@ -1,6 +1,6 @@
 "use client";
 
-import { Ban, CalendarDays, ChevronLeft, ChevronRight, Clock3, MoonStar, X } from "lucide-react";
+import { Ban, ChevronLeft, ChevronRight, Clock3, MoonStar } from "lucide-react";
 
 export type StaffShiftPreference = {
   id: number;
@@ -30,18 +30,15 @@ type StaffPreferenceCalendarProps = {
   onPrevMonth: () => void;
   onNextMonth: () => void;
   onToday: () => void;
-  onSelectDate: (date: string) => void;
+  onSelectDate: (date: string | null) => void;
   onToggleShift: (shiftType: StaffShiftType) => void;
-  onClearSelection?: () => void;
 };
 
-type SelectionPanelProps = {
-  selectedDate: string | null;
+type SelectionMenuProps = {
   shiftTypes: StaffShiftType[];
   selectedDatePreferences: StaffShiftPreference[];
   savingShiftIds: number[];
   onToggleShift: (shiftType: StaffShiftType) => void;
-  onClose?: () => void;
 };
 
 type CalendarCell = {
@@ -77,23 +74,6 @@ function getMonthTitle(date: Date) {
     .replace(/^./, (char) => char.toUpperCase());
 }
 
-function getFullDateLabel(date: string) {
-  return new Intl.DateTimeFormat("tr-TR", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  })
-    .format(new Date(`${date}T12:00:00`))
-    .replace(/^./, (char) => char.toUpperCase());
-}
-
-function getWeekdayBadge(date: string) {
-  return new Intl.DateTimeFormat("tr-TR", { weekday: "long" })
-    .format(new Date(`${date}T12:00:00`))
-    .replace(/^./, (char) => char.toUpperCase());
-}
-
 function getMonthGrid(date: Date) {
   const year = date.getFullYear();
   const monthIndex = date.getMonth();
@@ -122,45 +102,19 @@ function formatShortTime(time: string) {
   return time.slice(0, 5);
 }
 
-export function StaffPreferenceSelectionPanel({
-  selectedDate,
+function ShiftSelectionMenu({
   shiftTypes,
   selectedDatePreferences,
   savingShiftIds,
   onToggleShift,
-  onClose,
-}: SelectionPanelProps) {
+}: SelectionMenuProps) {
   return (
-    <aside className="flex w-full max-w-[280px] flex-col overflow-hidden rounded-[24px] border border-slate-200 bg-white/95 shadow-[0_24px_70px_-40px_rgba(37,99,235,0.32)] backdrop-blur-sm">
-      <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
-        <div className="min-w-0">
-          <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-slate-400">
-            Vardiya Engelle
-          </p>
-          <h3 className="mt-1 truncate text-sm font-bold text-slate-900">
-            {selectedDate ? getFullDateLabel(selectedDate) : "Takvimden gün seç"}
-          </h3>
-        </div>
-        <div className="flex items-center gap-2">
-          {selectedDate ? (
-            <div className="rounded-full bg-blue-50 px-3 py-1 text-[11px] font-bold text-blue-600">
-              {getWeekdayBadge(selectedDate)}
-            </div>
-          ) : null}
-          {onClose ? (
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600"
-              aria-label="Seçimi kapat"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          ) : null}
-        </div>
+    <div className="w-[228px] rounded-[18px] border border-slate-200 bg-white/95 p-2 shadow-[0_26px_54px_-34px_rgba(15,23,42,0.36)] backdrop-blur-sm">
+      <div className="mb-2 px-1 pb-2 text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">
+        Vardiyaları Engelle
       </div>
 
-      <div className="space-y-2 p-3">
+      <div className="space-y-1.5">
         {shiftTypes.map((shiftType) => {
           const activePreference = selectedDatePreferences.find(
             (item) => item.shiftTypeId === shiftType.id
@@ -171,30 +125,32 @@ export function StaffPreferenceSelectionPanel({
             <button
               key={shiftType.id}
               type="button"
-              onClick={() => onToggleShift(shiftType)}
-              disabled={!selectedDate || isSaving}
+              onClick={(event) => {
+                event.stopPropagation();
+                onToggleShift(shiftType);
+              }}
+              disabled={isSaving}
               className={[
-                "flex w-full items-center justify-between rounded-[18px] border px-3 py-3 text-left transition",
+                "flex w-full items-center justify-between rounded-[12px] border px-2.5 py-2 text-left transition",
                 activePreference
-                  ? "border-blue-200 bg-blue-50/70 shadow-[0_16px_30px_-26px_rgba(37,99,235,0.35)]"
-                  : "border-slate-200 bg-white hover:border-blue-200 hover:bg-blue-50/40",
-                !selectedDate ? "cursor-not-allowed opacity-55" : "",
+                  ? "border-rose-200 bg-rose-50/80 shadow-[0_14px_24px_-24px_rgba(244,63,94,0.32)]"
+                  : "border-slate-200 bg-white hover:border-rose-200 hover:bg-rose-50/40",
+                isSaving ? "opacity-60" : "",
               ].join(" ")}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2.5">
                 <div
-                  className="flex h-9 w-9 items-center justify-center rounded-2xl"
+                  className="flex h-7 w-7 items-center justify-center rounded-xl"
                   style={{
                     backgroundColor: `${shiftType.color}20`,
                     color: shiftType.color,
                   }}
                 >
-                  {shiftType.isNight ? <MoonStar className="h-4 w-4" /> : <Clock3 className="h-4 w-4" />}
+                  {shiftType.isNight ? <MoonStar className="h-3.5 w-3.5" /> : <Clock3 className="h-3.5 w-3.5" />}
                 </div>
-
                 <div>
-                  <p className="text-[13px] font-bold text-slate-900">{shiftType.name}</p>
-                  <p className="mt-0.5 text-[11px] font-medium text-slate-500">
+                  <p className="text-[11px] font-bold text-slate-900">{shiftType.name}</p>
+                  <p className="mt-0.5 text-[10px] font-medium text-slate-500">
                     {formatShortTime(shiftType.startTime)} - {formatShortTime(shiftType.endTime)}
                   </p>
                 </div>
@@ -202,9 +158,9 @@ export function StaffPreferenceSelectionPanel({
 
               <span
                 className={[
-                  "flex h-6 w-6 items-center justify-center rounded-md border text-[11px] font-black transition",
+                  "flex h-5 w-5 items-center justify-center rounded-md border text-[10px] font-black transition",
                   activePreference
-                    ? "border-blue-500 bg-blue-500 text-white"
+                    ? "border-rose-500 bg-rose-500 text-white"
                     : "border-slate-300 bg-white text-transparent",
                 ].join(" ")}
               >
@@ -214,7 +170,7 @@ export function StaffPreferenceSelectionPanel({
           );
         })}
       </div>
-    </aside>
+    </div>
   );
 }
 
@@ -230,7 +186,6 @@ export default function StaffPreferenceCalendar({
   onToday,
   onSelectDate,
   onToggleShift,
-  onClearSelection,
 }: StaffPreferenceCalendarProps) {
   const grid = getMonthGrid(monthDate);
   const weekCount = Math.max(1, grid.length / 7);
@@ -244,7 +199,7 @@ export default function StaffPreferenceCalendar({
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="relative flex h-full min-h-0 flex-col overflow-hidden rounded-[26px] border border-slate-200 bg-white">
+      <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-[26px] border border-slate-200 bg-white">
         <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
           <div className="flex items-center gap-3">
             <h3 className="text-[20px] font-bold tracking-[-0.02em] text-slate-900">
@@ -306,29 +261,15 @@ export default function StaffPreferenceCalendar({
               const isSelected = selectedDate === cell.date;
 
               return (
-                <button
+                <div
                   key={cell.date}
-                  type="button"
-                  onClick={() => onSelectDate(cell.date)}
                   className={[
-                    "group relative h-full min-h-0 overflow-hidden border-b border-r border-slate-200 px-3 py-3 text-left transition last:border-r-0",
+                    "group relative h-full min-h-0 overflow-visible border-b border-r border-slate-200 px-3 py-3 text-left last:border-r-0",
                     cell.isCurrentMonth ? "bg-white" : "bg-slate-50/70",
-                    isSelected
-                      ? "bg-blue-50 shadow-[inset_0_0_0_2px_#2563eb]"
-                      : cell.isCurrentMonth
-                        ? "hover:bg-rose-50/75 hover:shadow-[inset_0_0_0_1px_rgba(244,63,94,0.24)]"
-                        : "",
+                    isSelected ? "bg-rose-50/80 shadow-[inset_0_0_0_2px_rgba(244,63,94,0.34)]" : "",
                     !cell.isCurrentMonth ? "text-slate-300" : "text-slate-900",
                   ].join(" ")}
                 >
-                  {cell.isCurrentMonth && !isSelected ? (
-                    <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition duration-200 group-hover:opacity-100">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-[18px] bg-rose-100/90 text-rose-500 shadow-[0_18px_30px_-22px_rgba(244,63,94,0.45)]">
-                        <Ban className="h-6 w-6" />
-                      </div>
-                    </div>
-                  ) : null}
-
                   <span
                     className={[
                       "absolute right-3 top-3 text-[10px] font-bold",
@@ -363,26 +304,43 @@ export default function StaffPreferenceCalendar({
                       </span>
                     ) : null}
                   </div>
-                </button>
+
+                  {cell.isCurrentMonth ? (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onSelectDate(isSelected ? null : cell.date);
+                        }}
+                        className={[
+                          "z-10 flex h-12 w-12 items-center justify-center rounded-[18px] border transition duration-200",
+                          isSelected
+                            ? "border-rose-200 bg-rose-100 text-rose-600 shadow-[0_18px_30px_-22px_rgba(244,63,94,0.42)]"
+                            : "border-rose-100 bg-rose-100/90 text-rose-500 opacity-0 shadow-[0_18px_30px_-22px_rgba(244,63,94,0.32)] group-hover:opacity-100",
+                        ].join(" ")}
+                        aria-label={`${cell.dayNumber}. gün için vardiya engelleme menüsünü aç`}
+                      >
+                        <Ban className="h-6 w-6" />
+                      </button>
+                    </div>
+                  ) : null}
+
+                  {isSelected && cell.isCurrentMonth ? (
+                    <div className="absolute left-1/2 top-[calc(50%+34px)] z-30 -translate-x-1/2">
+                      <ShiftSelectionMenu
+                        shiftTypes={shiftTypes}
+                        selectedDatePreferences={selectedDatePreferences}
+                        savingShiftIds={savingShiftIds}
+                        onToggleShift={onToggleShift}
+                      />
+                    </div>
+                  ) : null}
+                </div>
               );
             })}
           </div>
         </div>
-
-        {selectedDate ? (
-          <div className="pointer-events-none absolute inset-0 z-20 flex items-start justify-end p-3">
-            <div className="pointer-events-auto w-full max-w-[280px]">
-              <StaffPreferenceSelectionPanel
-                selectedDate={selectedDate}
-                shiftTypes={shiftTypes}
-                selectedDatePreferences={selectedDatePreferences}
-                savingShiftIds={savingShiftIds}
-                onToggleShift={onToggleShift}
-                onClose={onClearSelection}
-              />
-            </div>
-          </div>
-        ) : null}
       </div>
     </div>
   );
