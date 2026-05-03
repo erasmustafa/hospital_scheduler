@@ -200,12 +200,15 @@ export default function StaffDetailPage() {
   }, [profileForm, staff]);
 
   const handleToggleShift = useCallback(
-    async (shiftType: StaffShiftType) => {
-      if (!selectedDate || !staff) {
+    async (shiftType: StaffShiftType, targetDate?: string) => {
+      const effectiveDate = targetDate ?? selectedDate;
+      if (!effectiveDate || !staff) {
         return;
       }
 
-      const existing = selectedPreferences.find((item) => item.shiftTypeId === shiftType.id);
+      const existing = preferences.find(
+        (item) => item.date === effectiveDate && item.shiftTypeId === shiftType.id
+      );
       setSavingShiftIds((current) => [...current, shiftType.id]);
 
       try {
@@ -216,7 +219,7 @@ export default function StaffDetailPage() {
           const created = await apiClient.post<StaffShiftPreference>("/availability/", {
             staffProfileId: staff.id,
             shiftTypeId: shiftType.id,
-            date: selectedDate,
+            date: effectiveDate,
             status: "unavailable",
             reason: "Personel profilinden çalışmak istemediği mesai olarak işaretlendi.",
           });
@@ -229,7 +232,7 @@ export default function StaffDetailPage() {
         setSavingShiftIds((current) => current.filter((value) => value !== shiftType.id));
       }
     },
-    [selectedDate, selectedPreferences, staff]
+    [preferences, selectedDate, staff]
   );
 
   if (loading) {

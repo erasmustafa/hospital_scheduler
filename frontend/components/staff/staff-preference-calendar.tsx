@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Ban, ChevronLeft, ChevronRight, Clock3, MoonStar } from "lucide-react";
+import { Ban, ChevronLeft, ChevronRight, Clock3, LockOpen, MoonStar } from "lucide-react";
 
 export type StaffShiftPreference = {
   id: number;
@@ -32,7 +32,7 @@ type StaffPreferenceCalendarProps = {
   onNextMonth: () => void;
   onToday: () => void;
   onSelectDate: (date: string | null) => void;
-  onToggleShift: (shiftType: StaffShiftType) => void;
+  onToggleShift: (shiftType: StaffShiftType, targetDate?: string) => void;
 };
 
 type SelectionMenuProps = {
@@ -307,27 +307,29 @@ export default function StaffPreferenceCalendar({
             className="grid h-full grid-cols-7"
             style={{ gridTemplateRows: `repeat(${weekCount}, minmax(0, 1fr))` }}
           >
-            {grid.map((cell) => {
+            {grid.map((cell, index) => {
               const items = preferenceMap[cell.date] ?? [];
               const isSelected = selectedDate === cell.date;
               const isMenuRendered = renderedMenuDate === cell.date;
               const hasBlockedShifts = items.length > 0;
+              const rowIndex = Math.floor(index / 7);
+              const columnIndex = index % 7;
+              const openUpwards = rowIndex >= weekCount - 2;
+              const horizontalMenuPosition =
+                columnIndex <= 1
+                  ? "left-0 translate-x-0"
+                  : columnIndex >= 5
+                    ? "right-0 translate-x-0"
+                    : "left-1/2 -translate-x-1/2";
 
               return (
                 <div
                   key={cell.date}
-                  onClick={() => {
-                    if (cell.isCurrentMonth && hasBlockedShifts) {
-                      onSelectDate(isSelected ? null : cell.date);
-                    }
-                  }}
                   className={[
                     "group relative h-full min-h-0 overflow-visible border-b border-r border-slate-200 px-3 py-3 text-left transition-colors duration-300 last:border-r-0",
                     isMenuRendered ? "z-20" : "",
                     cell.isCurrentMonth ? "bg-white" : "bg-slate-50/70",
-                    hasBlockedShifts
-                      ? "cursor-pointer hover:bg-emerald-50/90"
-                      : "",
+                    hasBlockedShifts ? "cursor-default" : "",
                     isSelected
                       ? hasBlockedShifts
                         ? "shadow-[inset_0_0_0_2px_rgba(244,63,94,0.34)]"
@@ -353,14 +355,29 @@ export default function StaffPreferenceCalendar({
                       }
 
                       return (
-                        <div
+                        <button
                           key={item.id}
-                          className="rounded-lg border border-dashed border-rose-300 bg-rose-50 px-2 py-1.5 text-left"
+                          type="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            onToggleShift(shiftType, cell.date);
+                          }}
+                          className="group/blocked relative flex w-full items-center justify-center overflow-hidden rounded-lg border border-dashed border-rose-300 bg-rose-50 px-2 py-1.5 text-left transition duration-200 hover:border-emerald-300 hover:bg-emerald-50"
                         >
-                          <p className="truncate text-[11px] font-bold text-rose-700">
-                            {shiftType.name}
-                          </p>
-                        </div>
+                          <div className="flex w-full flex-col text-left transition-opacity duration-150 group-hover/blocked:opacity-0">
+                            <p className="truncate text-[11px] font-bold text-rose-700">
+                              {shiftType.name}
+                            </p>
+                            <p className="mt-0.5 text-[10px] font-semibold text-rose-600">
+                              {formatShortTime(shiftType.startTime)} - {formatShortTime(shiftType.endTime)}
+                            </p>
+                          </div>
+                          <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-150 group-hover/blocked:opacity-100">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500 text-white shadow-[0_16px_28px_-18px_rgba(16,185,129,0.65)]">
+                              <LockOpen className="h-4 w-4" />
+                            </div>
+                          </div>
+                        </button>
                       );
                     })}
                     {items.length > 2 ? (
@@ -394,7 +411,9 @@ export default function StaffPreferenceCalendar({
                   {isMenuRendered && cell.isCurrentMonth ? (
                     <div
                       className={[
-                        "absolute left-1/2 top-[calc(50%+34px)] z-[80] -translate-x-1/2 transition-all duration-200 ease-out",
+                        "absolute z-[80] transition-all duration-200 ease-out",
+                        horizontalMenuPosition,
+                        openUpwards ? "bottom-[calc(50%+34px)]" : "top-[calc(50%+34px)]",
                         menuOpen
                           ? "translate-y-0 scale-100 opacity-100"
                           : "pointer-events-none -translate-y-1 scale-95 opacity-0",
