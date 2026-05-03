@@ -314,14 +314,14 @@ export default function StaffPreferenceCalendar({
                           onSelectDate(isSelected ? null : cell.date);
                         }}
                         className={[
-                          "z-10 flex h-12 w-12 items-center justify-center rounded-[18px] border transition duration-200",
+                          "z-10 flex h-12 w-12 cursor-pointer items-center justify-center rounded-[18px] border transition duration-200 ease-out",
                           isSelected
-                            ? "border-rose-200 bg-rose-100 text-rose-600 shadow-[0_18px_30px_-22px_rgba(244,63,94,0.42)]"
-                            : "border-rose-100 bg-rose-100/90 text-rose-500 opacity-0 shadow-[0_18px_30px_-22px_rgba(244,63,94,0.32)] group-hover:opacity-100",
+                            ? "border-rose-200 bg-rose-100 text-rose-600 shadow-[0_20px_34px_-20px_rgba(244,63,94,0.46)]"
+                            : "border-rose-100 bg-rose-100/90 text-rose-500 opacity-0 shadow-[0_18px_30px_-22px_rgba(244,63,94,0.32)] group-hover:-translate-y-0.5 group-hover:scale-[1.06] group-hover:border-rose-200 group-hover:bg-rose-100 group-hover:opacity-100 group-hover:shadow-[0_22px_38px_-20px_rgba(244,63,94,0.42)]",
                         ].join(" ")}
                         aria-label={`${cell.dayNumber}. gün için vardiya engelleme menüsünü aç`}
                       >
-                        <Ban className="h-6 w-6" />
+                        <Ban className="h-6 w-6 transition-transform duration-200 group-hover:scale-110" />
                       </button>
                     </div>
                   ) : null}

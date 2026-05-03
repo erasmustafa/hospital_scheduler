@@ -88,7 +88,6 @@ export default function StaffDetailPage() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [banner, setBanner] = useState<string | null>(null);
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingShiftIds, setSavingShiftIds] = useState<number[]>([]);
   const [profileForm, setProfileForm] = useState({
@@ -192,7 +191,6 @@ export default function StaffDetailPage() {
         isNewMother: response.isNewMother,
         isActive: response.isActive,
       });
-      setBanner("Personel çalışma kuralları güncellendi.");
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Profil ayarları güncellenemedi.");
@@ -214,7 +212,6 @@ export default function StaffDetailPage() {
         if (existing) {
           await apiClient.delete(`/availability/${existing.id}/`);
           setPreferences((current) => current.filter((item) => item.id !== existing.id));
-          setBanner(`${shiftType.name} tercihi kaldırıldı.`);
         } else {
           const created = await apiClient.post<StaffShiftPreference>("/availability/", {
             staffProfileId: staff.id,
@@ -224,7 +221,6 @@ export default function StaffDetailPage() {
             reason: "Personel profilinden çalışmak istemediği mesai olarak işaretlendi.",
           });
           setPreferences((current) => [created, ...current]);
-          setBanner(`${shiftType.name} mesaisi tercih dışı olarak işaretlendi.`);
         }
         setError(null);
       } catch (err) {
@@ -268,12 +264,6 @@ export default function StaffDetailPage() {
   return (
     <main className="h-full overflow-hidden bg-[radial-gradient(circle_at_top,#eff5ff,transparent_42%),linear-gradient(180deg,#f8fbff_0%,#f1f5f9_100%)] px-7 py-6">
       <div className="flex h-full min-h-0 w-full flex-col gap-4">
-        {banner ? (
-          <div className="rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-700">
-            {banner}
-          </div>
-        ) : null}
-
         {error ? (
           <div className="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-600">
             {error}
@@ -281,7 +271,7 @@ export default function StaffDetailPage() {
         ) : null}
 
         <section className="min-h-0 flex-1 rounded-[32px] border border-slate-200 bg-white/95 p-4 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.35)]">
-          <div className="grid h-full min-h-0 gap-3 xl:grid-cols-[272px_minmax(0,1fr)_216px] xl:items-stretch">
+          <div className="grid h-full min-h-0 gap-3 xl:grid-cols-[272px_minmax(0,1fr)_152px] xl:items-stretch">
           <aside className="flex h-full min-h-0 flex-col overflow-auto rounded-[24px] bg-transparent p-0">
             <div className="rounded-[24px] bg-[linear-gradient(180deg,#eef4ff_0%,#ffffff_100%)] px-4 pb-5 pt-5 text-center">
               <div className="mx-auto h-24 w-24 overflow-hidden rounded-full border-4 border-white bg-slate-100 shadow-[0_18px_38px_-22px_rgba(37,99,235,0.38)]">
