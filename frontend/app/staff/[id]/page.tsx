@@ -298,7 +298,16 @@ export default function StaffDetailPage() {
                 {staff.departmentName ?? "Birim atanamadı"} · {staff.title || staff.profession || "Personel"}
               </p>
               <div className="mt-5 flex justify-center">
-                <div className="inline-flex rounded-full border border-slate-200 bg-slate-100/90 p-1 shadow-[0_14px_34px_-26px_rgba(15,23,42,0.35)]">
+                <div className="relative inline-flex w-[192px] rounded-full border border-slate-200 bg-slate-100/90 p-1 shadow-[0_14px_34px_-26px_rgba(15,23,42,0.35)]">
+                  <span
+                    className={[
+                      "pointer-events-none absolute inset-y-1 w-[calc(50%-4px)] rounded-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                      "shadow-[0_16px_32px_-20px_rgba(15,23,42,0.35)] before:absolute before:inset-0 before:rounded-full before:opacity-70 before:blur-[10px]",
+                      profileForm.isActive
+                        ? "left-1 bg-[#12b981] before:bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.55),transparent_55%)]"
+                        : "left-[calc(50%)] bg-[#dc2626] before:bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.48),transparent_55%)]",
+                    ].join(" ")}
+                  />
                   <button
                     type="button"
                     onClick={() =>
@@ -308,9 +317,9 @@ export default function StaffDetailPage() {
                       }))
                     }
                     className={[
-                      "rounded-full px-4 py-2 text-sm font-bold transition",
+                      "relative z-10 flex-1 rounded-full px-4 py-2 text-sm font-bold transition duration-300",
                       profileForm.isActive
-                        ? "bg-[#12b981] text-white shadow-[0_12px_26px_-18px_rgba(16,185,129,0.38)]"
+                        ? "text-white"
                         : "text-slate-500 hover:text-emerald-700",
                     ].join(" ")}
                   >
@@ -325,9 +334,9 @@ export default function StaffDetailPage() {
                       }))
                     }
                     className={[
-                      "rounded-full px-4 py-2 text-sm font-bold transition",
+                      "relative z-10 flex-1 rounded-full px-4 py-2 text-sm font-bold transition duration-300",
                       !profileForm.isActive
-                        ? "bg-[#dc2626] text-white shadow-[0_12px_26px_-18px_rgba(220,38,38,0.34)]"
+                        ? "text-white"
                         : "text-slate-500 hover:text-rose-700",
                     ].join(" ")}
                   >
