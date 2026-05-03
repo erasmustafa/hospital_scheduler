@@ -369,15 +369,15 @@ export default function StaffDetailPage() {
                       }))
                     }
                     className={[
-                      "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition",
+                      "inline-flex items-center justify-center rounded-2xl border p-2.5 transition",
                       profileForm.gender === "female"
-                        ? "border-pink-200 bg-pink-50 text-pink-600"
-                        : "border-slate-200 bg-white text-slate-500 hover:border-pink-200 hover:bg-pink-50/70",
+                        ? "border-pink-200 bg-pink-50 shadow-[0_12px_24px_-20px_rgba(236,72,153,0.45)]"
+                        : "border-slate-200 bg-white hover:border-pink-200 hover:bg-pink-50/70",
                     ].join(" ")}
+                    aria-label="Kadýn"
+                    title="Kadýn"
                   >
-                    <span className={["flex h-4 w-4 items-center justify-center rounded-full border text-[10px] leading-none", profileForm.gender === "female" ? "border-pink-500 bg-pink-500 text-white" : "border-slate-300 bg-white text-transparent",].join(" ")}>â€¢</span>
-                    <img src="/icons/venus.svg" alt="" className="h-4 w-4 object-contain" />
-                    KadÄ±n
+                    <img src="/icons/venus.svg" alt="" className="h-5 w-5 object-contain" />
                   </button>
                   <button
                     type="button"
@@ -389,24 +389,15 @@ export default function StaffDetailPage() {
                       }))
                     }
                     className={[
-                      "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition",
+                      "inline-flex items-center justify-center rounded-2xl border p-2.5 transition",
                       profileForm.gender === "male"
-                        ? "border-blue-200 bg-blue-50 text-blue-600"
-                        : "border-slate-200 bg-white text-slate-500 hover:border-blue-200 hover:bg-blue-50/70",
+                        ? "border-blue-200 bg-blue-50 shadow-[0_12px_24px_-20px_rgba(37,99,235,0.42)]"
+                        : "border-slate-200 bg-white hover:border-blue-200 hover:bg-blue-50/70",
                     ].join(" ")}
+                    aria-label="Erkek"
+                    title="Erkek"
                   >
-                    <span
-                      className={[
-                        "flex h-4 w-4 items-center justify-center rounded-full border text-[10px] leading-none",
-                        profileForm.gender === "male"
-                          ? "border-blue-500 bg-blue-500 text-white"
-                          : "border-slate-300 bg-white text-transparent",
-                      ].join(" ")}
-                    >
-                      â€¢
-                    </span>
-                    <img src="/icons/mars.svg" alt="" className="h-4 w-4 object-contain" />
-                    Erkek
+                    <img src="/icons/mars.svg" alt="" className="h-5 w-5 object-contain" />
                   </button>
                 </div>
               </div>
@@ -565,3 +556,4 @@ export default function StaffDetailPage() {
     </main>
   );
 }
+
