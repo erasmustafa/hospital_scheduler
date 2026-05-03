@@ -1,6 +1,6 @@
 "use client";
 
-import { Ban, CalendarDays, ChevronLeft, ChevronRight, Clock3, Info, MoonStar, X } from "lucide-react";
+import { Ban, CalendarDays, ChevronLeft, ChevronRight, Clock3, MoonStar, X } from "lucide-react";
 
 export type StaffShiftPreference = {
   id: number;
@@ -131,43 +131,36 @@ export function StaffPreferenceSelectionPanel({
   onClose,
 }: SelectionPanelProps) {
   return (
-    <aside className="flex h-full min-h-0 flex-col overflow-auto rounded-[28px] border border-slate-200 bg-white/95 p-6 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.28)] backdrop-blur-sm">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-[13px] font-extrabold uppercase tracking-[0.18em] text-slate-400">
-            Seçilen Gün
+    <aside className="flex w-full max-w-[280px] flex-col overflow-hidden rounded-[24px] border border-slate-200 bg-white/95 shadow-[0_24px_70px_-40px_rgba(37,99,235,0.32)] backdrop-blur-sm">
+      <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
+        <div className="min-w-0">
+          <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-slate-400">
+            Vardiya Engelle
           </p>
-          <h3 className="mt-3 text-[15px] font-black tracking-[-0.03em] text-slate-900">
+          <h3 className="mt-1 truncate text-sm font-bold text-slate-900">
             {selectedDate ? getFullDateLabel(selectedDate) : "Takvimden gün seç"}
           </h3>
         </div>
-        {selectedDate ? (
-          <div className="flex items-center gap-2">
-            <div className="rounded-full bg-blue-50 px-4 py-2 text-xs font-bold text-blue-600">
+        <div className="flex items-center gap-2">
+          {selectedDate ? (
+            <div className="rounded-full bg-blue-50 px-3 py-1 text-[11px] font-bold text-blue-600">
               {getWeekdayBadge(selectedDate)}
             </div>
-            {onClose ? (
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex h-9 w-9 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-500 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600"
-                aria-label="Seçimi kapat"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            ) : null}
-          </div>
-        ) : null}
+          ) : null}
+          {onClose ? (
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600"
+              aria-label="Seçimi kapat"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          ) : null}
+        </div>
       </div>
 
-      <div className="mt-5 flex items-center gap-3 text-slate-500">
-        <CalendarDays className="h-5 w-5 text-slate-400" />
-        <p className="text-sm leading-6 text-slate-500">
-          Bu gün için tercihlerinizi işaretleyin.
-        </p>
-      </div>
-
-      <div className="mt-7 space-y-4">
+      <div className="space-y-2 p-3">
         {shiftTypes.map((shiftType) => {
           const activePreference = selectedDatePreferences.find(
             (item) => item.shiftTypeId === shiftType.id
@@ -181,69 +174,45 @@ export function StaffPreferenceSelectionPanel({
               onClick={() => onToggleShift(shiftType)}
               disabled={!selectedDate || isSaving}
               className={[
-                "w-full rounded-[24px] border px-5 py-5 text-left transition",
+                "flex w-full items-center justify-between rounded-[18px] border px-3 py-3 text-left transition",
                 activePreference
-                  ? "border-blue-200 bg-blue-50/60 shadow-[0_18px_40px_-34px_rgba(37,99,235,0.3)]"
+                  ? "border-blue-200 bg-blue-50/70 shadow-[0_16px_30px_-26px_rgba(37,99,235,0.35)]"
                   : "border-slate-200 bg-white hover:border-blue-200 hover:bg-blue-50/40",
                 !selectedDate ? "cursor-not-allowed opacity-55" : "",
               ].join(" ")}
             >
-              <div className="flex items-start gap-4">
+              <div className="flex items-center gap-3">
                 <div
-                  className="flex h-12 w-12 items-center justify-center rounded-2xl"
+                  className="flex h-9 w-9 items-center justify-center rounded-2xl"
                   style={{
                     backgroundColor: `${shiftType.color}20`,
                     color: shiftType.color,
                   }}
                 >
-                  {shiftType.isNight ? <MoonStar className="h-5 w-5" /> : <Clock3 className="h-5 w-5" />}
+                  {shiftType.isNight ? <MoonStar className="h-4 w-4" /> : <Clock3 className="h-4 w-4" />}
                 </div>
 
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-[15px] font-black text-slate-900">{shiftType.name}</p>
-                      <p className="mt-1 text-sm font-medium text-slate-500">
-                        {formatShortTime(shiftType.startTime)} - {formatShortTime(shiftType.endTime)}
-                      </p>
-                    </div>
-
-                    <span
-                      className={[
-                        "mt-1 flex h-7 w-7 items-center justify-center rounded-lg border text-xs font-bold transition",
-                        activePreference
-                          ? "border-blue-500 bg-blue-500 text-white"
-                          : "border-slate-300 bg-white text-transparent",
-                      ].join(" ")}
-                    >
-                      ✓
-                    </span>
-                  </div>
+                <div>
+                  <p className="text-[13px] font-bold text-slate-900">{shiftType.name}</p>
+                  <p className="mt-0.5 text-[11px] font-medium text-slate-500">
+                    {formatShortTime(shiftType.startTime)} - {formatShortTime(shiftType.endTime)}
+                  </p>
                 </div>
               </div>
+
+              <span
+                className={[
+                  "flex h-6 w-6 items-center justify-center rounded-md border text-[11px] font-black transition",
+                  activePreference
+                    ? "border-blue-500 bg-blue-500 text-white"
+                    : "border-slate-300 bg-white text-transparent",
+                ].join(" ")}
+              >
+                ✓
+              </span>
             </button>
           );
         })}
-      </div>
-
-      <div className="mt-6 rounded-[22px] bg-blue-50/70 px-4 py-4 text-sm leading-6 text-slate-600">
-        <div className="flex items-start gap-3">
-          <Info className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
-          <p>İşaretlediğiniz vardiyalar, planlama sırasında tercih edilmez.</p>
-        </div>
-      </div>
-
-      <div className="mt-8 flex items-center justify-between gap-3 border-t border-slate-200 pt-5">
-        <span className="text-sm font-semibold text-slate-500">
-          {selectedDatePreferences.length} vardiya seçildi
-        </span>
-        <button
-          type="button"
-          disabled
-          className="rounded-2xl bg-slate-100 px-5 py-3 text-sm font-bold text-slate-400"
-        >
-          Tercihleri Kaydet
-        </button>
       </div>
     </aside>
   );
@@ -401,8 +370,8 @@ export default function StaffPreferenceCalendar({
         </div>
 
         {selectedDate ? (
-          <div className="pointer-events-none absolute inset-0 z-20 flex items-start justify-end p-4">
-            <div className="pointer-events-auto h-[min(100%,620px)] w-full max-w-[360px]">
+          <div className="pointer-events-none absolute inset-0 z-20 flex items-start justify-end p-3">
+            <div className="pointer-events-auto w-full max-w-[280px]">
               <StaffPreferenceSelectionPanel
                 selectedDate={selectedDate}
                 shiftTypes={shiftTypes}
