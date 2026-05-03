@@ -251,8 +251,8 @@ export default function StaffPreferenceCalendar({
   }, {});
 
   return (
-    <section className="flex h-full flex-col rounded-[30px] border border-slate-200 bg-white/95 p-6 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.38)]">
-      <div className="flex flex-col gap-4">
+    <section className="flex h-full flex-col rounded-[30px] border border-slate-200 bg-white/95 p-4 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.38)]">
+      <div className="flex flex-col gap-2">
         <div>
           <span className="inline-flex px-0 py-1 text-[13px] font-extrabold uppercase tracking-[0.18em] text-blue-600">
             Personel Takvimi
@@ -260,32 +260,32 @@ export default function StaffPreferenceCalendar({
         </div>
       </div>
 
-      <div className="mt-6 flex flex-1 flex-col overflow-hidden rounded-[26px] border border-slate-200 bg-white">
-        <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
-          <div className="flex items-center gap-4">
-            <h3 className="text-[28px] font-black tracking-[-0.03em] text-slate-900">
+      <div className="mt-3 flex flex-1 flex-col overflow-hidden rounded-[26px] border border-slate-200 bg-white">
+        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+          <div className="flex items-center gap-3">
+            <h3 className="text-[23px] font-extrabold tracking-[-0.02em] text-slate-900">
               {getMonthTitle(monthDate)}
             </h3>
-            <div className="rounded-full bg-blue-50 px-4 py-2 text-sm font-bold text-blue-600">
+            <div className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-600">
               {preferences.length} tercih kaydı
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600">
+            <div className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600">
               Ay
             </div>
             <button
               type="button"
               onClick={onToday}
-              className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-blue-600 transition hover:border-blue-200 hover:bg-blue-50"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-blue-600 transition hover:border-blue-200 hover:bg-blue-50"
             >
               Bugün
             </button>
             <button
               type="button"
               onClick={onPrevMonth}
-              className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:border-blue-200 hover:text-blue-600"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:border-blue-200 hover:text-blue-600"
               aria-label="Önceki ay"
             >
               <ChevronLeft className="h-4 w-4" />
@@ -293,7 +293,7 @@ export default function StaffPreferenceCalendar({
             <button
               type="button"
               onClick={onNextMonth}
-              className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:border-blue-200 hover:text-blue-600"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:border-blue-200 hover:text-blue-600"
               aria-label="Sonraki ay"
             >
               <ChevronRight className="h-4 w-4" />
@@ -305,7 +305,7 @@ export default function StaffPreferenceCalendar({
           {dayLabels.map((label) => (
             <div
               key={label}
-              className="border-r border-slate-200 px-3 py-3 text-center text-[11px] font-extrabold uppercase tracking-[0.18em] text-slate-500 last:border-r-0"
+              className="border-r border-slate-200 px-3 py-2 text-center text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-500 last:border-r-0"
             >
               {label}
             </div>
@@ -323,7 +323,7 @@ export default function StaffPreferenceCalendar({
                 type="button"
                 onClick={() => onSelectDate(cell.date)}
                 className={[
-                  "relative min-h-[116px] border-b border-r border-slate-200 px-3 py-3 text-left transition last:border-r-0",
+                  "relative min-h-[88px] border-b border-r border-slate-200 px-3 py-3 text-left transition last:border-r-0",
                   cell.isCurrentMonth ? "bg-white" : "bg-slate-50/70",
                   isSelected ? "bg-blue-50 shadow-[inset_0_0_0_2px_#2563eb]" : "",
                   !cell.isCurrentMonth ? "text-slate-300" : "text-slate-900",
@@ -331,14 +331,14 @@ export default function StaffPreferenceCalendar({
               >
                 <span
                   className={[
-                    "absolute right-3 top-3 text-[11px] font-bold",
+                    "absolute right-3 top-3 text-[10px] font-bold",
                     cell.isToday ? "rounded-full bg-blue-600 px-2.5 py-1.5 text-white" : "",
                   ].join(" ")}
                 >
                   {cell.dayNumber}
                 </span>
 
-                <div className="mt-8 flex flex-col gap-2">
+                <div className="mt-7 flex flex-col gap-1.5">
                   {items.slice(0, 2).map((item) => {
                     const shiftType = shiftTypes.find((shift) => shift.id === item.shiftTypeId);
                     if (!shiftType) {
