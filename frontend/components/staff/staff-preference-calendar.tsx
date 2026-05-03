@@ -259,13 +259,17 @@ export default function StaffPreferenceCalendar({
             {grid.map((cell) => {
               const items = preferenceMap[cell.date] ?? [];
               const isSelected = selectedDate === cell.date;
+              const hasBlockedShifts = items.length > 0;
 
               return (
                 <div
                   key={cell.date}
                   className={[
-                    "group relative h-full min-h-0 overflow-visible border-b border-r border-slate-200 px-3 py-3 text-left last:border-r-0",
+                    "group relative h-full min-h-0 overflow-visible border-b border-r border-slate-200 px-3 py-3 text-left transition-colors duration-300 last:border-r-0",
                     cell.isCurrentMonth ? "bg-white" : "bg-slate-50/70",
+                    hasBlockedShifts
+                      ? "bg-rose-50/85 hover:bg-emerald-50/90"
+                      : "",
                     isSelected ? "bg-rose-50/80 shadow-[inset_0_0_0_2px_rgba(244,63,94,0.34)]" : "",
                     !cell.isCurrentMonth ? "text-slate-300" : "text-slate-900",
                   ].join(" ")}
@@ -287,15 +291,15 @@ export default function StaffPreferenceCalendar({
                       }
 
                       return (
-                        <div
+                        <p
                           key={item.id}
-                          className="rounded-2xl border border-blue-100 bg-blue-50/70 px-3 py-2 text-left shadow-[0_12px_24px_-24px_rgba(37,99,235,0.35)]"
+                          className="truncate text-[11px] font-bold text-rose-700"
                         >
-                          <p className="text-[11px] font-black text-blue-700">{shiftType.name}</p>
-                          <p className="mt-1 text-[11px] font-semibold text-slate-500">
-                            {formatShortTime(shiftType.startTime)} - {formatShortTime(shiftType.endTime)}
-                          </p>
-                        </div>
+                          {shiftType.name}{" "}
+                          <span className="font-semibold text-slate-500">
+                            / {formatShortTime(shiftType.startTime)} - {formatShortTime(shiftType.endTime)}
+                          </span>
+                        </p>
                       );
                     })}
                     {items.length > 2 ? (
@@ -305,7 +309,7 @@ export default function StaffPreferenceCalendar({
                     ) : null}
                   </div>
 
-                  {cell.isCurrentMonth ? (
+                  {cell.isCurrentMonth && !hasBlockedShifts ? (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <button
                         type="button"
