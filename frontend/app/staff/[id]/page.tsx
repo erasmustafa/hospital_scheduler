@@ -309,7 +309,7 @@ export default function StaffDetailPage() {
                     className={[
                       "rounded-full px-4 py-2 text-sm font-bold transition",
                       profileForm.isActive
-                        ? "bg-[#edfdf5] text-emerald-700 shadow-[0_12px_26px_-18px_rgba(16,185,129,0.28)]"
+                        ? "bg-[#12b981] text-white shadow-[0_12px_26px_-18px_rgba(16,185,129,0.38)]"
                         : "text-slate-500 hover:text-emerald-700",
                     ].join(" ")}
                   >
@@ -326,7 +326,7 @@ export default function StaffDetailPage() {
                     className={[
                       "rounded-full px-4 py-2 text-sm font-bold transition",
                       !profileForm.isActive
-                        ? "bg-[#fff1f3] text-rose-700 shadow-[0_12px_26px_-18px_rgba(244,63,94,0.24)]"
+                        ? "bg-[#dc2626] text-white shadow-[0_12px_26px_-18px_rgba(220,38,38,0.34)]"
                         : "text-slate-500 hover:text-rose-700",
                     ].join(" ")}
                   >
@@ -369,7 +369,7 @@ export default function StaffDetailPage() {
                       }))
                     }
                     className={[
-                      "inline-flex items-center justify-center rounded-2xl border p-2.5 transition",
+                      "inline-flex items-center justify-center rounded-2xl border p-2 transition",
                       profileForm.gender === "female"
                         ? "border-pink-200 bg-pink-50 shadow-[0_12px_24px_-20px_rgba(236,72,153,0.45)]"
                         : "border-slate-200 bg-white hover:border-pink-200 hover:bg-pink-50/70",
@@ -377,7 +377,7 @@ export default function StaffDetailPage() {
                     aria-label="Kadýn"
                     title="Kadýn"
                   >
-                    <img src="/icons/venus.svg" alt="" className="h-5 w-5 object-contain" />
+                    <img src="/icons/venus.svg" alt="" className="h-4 w-4 object-contain" />
                   </button>
                   <button
                     type="button"
@@ -389,7 +389,7 @@ export default function StaffDetailPage() {
                       }))
                     }
                     className={[
-                      "inline-flex items-center justify-center rounded-2xl border p-2.5 transition",
+                      "inline-flex items-center justify-center rounded-2xl border p-2 transition",
                       profileForm.gender === "male"
                         ? "border-blue-200 bg-blue-50 shadow-[0_12px_24px_-20px_rgba(37,99,235,0.42)]"
                         : "border-slate-200 bg-white hover:border-blue-200 hover:bg-blue-50/70",
@@ -397,7 +397,7 @@ export default function StaffDetailPage() {
                     aria-label="Erkek"
                     title="Erkek"
                   >
-                    <img src="/icons/mars.svg" alt="" className="h-5 w-5 object-contain" />
+                    <img src="/icons/mars.svg" alt="" className="h-4 w-4 object-contain" />
                   </button>
                 </div>
               </div>
@@ -556,4 +556,5 @@ export default function StaffDetailPage() {
     </main>
   );
 }
+
 
