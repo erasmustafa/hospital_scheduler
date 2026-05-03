@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { CalendarDays, ChevronLeft, ChevronRight, Clock3, Info, MoonStar } from "lucide-react";
 
@@ -46,7 +46,7 @@ type CalendarCell = {
   isToday: boolean;
 };
 
-const dayLabels = ["PZT", "SAL", "CAR", "PER", "CUM", "CMT", "PAZ"];
+const dayLabels = ["PZT", "SAL", "ÇAR", "PER", "CUM", "CMT", "PAZ"];
 
 function toIsoDate(date: Date) {
   const y = date.getFullYear();
@@ -129,10 +129,10 @@ export function StaffPreferenceSelectionPanel({
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-[13px] font-extrabold uppercase tracking-[0.18em] text-slate-400">
-            Secilen Gun
+            Seçilen Gün
           </p>
           <h3 className="mt-3 text-[15px] font-black tracking-[-0.03em] text-slate-900">
-            {selectedDate ? getFullDateLabel(selectedDate) : "Takvimden gun sec"}
+            {selectedDate ? getFullDateLabel(selectedDate) : "Takvimden gün seç"}
           </h3>
         </div>
         {selectedDate ? (
@@ -145,7 +145,7 @@ export function StaffPreferenceSelectionPanel({
       <div className="mt-5 flex items-center gap-3 text-slate-500">
         <CalendarDays className="h-5 w-5 text-slate-400" />
         <p className="text-sm leading-6 text-slate-500">
-          Bu gun icin tercihlerinizi isaretleyin.
+          Bu gün için tercihlerinizi işaretleyin.
         </p>
       </div>
 
@@ -286,7 +286,7 @@ export default function StaffPreferenceCalendar({
               type="button"
               onClick={onPrevMonth}
               className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:border-blue-200 hover:text-blue-600"
-              aria-label="Onceki ay"
+              aria-label="Önceki ay"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -338,7 +338,7 @@ export default function StaffPreferenceCalendar({
                   {cell.dayNumber}
                 </span>
 
-                <div className="mt-7 space-y-1.5">
+                <div className="mt-8 flex flex-col gap-2">
                   {items.slice(0, 2).map((item) => {
                     const shiftType = shiftTypes.find((shift) => shift.id === item.shiftTypeId);
                     if (!shiftType) {
@@ -348,16 +348,17 @@ export default function StaffPreferenceCalendar({
                     return (
                       <div
                         key={item.id}
-                        className="truncate rounded-xl border border-blue-100 bg-blue-50 px-2 py-1 text-[11px] font-semibold text-blue-700"
+                        className="rounded-2xl border border-blue-100 bg-blue-50/70 px-3 py-2 text-left shadow-[0_12px_24px_-24px_rgba(37,99,235,0.35)]"
                       >
-                        {shiftType.name}
+                        <p className="text-[11px] font-black text-blue-700">{shiftType.name}</p>
+                        <p className="mt-1 text-[11px] font-semibold text-slate-500">
+                          {formatShortTime(shiftType.startTime)} - {formatShortTime(shiftType.endTime)}
+                        </p>
                       </div>
                     );
                   })}
                   {items.length > 2 ? (
-                    <div className="text-[11px] font-semibold text-slate-400">
-                      +{items.length - 2} tercih daha
-                    </div>
+                    <span className="text-[11px] font-semibold text-blue-600">+{items.length - 2} tercih daha</span>
                   ) : null}
                 </div>
               </button>

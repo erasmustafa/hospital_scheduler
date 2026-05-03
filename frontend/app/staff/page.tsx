@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiClient } from "@/lib/api";
-import { Search, Plus, Settings, UserCheck } from "lucide-react";
+import { Search, Plus, Settings } from "lucide-react";
 
 type StaffRow = {
   id: number;
@@ -19,42 +19,38 @@ type StaffRow = {
   isActive: boolean;
 };
 
-/* ── colour helpers ─────────────────────────────────────── */
-
-const roleBadgeColors: Record<string, { bg: string; text: string }> = {
-  doctor:     { bg: "#E8F5E9", text: "#2E7D32" },
-  nurse:      { bg: "#E3F2FD", text: "#1565C0" },
-  technician: { bg: "#FFF3E0", text: "#E65100" },
-  admin:      { bg: "#F3E5F5", text: "#7B1FA2" },
-};
-
-const departmentBadgeColors: Record<string, { bg: string; text: string }> = {
-  Anestezi:     { bg: "#E8EAF6", text: "#283593" },
-  Ameliyathane: { bg: "#E0F7FA", text: "#00695C" },
-  Acil:         { bg: "#FCE4EC", text: "#C62828" },
-  Dahiliye:     { bg: "#F1F8E9", text: "#558B2F" },
-  Radyoloji:    { bg: "#FFF8E1", text: "#F57F17" },
-  Kardiyoloji:  { bg: "#FBE9E7", text: "#BF360C" },
-};
-
 const titleBadgeColors: Record<string, { bg: string; text: string }> = {
-  Hemşire:    { bg: "#E3F2FD", text: "#1565C0" },
-  Teknisyen:  { bg: "#FFF3E0", text: "#E65100" },
-  Doktor:     { bg: "#E8F5E9", text: "#2E7D32" },
-  Uzman:      { bg: "#F3E5F5", text: "#7B1FA2" },
+  "Hemşire": { bg: "#E3F2FD", text: "#1565C0" },
+  "Teknisyen": { bg: "#FFF3E0", text: "#E65100" },
+  "Doktor": { bg: "#E8F5E9", text: "#2E7D32" },
+  "Uzman": { bg: "#F3E5F5", text: "#7B1FA2" },
+  "Yönetici": { bg: "#F3E5F5", text: "#7B1FA2" },
 };
 
 const professionBadgeColors: Record<string, { bg: string; text: string }> = {
-  Hemşire:    { bg: "#E3F2FD", text: "#1565C0" },
-  anstek:     { bg: "#FFF3E0", text: "#E65100" },
-  Teknisyen:  { bg: "#FFF3E0", text: "#E65100" },
-  Doktor:     { bg: "#E8F5E9", text: "#2E7D32" },
+  "Hemşire": { bg: "#E3F2FD", text: "#1565C0" },
+  "Anestezi Teknikeri": { bg: "#FFF3E0", text: "#E65100" },
+  "Teknisyen": { bg: "#FFF3E0", text: "#E65100" },
+  "Doktor": { bg: "#E8F5E9", text: "#2E7D32" },
 };
 
-function getBadgeColor(
-  map: Record<string, { bg: string; text: string }>,
-  key: string
-) {
+const departmentBadgeColors: Record<string, { bg: string; text: string }> = {
+  "Anestezi": { bg: "#E8EAF6", text: "#283593" },
+  "Ameliyathane": { bg: "#E0F7FA", text: "#00695C" },
+  "Acil Servis": { bg: "#FCE4EC", text: "#C62828" },
+  "Dahiliye": { bg: "#F1F8E9", text: "#558B2F" },
+  "Radyoloji": { bg: "#FFF8E1", text: "#F57F17" },
+  "Kardiyoloji": { bg: "#FBE9E7", text: "#BF360C" },
+};
+
+const roleLabelTr: Record<string, string> = {
+  doctor: "Doktor",
+  nurse: "Hemşire",
+  technician: "Teknisyen",
+  admin: "Yönetici",
+};
+
+function getBadgeColor(map: Record<string, { bg: string; text: string }>, key: string) {
   return map[key] ?? { bg: "#F1F5F9", text: "#475569" };
 }
 
@@ -64,14 +60,6 @@ function getDefaultAvatarSrc(gender?: StaffRow["gender"]) {
   }
   return "/images/staff-avatar-male.svg";
 }
-
-/* ── role label mapping (EN → TR) ───────────────────────── */
-const roleLabelTr: Record<string, string> = {
-  doctor: "Doktor",
-  nurse: "Hemşire",
-  technician: "Teknisyen",
-  admin: "Yönetici",
-};
 
 export default function StaffPage() {
   const router = useRouter();
@@ -95,8 +83,6 @@ export default function StaffPage() {
     void load();
   }, []);
 
-  /* ── derived stats ──────────────────────────────────────── */
-
   const filteredStaff = useMemo(() => {
     const normalized = search.trim().toLocaleLowerCase("tr-TR");
     if (normalized.length === 0) return staff;
@@ -114,17 +100,12 @@ export default function StaffPage() {
   const activeStaff = staff.filter((s) => s.isActive).length;
   const departments = useMemo(() => {
     return Array.from(
-      new Set(
-        filteredStaff
-          .map((s) => s.departmentName)
-          .filter((n): n is string => Boolean(n))
-      )
+      new Set(filteredStaff.map((s) => s.departmentName).filter((n): n is string => Boolean(n)))
     );
   }, [filteredStaff]);
 
   return (
     <main style={styles.main}>
-      {/* ── PAGE HEADER ──────────────────────────────────── */}
       <div style={styles.headerRow}>
         <h1 style={styles.pageTitle}>PERSONEL YÖNETİMİ</h1>
         <button type="button" style={styles.addButton}>
@@ -133,9 +114,7 @@ export default function StaffPage() {
         </button>
       </div>
 
-      {/* ── SEARCH + STAT CARDS ──────────────────────────── */}
       <section style={styles.searchStatsRow}>
-        {/* search box */}
         <div style={styles.searchBox}>
           <h2 style={styles.searchTitle}>Personel Ara</h2>
           <div style={styles.searchInputWrap}>
@@ -149,7 +128,6 @@ export default function StaffPage() {
           </div>
         </div>
 
-        {/* stat cards */}
         <div style={styles.statCard}>
           <p style={styles.statLabel}>TOPLAM PERSONEL</p>
           <p style={styles.statValue}>{totalStaff}</p>
@@ -165,26 +143,21 @@ export default function StaffPage() {
           <p style={styles.statValue}>{departments.length}</p>
           <p style={styles.statDesc}>
             {departments.length > 0
-              ? departments.join(" ve ").toLocaleLowerCase("tr-TR") +
-                " dağılımı aynı panelde"
+              ? `${departments.join(" ve ").toLocaleLowerCase("tr-TR")} dağılımı aynı panelde`
               : "Birim bilgisi yok"}
           </p>
         </div>
       </section>
 
-      {/* ── TABLE SECTION ────────────────────────────────── */}
       <section style={styles.tableSection}>
         <div style={styles.tableHeader}>
           <div>
             <h2 style={styles.tableTitle}>Personel Tablosu</h2>
             <p style={styles.tableSubtitle}>
-              Kadro listesini ad, unvan, meslek, birim ve aktiflik durumu ile
-              birlikte inceleyin.
+              Kadro listesini ad, unvan, meslek, birim ve aktiflik durumu ile birlikte inceleyin.
             </p>
           </div>
-          <span style={styles.recordBadge}>
-            {filteredStaff.length} kayıt
-          </span>
+          <span style={styles.recordBadge}>{filteredStaff.length} kayıt</span>
         </div>
 
         {loading && <p style={{ padding: 20, color: "#64748b" }}>Yükleniyor...</p>}
@@ -230,7 +203,6 @@ export default function StaffPage() {
                           cursor: "pointer",
                         }}
                       >
-                        {/* Ad Soyad */}
                         <td style={styles.td}>
                           <div style={styles.nameCell}>
                             <img
@@ -240,21 +212,15 @@ export default function StaffPage() {
                             />
                             <div>
                               <p style={styles.nameText}>{row.fullName}</p>
-                              <p style={styles.nameSubtext}>
-                                Personel kartı ve temel kimlik bilgisi
-                              </p>
+                              <p style={styles.nameSubtext}>Personel kartı ve temel kimlik bilgisi</p>
                             </div>
                           </div>
                         </td>
 
-                        {/* Personel No */}
                         <td style={{ ...styles.td, textAlign: "center" }}>
-                          <span style={styles.employeeNoBadge}>
-                            {row.employeeNo ?? row.id}
-                          </span>
+                          <span style={styles.employeeNoBadge}>{row.employeeNo ?? row.id}</span>
                         </td>
 
-                        {/* Unvan */}
                         <td style={styles.td}>
                           <span
                             style={{
@@ -267,7 +233,6 @@ export default function StaffPage() {
                           </span>
                         </td>
 
-                        {/* Meslek */}
                         <td style={styles.td}>
                           <span
                             style={{
@@ -280,7 +245,6 @@ export default function StaffPage() {
                           </span>
                         </td>
 
-                        {/* Birim */}
                         <td style={styles.td}>
                           <span
                             style={{
@@ -293,29 +257,23 @@ export default function StaffPage() {
                           </span>
                         </td>
 
-                        {/* Durum */}
                         <td style={styles.td}>
                           <span
                             style={{
                               ...styles.statusBadge,
-                              ...(row.isActive
-                                ? { color: "#16a34a" }
-                                : { color: "#dc2626" }),
+                              ...(row.isActive ? { color: "#16a34a" } : { color: "#dc2626" }),
                             }}
                           >
                             <span
                               style={{
                                 ...styles.statusDot,
-                                backgroundColor: row.isActive
-                                  ? "#16a34a"
-                                  : "#dc2626",
+                                backgroundColor: row.isActive ? "#16a34a" : "#dc2626",
                               }}
                             />
                             {row.isActive ? "Aktif" : "Pasif"}
                           </span>
                         </td>
 
-                        {/* İşlem */}
                         <td style={{ ...styles.td, textAlign: "center" }}>
                           <button type="button" style={styles.editButton}>
                             <Settings size={14} />
@@ -331,20 +289,11 @@ export default function StaffPage() {
           </div>
         )}
 
-        {/* Footer record count */}
-        {!loading && !error && (
-          <p style={styles.footerCount}>
-            {filteredStaff.length} kayıt
-          </p>
-        )}
+        {!loading && !error && <p style={styles.footerCount}>{filteredStaff.length} kayıt</p>}
       </section>
     </main>
   );
 }
-
-/* ═══════════════════════════════════════════════════════════
-   INLINE STYLES
-   ═══════════════════════════════════════════════════════════ */
 
 const styles: Record<string, React.CSSProperties> = {
   main: {
@@ -358,8 +307,6 @@ const styles: Record<string, React.CSSProperties> = {
     boxSizing: "border-box",
     background: "#f1f5f9",
   },
-
-  /* ── header ── */
   headerRow: {
     display: "flex",
     alignItems: "center",
@@ -388,8 +335,6 @@ const styles: Record<string, React.CSSProperties> = {
     boxShadow: "0 4px 14px rgba(74,108,247,0.35)",
     transition: "all 0.2s ease",
   },
-
-  /* ── search + stats row ── */
   searchStatsRow: {
     display: "grid",
     gridTemplateColumns: "1.4fr 1fr 1fr 1fr",
@@ -443,7 +388,7 @@ const styles: Record<string, React.CSSProperties> = {
     letterSpacing: "0.06em",
     color: "#64748b",
     margin: "0 0 6px 0",
-    textTransform: "uppercase" as const,
+    textTransform: "uppercase",
   },
   statValue: {
     fontSize: 32,
@@ -458,8 +403,6 @@ const styles: Record<string, React.CSSProperties> = {
     margin: 0,
     lineHeight: 1.4,
   },
-
-  /* ── table section ── */
   tableSection: {
     background: "#ffffff",
     borderRadius: 16,
@@ -497,42 +440,38 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#4A6CF7",
     background: "#EEF2FF",
     borderRadius: 8,
-    whiteSpace: "nowrap" as const,
+    whiteSpace: "nowrap",
   },
-
-  /* ── table ── */
   tableWrap: {
     flex: 1,
     minHeight: 0,
-    overflow: "auto" as const,
+    overflow: "auto",
   },
   table: {
     width: "100%",
-    borderCollapse: "collapse" as const,
+    borderCollapse: "collapse",
   },
   th: {
     padding: "12px 20px",
     fontSize: 12,
     fontWeight: 700,
     color: "#64748b",
-    textAlign: "left" as const,
+    textAlign: "left",
     borderBottom: "1px solid #e2e8f0",
     borderTop: "1px solid #e2e8f0",
     background: "#f8fafc",
-    whiteSpace: "nowrap" as const,
+    whiteSpace: "nowrap",
   },
   td: {
     padding: "14px 20px",
     fontSize: 13,
     color: "#334155",
     borderBottom: "1px solid #f1f5f9",
-    verticalAlign: "middle" as const,
+    verticalAlign: "middle",
   },
   tableRow: {
     transition: "background 0.15s ease",
   },
-
-  /* ── name cell ── */
   nameCell: {
     display: "flex",
     alignItems: "center",
@@ -542,7 +481,7 @@ const styles: Record<string, React.CSSProperties> = {
     width: 38,
     height: 38,
     borderRadius: "50%",
-    objectFit: "cover" as const,
+    objectFit: "cover",
     flexShrink: 0,
     background: "#eff6ff",
     border: "1px solid rgba(148, 163, 184, 0.18)",
@@ -559,8 +498,6 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#94a3b8",
     margin: "2px 0 0 0",
   },
-
-  /* ── badges ── */
   employeeNoBadge: {
     display: "inline-flex",
     alignItems: "center",
@@ -580,7 +517,7 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 12,
     fontWeight: 700,
     borderRadius: 8,
-    whiteSpace: "nowrap" as const,
+    whiteSpace: "nowrap",
   },
   statusBadge: {
     display: "inline-flex",
@@ -595,8 +532,6 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: "50%",
     display: "inline-block",
   },
-
-  /* ── edit button ── */
   editButton: {
     display: "inline-flex",
     alignItems: "center",
@@ -611,8 +546,6 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: "pointer",
     transition: "all 0.2s ease",
   },
-
-  /* ── footer ── */
   footerCount: {
     padding: "14px 24px",
     fontSize: 12,
@@ -622,3 +555,4 @@ const styles: Record<string, React.CSSProperties> = {
     margin: 0,
   },
 };
+

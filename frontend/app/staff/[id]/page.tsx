@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -104,6 +104,7 @@ export default function StaffDetailPage() {
       if (!staffId) {
         return;
       }
+
       const { date_from, date_to } = getMonthRange(targetMonth);
       const response = await apiClient.get<AvailabilityResponse>(
         `/availability/?staffProfileId=${staffId}&date_from=${date_from}&date_to=${date_to}`
@@ -115,7 +116,7 @@ export default function StaffDetailPage() {
 
   const loadPage = useCallback(async () => {
     if (!staffId) {
-      setError("Gecersiz personel kaydi.");
+      setError("Geçersiz personel kaydı.");
       setLoading(false);
       return;
     }
@@ -139,7 +140,7 @@ export default function StaffDetailPage() {
       await loadAvailability(initialMonth);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Personel profili yÃ¼klenemedi.");
+      setError(err instanceof Error ? err.message : "Personel profili yüklenemedi.");
     } finally {
       setLoading(false);
     }
@@ -166,7 +167,7 @@ export default function StaffDetailPage() {
       return "08:00-12:00 yeni anne modeli";
     }
     if (profileForm.cannotTakeNightShifts) {
-      return "Gece veya nÃ¶bet dÄ±ÅŸÄ± planlama";
+      return "Gece veya nöbet dışı planlama";
     }
     return "Standart vardiya modeli";
   }, [profileForm]);
@@ -192,10 +193,10 @@ export default function StaffDetailPage() {
         isNewMother: response.isNewMother,
         isActive: response.isActive,
       });
-      setBanner("Personel Ã§alÄ±ÅŸma kurallarÄ± gÃ¼ncellendi.");
+      setBanner("Personel çalışma kuralları güncellendi.");
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Profil ayarlarÄ± gÃ¼ncellenemedi.");
+      setError(err instanceof Error ? err.message : "Profil ayarları güncellenemedi.");
     } finally {
       setSavingProfile(false);
     }
@@ -214,21 +215,21 @@ export default function StaffDetailPage() {
         if (existing) {
           await apiClient.delete(`/availability/${existing.id}/`);
           setPreferences((current) => current.filter((item) => item.id !== existing.id));
-          setBanner(`${shiftType.name} tercihi kaldÄ±rÄ±ldÄ±.`);
+          setBanner(`${shiftType.name} tercihi kaldırıldı.`);
         } else {
           const created = await apiClient.post<StaffShiftPreference>("/availability/", {
             staffProfileId: staff.id,
             shiftTypeId: shiftType.id,
             date: selectedDate,
             status: "unavailable",
-            reason: "Personel profilinden Ã§alÄ±ÅŸmak istemediÄŸi mesai olarak iÅŸaretlendi.",
+            reason: "Personel profilinden çalışmak istemediği mesai olarak işaretlendi.",
           });
           setPreferences((current) => [created, ...current]);
-          setBanner(`${shiftType.name} mesaisi tercih dÄ±ÅŸÄ± olarak iÅŸaretlendi.`);
+          setBanner(`${shiftType.name} mesaisi tercih dışı olarak işaretlendi.`);
         }
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Mesai tercihi gÃ¼ncellenemedi.");
+        setError(err instanceof Error ? err.message : "Mesai tercihi güncellenemedi.");
       } finally {
         setSavingShiftIds((current) => current.filter((value) => value !== shiftType.id));
       }
@@ -239,7 +240,7 @@ export default function StaffDetailPage() {
   if (loading) {
     return (
       <main className="flex h-full items-center justify-center bg-slate-50 text-sm font-semibold text-slate-500">
-        Personel profili hazÄ±rlanÄ±yor...
+        Personel profili hazırlanıyor...
       </main>
     );
   }
@@ -254,7 +255,7 @@ export default function StaffDetailPage() {
             className="mt-4 inline-flex items-center gap-2 rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-blue-200 hover:text-blue-600"
           >
             <ArrowLeft className="h-4 w-4" />
-            Personel listesine dÃ¶n
+            Personel listesine dön
           </Link>
         </div>
       </main>
@@ -280,7 +281,7 @@ export default function StaffDetailPage() {
           </div>
         ) : null}
 
-        <section className="grid min-h-0 flex-1 gap-4 xl:grid-cols-[320px_minmax(0,1fr)_336px] xl:items-stretch">
+        <section className="grid min-h-0 flex-1 gap-3 xl:grid-cols-[320px_minmax(0,1fr)_336px] xl:items-stretch">
           <aside className="flex h-full min-h-0 flex-col overflow-auto rounded-[32px] border border-slate-200 bg-white/95 p-6 shadow-[0_30px_90px_-54px_rgba(37,99,235,0.35)]">
             <div className="rounded-[28px] bg-[linear-gradient(180deg,#eef4ff_0%,#ffffff_100%)] px-5 pb-6 pt-7 text-center">
               <div className="mx-auto h-28 w-28 overflow-hidden rounded-full border-4 border-white bg-slate-100 shadow-[0_18px_38px_-22px_rgba(37,99,235,0.38)]">
@@ -294,7 +295,7 @@ export default function StaffDetailPage() {
                 {staff.fullName}
               </h2>
               <p className="mt-2 text-sm font-semibold text-slate-500">
-                {staff.departmentName ?? "Birim atanamadi"} Â· {staff.title || staff.profession || "Personel"}
+                {staff.departmentName ?? "Birim atanamadı"} · {staff.title || staff.profession || "Personel"}
               </p>
               <div className="mt-5 flex justify-center">
                 <div className="inline-flex rounded-full border border-slate-200 bg-slate-100/90 p-1 shadow-[0_14px_34px_-26px_rgba(15,23,42,0.35)]">
@@ -334,7 +335,7 @@ export default function StaffDetailPage() {
                   </button>
                 </div>
               </div>
-              </div>
+            </div>
 
             <div className="mt-6 space-y-4 rounded-[26px] border border-slate-200 bg-slate-50/80 p-5">
               <div className="flex items-center gap-3 text-sm font-semibold text-slate-700">
@@ -347,13 +348,12 @@ export default function StaffDetailPage() {
               </div>
               <div className="flex items-center gap-3 text-sm font-semibold text-slate-700">
                 <Mail className="h-4 w-4 text-blue-600" />
-                E-posta: <span className="font-bold text-slate-900 break-all">{staff.email || "Belirtilmedi"}</span>
+                E-posta: <span className="break-all font-bold text-slate-900">{staff.email || "Belirtilmedi"}</span>
               </div>
               <div className="flex items-center gap-3 text-sm font-semibold text-slate-700">
                 <BriefcaseBusiness className="h-4 w-4 text-blue-600" />
                 Meslek: <span className="font-bold text-slate-900">{staff.profession || "Belirtilmedi"}</span>
               </div>
-
               <div className="flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
                 <span className="inline-flex shrink-0 items-center gap-2">
                   <img src="/icons/venus-and-mars.svg" alt="" className="h-4 w-4 object-contain" />
@@ -404,90 +404,87 @@ export default function StaffDetailPage() {
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() =>
-                    setProfileForm((current) => ({
-                      ...current,
-                      cannotTakeNightShifts: !current.cannotTakeNightShifts,
-                    }))
-                  }
-                  className={[
-                    "group relative flex min-h-[140px] w-full flex-col items-center justify-center overflow-hidden rounded-[26px] border px-4 py-4 text-center transition",
-                    profileForm.cannotTakeNightShifts
-                      ? "border-blue-200 bg-[linear-gradient(135deg,rgba(59,91,219,0.1),rgba(74,108,247,0.08))] shadow-[0_20px_46px_-34px_rgba(37,99,235,0.4)]"
-                      : "border-slate-200 bg-white/80 hover:border-blue-200 hover:bg-blue-50/40",
-                  ].join(" ")}
-                >
-                  <div className="mb-4 flex w-full items-start justify-center gap-3">
-                    <span
-                      className={[
-                        "mt-0.5 flex h-5 w-5 items-center justify-center rounded-md border text-[12px] font-black transition",
-                        profileForm.cannotTakeNightShifts
-                          ? "border-blue-500 bg-blue-500 text-white"
-                          : "border-slate-300 bg-white text-transparent",
-                      ].join(" ")}
-                    >
-                      âœ“
-                    </span>
-                  </div>
-                  <div className="pr-0">
-                    <p className="text-sm font-bold text-slate-900">NÃ¶bet tutamaz</p>
-                    <p className="mt-1 text-xs font-medium leading-5 text-slate-500">
-                      24 saat Ã§alÄ±ÅŸamaz
-                    </p>
-                  </div>
-                </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setProfileForm((current) => ({
+                    ...current,
+                    cannotTakeNightShifts: !current.cannotTakeNightShifts,
+                  }))
+                }
+                className={[
+                  "group relative flex min-h-[140px] w-full flex-col items-center justify-center overflow-hidden rounded-[26px] border px-4 py-4 text-center transition",
+                  profileForm.cannotTakeNightShifts
+                    ? "border-blue-200 bg-[linear-gradient(135deg,rgba(59,91,219,0.1),rgba(74,108,247,0.08))] shadow-[0_20px_46px_-34px_rgba(37,99,235,0.4)]"
+                    : "border-slate-200 bg-white/80 hover:border-blue-200 hover:bg-blue-50/40",
+                ].join(" ")}
+              >
+                <div className="mb-4 flex w-full items-start justify-center gap-3">
+                  <span
+                    className={[
+                      "mt-0.5 flex h-5 w-5 items-center justify-center rounded-md border text-[12px] font-black transition",
+                      profileForm.cannotTakeNightShifts
+                        ? "border-blue-500 bg-blue-500 text-white"
+                        : "border-slate-300 bg-white text-transparent",
+                    ].join(" ")}
+                  >
+                    ✓
+                  </span>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-900">Nöbet tutamaz</p>
+                  <p className="mt-1 text-xs font-medium leading-5 text-slate-500">24 saat çalışamaz</p>
+                </div>
+              </button>
 
-                <button
-                  type="button"
-                  disabled={profileForm.gender !== "female"}
-                  onClick={() => {
-                    if (profileForm.gender !== "female") {
-                      return;
-                    }
-                    setProfileForm((current) => ({
-                      ...current,
-                      isNewMother: !current.isNewMother,
-                      cannotTakeNightShifts: !current.isNewMother ? true : current.cannotTakeNightShifts,
-                    }));
-                  }}
-                  className={[
-                    "flex min-h-[140px] w-full flex-col items-center justify-center rounded-[24px] border px-4 py-4 text-center transition",
-                    profileForm.gender !== "female"
-                      ? "cursor-not-allowed border-slate-200 bg-slate-100/90 opacity-60"
-                      : profileForm.isNewMother
-                        ? "border-pink-200 bg-pink-50"
-                        : "border-slate-200 bg-slate-50 hover:border-pink-200 hover:bg-pink-50/60",
-                  ].join(" ")}
-                >
-                  <div className="mb-4 flex w-full items-start justify-center gap-3">
-                    <span
-                      className={[
-                        "mt-0.5 flex h-5 w-5 items-center justify-center rounded-md border text-[12px] font-black transition",
-                        profileForm.isNewMother
-                          ? "border-pink-500 bg-pink-500 text-white"
-                          : "border-slate-300 bg-white text-transparent",
-                      ].join(" ")}
-                    >
-                      âœ“
-                    </span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-slate-900">Yeni anne</p>
-                    <p className="mt-1 text-xs font-medium leading-5 text-slate-500">
-                      08:00-12:00 arasÄ±nda Ã§alÄ±ÅŸÄ±r
-                    </p>
-                  </div>
-                </button>
+              <button
+                type="button"
+                disabled={profileForm.gender !== "female"}
+                onClick={() => {
+                  if (profileForm.gender !== "female") {
+                    return;
+                  }
+                  setProfileForm((current) => ({
+                    ...current,
+                    isNewMother: !current.isNewMother,
+                    cannotTakeNightShifts: !current.isNewMother ? true : current.cannotTakeNightShifts,
+                  }));
+                }}
+                className={[
+                  "flex min-h-[140px] w-full flex-col items-center justify-center rounded-[24px] border px-4 py-4 text-center transition",
+                  profileForm.gender !== "female"
+                    ? "cursor-not-allowed border-slate-200 bg-slate-100/90 opacity-60"
+                    : profileForm.isNewMother
+                      ? "border-pink-200 bg-pink-50"
+                      : "border-slate-200 bg-slate-50 hover:border-pink-200 hover:bg-pink-50/60",
+                ].join(" ")}
+              >
+                <div className="mb-4 flex w-full items-start justify-center gap-3">
+                  <span
+                    className={[
+                      "mt-0.5 flex h-5 w-5 items-center justify-center rounded-md border text-[12px] font-black transition",
+                      profileForm.isNewMother
+                        ? "border-pink-500 bg-pink-500 text-white"
+                        : "border-slate-300 bg-white text-transparent",
+                    ].join(" ")}
+                  >
+                    ✓
+                  </span>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-900">Yeni anne</p>
+                  <p className="mt-1 text-xs font-medium leading-5 text-slate-500">08:00-12:00 arasında çalışır</p>
+                </div>
+              </button>
             </div>
+
             <button
               type="button"
               onClick={saveProfileSettings}
               disabled={savingProfile}
               className="mt-6 w-full rounded-2xl bg-[linear-gradient(135deg,#4A6CF7_0%,#3B5BDB_100%)] px-4 py-3 text-sm font-bold text-white shadow-[0_18px_38px_-24px_rgba(37,99,235,0.52)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {savingProfile ? "Kaydediliyor..." : "Profil kurallarÄ±nÄ± kaydet"}
+              {savingProfile ? "Kaydediliyor..." : "Profil kurallarını kaydet"}
             </button>
           </aside>
 
@@ -517,7 +514,7 @@ export default function StaffDetailPage() {
                 <div className="mt-3 text-[28px] font-black leading-none tracking-[-0.05em] text-slate-900">
                   {staff.weeklyLimitHours}
                 </div>
-                <p className="mt-1 text-[11px] font-semibold leading-4 text-slate-500">HaftalÄ±k limit saat</p>
+                <p className="mt-1 text-[11px] font-semibold leading-4 text-slate-500">Haftalık limit saat</p>
               </article>
 
               <article className="rounded-[22px] border border-slate-200 bg-white/95 p-3 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
@@ -525,9 +522,9 @@ export default function StaffDetailPage() {
                   <MoonStar className="h-4 w-4" />
                 </div>
                 <div className="mt-3 text-sm font-black tracking-[-0.03em] text-slate-900">
-                  {profileForm.cannotTakeNightShifts || profileForm.isNewMother ? "Kisitli" : "Uygun"}
+                  {profileForm.cannotTakeNightShifts || profileForm.isNewMother ? "Kısıtlı" : "Uygun"}
                 </div>
-                <p className="mt-1 text-[11px] font-semibold leading-4 text-slate-500">Gece / NÃ¶bet planlamasÄ±</p>
+                <p className="mt-1 text-[11px] font-semibold leading-4 text-slate-500">Gece / Nöbet planlaması</p>
               </article>
 
               <article className="rounded-[22px] border border-slate-200 bg-white/95 p-3 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.4)]">
@@ -537,7 +534,7 @@ export default function StaffDetailPage() {
                 <div className="mt-3 text-sm font-black leading-5 tracking-[-0.03em] text-slate-900">
                   {workingModelLabel}
                 </div>
-                <p className="mt-1 text-[11px] font-semibold leading-4 text-slate-500">Aktif Ã§alÄ±ÅŸma modeli</p>
+                <p className="mt-1 text-[11px] font-semibold leading-4 text-slate-500">Aktif çalışma modeli</p>
               </article>
             </div>
 
@@ -556,5 +553,3 @@ export default function StaffDetailPage() {
     </main>
   );
 }
-
-
