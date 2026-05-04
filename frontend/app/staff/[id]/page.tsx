@@ -8,6 +8,8 @@ import {
   BadgeCheck,
   BriefcaseBusiness,
   CalendarClock,
+  Cake,
+  Heart,
   Mail,
   MoonStar,
   Phone,
@@ -33,6 +35,8 @@ type StaffDetail = {
   phone: string;
   phoneInternal: string;
   email: string;
+  birthDate?: string | null;
+  maritalStatus?: string | null;
   gender: "female" | "male" | "other" | "unspecified";
   cannotTakeNightShifts: boolean;
   isNewMother: boolean;
@@ -70,6 +74,23 @@ function getMonthRange(date: Date) {
     date_from: toIso(start),
     date_to: toIso(end),
   };
+}
+
+function formatBirthDate(value?: string | null) {
+  if (!value) {
+    return "Belirtilmedi";
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("tr-TR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(parsed);
 }
 
 export default function StaffDetailPage() {
@@ -401,6 +422,14 @@ export default function StaffDetailPage() {
               <div className="flex items-center gap-2.5 text-[13px] font-semibold text-slate-700">
                 <BriefcaseBusiness className="h-4 w-4 text-blue-600" />
                 Meslek: <span className="font-bold text-slate-900">{staff.profession || "Belirtilmedi"}</span>
+              </div>
+              <div className="flex items-center gap-2.5 text-[13px] font-semibold text-slate-700">
+                <Cake className="h-4 w-4 text-blue-600" />
+                Doğum Tarihi: <span className="font-bold text-slate-900">{formatBirthDate(staff.birthDate)}</span>
+              </div>
+              <div className="flex items-center gap-2.5 text-[13px] font-semibold text-slate-700">
+                <Heart className="h-4 w-4 text-blue-600" />
+                Medeni Hali: <span className="font-bold text-slate-900">{staff.maritalStatus || "Belirtilmedi"}</span>
               </div>
               <div className="flex items-center justify-between gap-2.5 text-[13px] font-semibold text-slate-700">
                 <span className="inline-flex shrink-0 items-center gap-2">
