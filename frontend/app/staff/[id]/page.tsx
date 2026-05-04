@@ -79,13 +79,7 @@ export default function StaffDetailPage() {
   const [shiftTypes, setShiftTypes] = useState<StaffShiftType[]>([]);
   const [preferences, setPreferences] = useState<StaffShiftPreference[]>([]);
   const [monthDate, setMonthDate] = useState(() => new Date());
-  const [selectedDate, setSelectedDate] = useState<string | null>(() => {
-    const today = new Date();
-    const y = today.getFullYear();
-    const m = String(today.getMonth() + 1).padStart(2, "0");
-    const d = String(today.getDate()).padStart(2, "0");
-    return `${y}-${m}-${d}`;
-  });
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [savingProfile, setSavingProfile] = useState(false);
