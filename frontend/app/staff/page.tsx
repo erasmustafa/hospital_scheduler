@@ -67,6 +67,7 @@ export default function StaffPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [hoveredRowId, setHoveredRowId] = useState<number | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -196,11 +197,23 @@ export default function StaffPage() {
                     return (
                       <tr
                         key={row.id}
+                        onMouseEnter={() => setHoveredRowId(row.id)}
+                        onMouseLeave={() => setHoveredRowId((current) => (current === row.id ? null : current))}
                         onClick={() => router.push(`/staff/${row.id}`)}
                         style={{
                           ...styles.tableRow,
-                          backgroundColor: idx % 2 === 0 ? "#ffffff" : "#f8fafc",
+                          background:
+                            hoveredRowId === row.id
+                              ? "linear-gradient(90deg, rgba(239,246,255,0.96) 0%, rgba(248,250,252,0.96) 100%)"
+                              : idx % 2 === 0
+                                ? "#ffffff"
+                                : "#f8fafc",
                           cursor: "pointer",
+                          transform: hoveredRowId === row.id ? "translateY(-1px)" : "translateY(0)",
+                          boxShadow:
+                            hoveredRowId === row.id
+                              ? "inset 0 0 0 1px rgba(191,219,254,0.7), 0 14px 30px -28px rgba(37,99,235,0.45)"
+                              : "none",
                         }}
                       >
                         <td style={styles.td}>
@@ -452,6 +465,9 @@ const styles: Record<string, React.CSSProperties> = {
     borderCollapse: "collapse",
   },
   th: {
+    position: "sticky",
+    top: 0,
+    zIndex: 2,
     padding: "12px 20px",
     fontSize: 12,
     fontWeight: 700,
@@ -470,7 +486,7 @@ const styles: Record<string, React.CSSProperties> = {
     verticalAlign: "middle",
   },
   tableRow: {
-    transition: "background 0.15s ease",
+    transition: "background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease",
   },
   nameCell: {
     display: "flex",
