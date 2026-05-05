@@ -34,8 +34,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [isAuthorizing, setIsAuthorizing] = useState(true);
   const isLogoutInFlight = useRef(false);
   const isLogin = pathname.startsWith("/login");
+  const isSignup = pathname.startsWith("/signup");
   const isPublicLanding = pathname === "/";
-  const isShellDisabled = isLogin || isPublicLanding;
+  const isShellDisabled = isLogin || isSignup || isPublicLanding;
 
   const pageInfo = useMemo(() => {
     const match = Object.keys(titleByPath).find((key) =>

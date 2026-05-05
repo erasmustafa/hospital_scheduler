@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Lock, User } from "lucide-react";
@@ -33,11 +34,11 @@ export function LoginForm({ onSubmitStart, onSubmitError }: LoginFormProps) {
     onSubmitStart?.();
     window.sessionStorage.setItem(DASHBOARD_LOADING_KEY, "1");
 
-    const ok = await login(username, password);
-    if (!ok) {
+    const result = await login(username, password);
+    if (!result.ok) {
       window.sessionStorage.removeItem(DASHBOARD_LOADING_KEY);
       onSubmitError?.();
-      setError("Giris basarisiz. Bilgileri kontrol edip tekrar deneyin.");
+      setError("Giriş başarısız. Bilgileri kontrol edip tekrar deneyin.");
       return;
     }
 
@@ -57,7 +58,7 @@ export function LoginForm({ onSubmitStart, onSubmitError }: LoginFormProps) {
             required
             value={username}
             onChange={(event) => setUsername(event.target.value)}
-            placeholder="username"
+            placeholder="E-posta veya kullanıcı adı"
             className="h-[58px] rounded-[16px] border-[#dfe6f2] bg-white pl-[52px] pr-4 text-base text-[#27364d] shadow-[0_4px_12px_rgba(34,56,101,0.04)] placeholder:text-[#9ca8bb] focus-visible:ring-[#7ca0ff]/50"
           />
         </div>
@@ -73,14 +74,14 @@ export function LoginForm({ onSubmitStart, onSubmitError }: LoginFormProps) {
             required
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            placeholder="password"
+            placeholder="Şifrenizi girin"
             className="h-[58px] rounded-[16px] border-[#dfe6f2] bg-white pl-[52px] pr-12 text-base text-[#27364d] shadow-[0_4px_12px_rgba(34,56,101,0.04)] placeholder:text-[#9ca8bb] focus-visible:ring-[#7ca0ff]/50"
           />
           <button
             type="button"
             onClick={() => setShowPassword((current) => !current)}
             className="absolute right-4 top-1/2 -translate-y-1/2 text-[#94a1b6] transition hover:text-[#6f7d96]"
-            aria-label={showPassword ? "Sifreyi gizle" : "Sifreyi goster"}
+            aria-label={showPassword ? "Şifreyi gizle" : "Şifreyi göster"}
           >
             {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>
@@ -131,15 +132,15 @@ export function LoginForm({ onSubmitStart, onSubmitError }: LoginFormProps) {
         className="flex h-[54px] w-full items-center justify-center gap-2.5 rounded-[16px] border border-[#dfe6f2] bg-white text-base font-bold text-[#34445e] transition hover:bg-[#f8faff]"
       >
         <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[linear-gradient(135deg,#4477f4_0%,#3058d8_100%)] text-xs font-extrabold text-white">
-        S
+          S
         </span>
         <span>SSO ile Giriş Yap</span>
       </button>
       <p className="pt-1 text-center text-[15px] text-[#73829a]">
         Hesabınız yok mu?{" "}
-        <button type="button" className="font-bold text-[#3f66ea] hover:underline">
+        <Link href="/signup" className="font-bold text-[#3f66ea] hover:underline">
           Kayıt Ol
-        </button>
+        </Link>
       </p>
     </form>
   );

@@ -240,12 +240,12 @@ export default function LandingPage() {
                 </p>
 
                 <div className="mt-10 flex flex-wrap items-center gap-4">
-                  <Link
-                    href="/login"
-                    className="inline-flex h-14 items-center justify-center rounded-2xl bg-white px-8 text-base font-bold text-[#3f63ea] shadow-[0_18px_35px_rgba(28,52,125,0.25)] transition hover:-translate-y-0.5"
-                  >
-                    {"Hemen Kay\u0131t Ol"}
-                  </Link>
+              <Link
+                href="/signup"
+                className="inline-flex h-14 items-center justify-center rounded-2xl bg-white px-8 text-base font-bold text-[#3f63ea] shadow-[0_18px_35px_rgba(28,52,125,0.25)] transition hover:-translate-y-0.5"
+              >
+                {"Hemen Kay\u0131t Ol"}
+              </Link>
                   <a
                     href="#how-it-works"
                     className="inline-flex h-14 items-center justify-center gap-2 rounded-2xl border border-white/30 px-8 text-base font-semibold text-white transition hover:bg-white/10"
@@ -541,7 +541,7 @@ export default function LandingPage() {
 
                 <div className="flex flex-col items-center justify-center gap-1 lg:items-start">
                   <Link
-                    href="/login"
+                    href="/signup"
                     className="inline-flex h-14 min-w-[175px] items-center justify-center gap-3 rounded-xl bg-white px-8 text-base font-bold text-[#4366ef] transition hover:-translate-y-0.5"
                   >
                     {"Hemen Kay\u0131t Ol"}
