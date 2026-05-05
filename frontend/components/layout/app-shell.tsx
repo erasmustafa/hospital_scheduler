@@ -89,7 +89,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return () => {
       isCancelled = true;
     };
-  }, [isShellDisabled, pathname, router]);
+  }, [isShellDisabled, router]);
 
   useEffect(() => {
     if (isShellDisabled || isAuthorizing || !currentUser || hasManagerAccess) {
