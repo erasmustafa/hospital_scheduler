@@ -8,6 +8,7 @@ import {
   ArrowRight,
   BriefcaseBusiness,
   Building2,
+  Calendar,
   CalendarClock,
   Check,
   Clock3,
@@ -18,15 +19,14 @@ import {
   Mail,
   Phone,
   ShieldCheck,
-  Sparkles,
   User,
   Users,
 } from "lucide-react";
 
+import { ApiError } from "@/lib/api";
+import { register, type RegisterPayload } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { register, type RegisterPayload } from "@/lib/auth";
-import { ApiError } from "@/lib/api";
 
 type Purpose = "personal" | "manager" | "invite";
 type Step = 1 | 2 | 3 | 4;
@@ -63,38 +63,61 @@ const PURPOSE_CARDS: Array<{
   {
     id: "personal",
     title: "Kişisel Takvim",
-    description: "Kendi çalışma listemi takip etmek istiyorum.",
+    description: "Kendi çalışma listenizi ve tercihlerinizi yönetirsiniz.",
     icon: User,
   },
   {
     id: "manager",
     title: "Birim Yönetimi",
-    description: "Ekibimin vardiya planlamasını yönetmek istiyorum.",
+    description: "Birim kurar, vardiya tipleri ve plan akışını yönetirsiniz.",
     icon: Building2,
   },
   {
     id: "invite",
     title: "Davet ile Katılım",
-    description: "Bir birime davet kodu ile katılmak istiyorum.",
+    description: "Mevcut birime davet kodu ile çalışan olarak katılırsınız.",
     icon: Users,
   },
 ] as const;
 
 const SIDE_FEATURES = [
   {
-    title: "Adil ve Dengeli",
-    description: "Fairness analizleri ile ekip dağılımını daha kontrollü yönetin.",
+    title: "Adil & Dengeli",
+    description: "Fairness analizleri ile herkes için adil dağılım.",
     icon: User,
   },
   {
     title: "Akıllı Öneriler",
-    description: "Swap ve vardiya önerileri ile planlama süresini azaltın.",
-    icon: Sparkles,
+    description: "Swap önerileri ile listeleri iyileştirin.",
+    icon: Calendar,
   },
   {
-    title: "Güvenli ve İzlenebilir",
-    description: "Yetki, onay ve kayıt akışı tek yüzeyde denetlenir.",
+    title: "Güvenli & Güvenilir",
+    description: "Verileriniz güvenle korunur.",
     icon: ShieldCheck,
+  },
+] as const;
+
+const FOOTER_FEATURES = [
+  {
+    title: "Uyumlu Kurallar",
+    description: "Yasal ve kurumsal kurallara uyumlu.",
+    icon: ShieldCheck,
+  },
+  {
+    title: "Zaman Tasarrufu",
+    description: "Otomasyon ile saatler süren işleri dakikalara indirin.",
+    icon: Clock3,
+  },
+  {
+    title: "Detaylı Raporlama",
+    description: "Performans panelleri ile tüm verilere hakim olun.",
+    icon: CalendarClock,
+  },
+  {
+    title: "Her Yerden Erişim",
+    description: "Web ve mobil ile her zaman yanınızda.",
+    icon: Phone,
   },
 ] as const;
 
@@ -118,7 +141,7 @@ function cn(...parts: Array<string | false | null | undefined>) {
   return parts.filter(Boolean).join(" ");
 }
 
-export function SignupWizard() {
+export default function SignupWizard() {
   const [step, setStep] = useState<Step>(1);
   const [form, setForm] = useState<FormState>(initialState);
   const [showPassword, setShowPassword] = useState(false);
@@ -224,6 +247,7 @@ export function SignupWizard() {
   return (
     <main className="relative min-h-[100dvh] overflow-hidden bg-[linear-gradient(135deg,#edf4ff_0%,#f8fbff_50%,#eef3ff_100%)] px-3 py-4 sm:px-5 lg:px-6">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-[radial-gradient(circle_at_top,rgba(76,117,238,0.12),transparent_68%)]" />
+
       <Link
         href="/"
         className="absolute left-4 top-4 z-20 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-[#dce7ff] bg-white/85 text-[#4568e6] shadow-[0_12px_30px_rgba(74,105,196,0.12)] transition hover:-translate-y-0.5"
@@ -233,62 +257,66 @@ export function SignupWizard() {
       </Link>
 
       <section className="mx-auto grid min-h-[calc(100dvh-32px)] w-full max-w-[1380px] overflow-hidden rounded-[32px] border border-[#dfe8ff] bg-white shadow-[0_32px_90px_rgba(53,85,176,0.12)] lg:grid-cols-[0.96fr_1.04fr]">
-        <aside className="relative hidden overflow-hidden bg-[#05070d] lg:flex">
+        <aside className="relative hidden overflow-hidden bg-[#f7fbff] lg:flex">
           <Image
-            src="/images/signup/signup-panel-illustration-dark.png"
-            alt="Signup panel illüstrasyonu"
+            src="/images/signup/left-panel-background.png"
+            alt="MediPlan tanıtım arka planı"
             fill
             className="pointer-events-none object-cover object-center"
             sizes="(min-width: 1024px) 560px, 100vw"
             priority
           />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_70%,rgba(112,156,255,0.4),transparent_22%),linear-gradient(180deg,rgba(3,6,18,0.22),rgba(3,6,18,0.66))]" />
-          <div className="relative z-10 flex h-full w-full flex-col justify-between p-8 text-white">
-            <div className="space-y-8">
-              <div className="flex items-center gap-4">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.65),transparent_34%),radial-gradient(circle_at_center_right,rgba(97,139,237,0.12),transparent_42%)]" />
+
+          <div className="relative z-10 flex h-full w-full flex-col justify-between px-10 py-8">
+            <div className="space-y-10">
+              <div className="flex items-start gap-5">
                 <Image
                   src="/icons/medishift-brand.png"
                   alt="MediPlan"
-                  width={58}
-                  height={58}
+                  width={118}
+                  height={118}
                   unoptimized
+                  className="h-[118px] w-[118px] shrink-0"
                 />
-                <div>
-                  <div className="text-[24px] font-extrabold tracking-tight text-white">
+                <div className="space-y-1.5 pt-2">
+                  <div className="text-[52px] font-extrabold leading-none tracking-[-0.05em] text-[#1f57e7]">
                     MediPlan
                   </div>
-                  <p className="text-sm leading-6 text-white/72">
+                  <p className="max-w-[280px] text-[22px] leading-[1.28] text-[#223768]">
                     Hastane Personel Organizasyon Sistemi
                   </p>
                 </div>
               </div>
 
-              <div className="max-w-[420px] space-y-4">
-                <h2 className="text-[clamp(38px,5vw,62px)] font-extrabold leading-[1.02] tracking-[-0.05em] text-white">
-                  Daha adil, daha dengeli, daha verimli çalışma listeleri.
+              <div className="max-w-[460px] space-y-6">
+                <h2 className="text-[clamp(56px,6vw,80px)] font-extrabold leading-[0.98] tracking-[-0.06em] text-[#1b3271]">
+                  Daha adil,
+                  <br />
+                  daha dengeli,
+                  <br />
+                  daha verimli çalışma listeleri.
                 </h2>
-                <p className="max-w-[380px] text-[17px] leading-8 text-white/74">
+                <p className="max-w-[430px] text-[18px] leading-9 text-[#506387]">
                   Bireysel takvim yönetimi, birim organizasyonu ve akıllı analizlerle
-                  adil vardiya planlaması tek akışta ilerler.
+                  adil vardiya planlaması şimdi çok daha kolay.
                 </p>
+                <div className="h-1.5 w-14 rounded-full bg-[#2759e7]" />
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {SIDE_FEATURES.map((item) => {
                   const Icon = item.icon;
                   return (
-                    <div
-                      key={item.title}
-                      className="flex items-start gap-4 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4 backdrop-blur-sm"
-                    >
-                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[18px] bg-white/10 text-[#8fb4ff]">
-                        <Icon className="h-6 w-6" />
+                    <div key={item.title} className="flex items-start gap-5">
+                      <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-[28px] border border-[#dbe6ff] bg-[#f4f8ff] text-[#2759e7] shadow-[0_16px_40px_rgba(39,89,231,0.08)]">
+                        <Icon className="h-11 w-11 stroke-[1.7]" />
                       </div>
-                      <div>
-                        <div className="text-[22px] font-bold tracking-[-0.02em] text-white">
+                      <div className="pt-1">
+                        <div className="text-[28px] font-bold tracking-[-0.03em] text-[#2140a5]">
                           {item.title}
                         </div>
-                        <p className="mt-1 max-w-[300px] text-sm leading-6 text-white/68">
+                        <p className="mt-1 max-w-[290px] text-[16px] leading-8 text-[#536585]">
                           {item.description}
                         </p>
                       </div>
@@ -298,21 +326,58 @@ export function SignupWizard() {
               </div>
             </div>
 
-            <div className="rounded-[24px] border border-white/12 bg-white/6 p-5 backdrop-blur-md">
-              <div className="flex items-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-[18px] bg-[#2458e8] text-white shadow-[0_18px_36px_rgba(36,88,232,0.35)]">
-                  <Users className="h-7 w-7" />
-                </div>
-                <div>
-                  <div className="text-[24px] font-bold tracking-[-0.03em] text-white">
-                    Hemen Başla
+            <div className="space-y-8">
+              <div className="max-w-[470px] rounded-[28px] border border-[#dbe6ff] bg-[#f6faff] px-6 py-6 shadow-[0_18px_50px_rgba(39,89,231,0.08)]">
+                <div className="flex items-center gap-5">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-[20px] bg-[#edf4ff] text-[#2759e7]">
+                    <Users className="h-8 w-8 stroke-[1.8]" />
                   </div>
-                  <p className="text-sm leading-6 text-white/70">
-                    Kurulumu tamamlayın, ilk vardiya akışınızı bugün başlatın.
-                  </p>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[30px] font-bold tracking-[-0.03em] text-[#2140a5]">
+                      Hemen başla!
+                    </div>
+                    <p className="text-[16px] leading-7 text-[#5b6d8e]">
+                      Daha iyi bir vardiya planlaması sizi bekliyor.
+                    </p>
+                  </div>
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#2759e7] text-white shadow-[0_18px_34px_rgba(39,89,231,0.26)]">
+                    <ArrowRight className="h-6 w-6" />
+                  </div>
                 </div>
               </div>
+
+              <div className="grid max-w-[860px] grid-cols-4 overflow-hidden rounded-[28px] border border-[#dbe6ff] bg-white/92 shadow-[0_18px_44px_rgba(39,89,231,0.08)] backdrop-blur-sm">
+                {FOOTER_FEATURES.map((item, index) => {
+                  const Icon = item.icon;
+                  return (
+                    <div
+                      key={item.title}
+                      className={cn(
+                        "flex flex-col gap-3 px-6 py-6",
+                        index !== FOOTER_FEATURES.length - 1 &&
+                          "border-r border-[#e6edff]",
+                      )}
+                    >
+                      <Icon className="h-10 w-10 text-[#2759e7] stroke-[1.75]" />
+                      <div className="text-[18px] font-bold tracking-[-0.02em] text-[#263a67]">
+                        {item.title}
+                      </div>
+                      <p className="text-[14px] leading-6 text-[#60708e]">
+                        {item.description}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
+
+            <Image
+              src="/images/signup/left-panel-asset.svg"
+              alt=""
+              width={620}
+              height={760}
+              className="pointer-events-none absolute bottom-0 right-0 z-0 h-auto w-[58%] max-w-[620px]"
+            />
           </div>
         </aside>
 
@@ -400,7 +465,7 @@ export function SignupWizard() {
                   </h1>
                   <p className="mt-3 text-[17px] leading-7 text-[#6c7c98]">
                     {step === 1 &&
-                      "MediPlan’a hoş geldiniz. Temel hesap bilgilerinizi girerek başlayın."}
+                      "MediPlan'a hoş geldiniz. Temel hesap bilgilerinizi girerek başlayın."}
                     {step === 2 &&
                       "Sistemi hangi bağlamda kullanacağınızı seçin. Bu seçim sonraki akışı belirler."}
                     {step === 3 &&
@@ -438,54 +503,22 @@ export function SignupWizard() {
                       />
                     </Field>
                     <Field label="Şifre" icon={Lock}>
-                      <div className="relative">
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          value={form.password}
-                          onChange={(event) => setField("password", event.target.value)}
-                          placeholder="En az 8 karakter"
-                          className="h-[60px] rounded-[18px] border-[#dfe7f7] pl-5 pr-12 text-base"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword((current) => !current)}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8c99b0]"
-                          aria-label={showPassword ? "Şifreyi gizle" : "Şifreyi göster"}
-                        >
-                          {showPassword ? (
-                            <EyeOff className="h-5 w-5" />
-                          ) : (
-                            <Eye className="h-5 w-5" />
-                          )}
-                        </button>
-                      </div>
+                      <PasswordInput
+                        value={form.password}
+                        onChange={(value) => setField("password", value)}
+                        visible={showPassword}
+                        onToggle={() => setShowPassword((current) => !current)}
+                        placeholder="En az 8 karakter"
+                      />
                     </Field>
                     <Field label="Şifre (Tekrar)" icon={Lock}>
-                      <div className="relative">
-                        <Input
-                          type={showConfirmPassword ? "text" : "password"}
-                          value={form.confirmPassword}
-                          onChange={(event) =>
-                            setField("confirmPassword", event.target.value)
-                          }
-                          placeholder="Şifrenizi tekrar giriniz"
-                          className="h-[60px] rounded-[18px] border-[#dfe7f7] pl-5 pr-12 text-base"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowConfirmPassword((current) => !current)}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8c99b0]"
-                          aria-label={
-                            showConfirmPassword ? "Şifreyi gizle" : "Şifreyi göster"
-                          }
-                        >
-                          {showConfirmPassword ? (
-                            <EyeOff className="h-5 w-5" />
-                          ) : (
-                            <Eye className="h-5 w-5" />
-                          )}
-                        </button>
-                      </div>
+                      <PasswordInput
+                        value={form.confirmPassword}
+                        onChange={(value) => setField("confirmPassword", value)}
+                        visible={showConfirmPassword}
+                        onToggle={() => setShowConfirmPassword((current) => !current)}
+                        placeholder="Şifrenizi tekrar girin"
+                      />
                     </Field>
                     <div className="rounded-[18px] border border-[#e4ebfb] bg-[#f8fbff] px-4 py-3 text-sm text-[#5f7092]">
                       Şifreniz en az 8 karakter içermelidir.
@@ -534,27 +567,23 @@ export function SignupWizard() {
                       />
                     </Field>
                     <Field label="Çalışma Modeli" icon={Clock3}>
-                      <select
+                      <SelectField
                         value={form.workModel}
-                        onChange={(event) => setField("workModel", event.target.value)}
-                        className="h-[56px] w-full rounded-[18px] border border-[#dfe7f7] bg-white px-5 text-base text-[#24365b] outline-none"
-                      >
-                        <option>Mesaili</option>
-                        <option>Nöbetli</option>
-                        <option>Karma</option>
-                      </select>
+                        onChange={(value) => setField("workModel", value)}
+                        options={["Mesaili", "Nöbetli", "Karma"]}
+                      />
                     </Field>
                     <Field label="Liste Aktarma Yöntemi" icon={FileUp}>
-                      <select
+                      <SelectField
                         value={form.importMethod}
-                        onChange={(event) => setField("importMethod", event.target.value)}
-                        className="h-[56px] w-full rounded-[18px] border border-[#dfe7f7] bg-white px-5 text-base text-[#24365b] outline-none"
-                      >
-                        <option>Şimdilik boş başla</option>
-                        <option>Fotoğraf yükle</option>
-                        <option>PDF / Excel yükle</option>
-                        <option>Manuel takvimden ekle</option>
-                      </select>
+                        onChange={(value) => setField("importMethod", value)}
+                        options={[
+                          "Şimdilik boş başla",
+                          "Fotoğraf yükle",
+                          "PDF / Excel yükle",
+                          "Manuel takvimden ekle",
+                        ]}
+                      />
                     </Field>
                     <div className="rounded-[22px] border border-[#dce8ff] bg-[#f8fbff] p-5 text-sm leading-7 text-[#5e6f90]">
                       Bu akış sonunda kişisel takviminiz, OCR içe aktarma ve fairness
@@ -592,15 +621,15 @@ export function SignupWizard() {
                       />
                     </Field>
                     <Field label="Çalışma Modeli" icon={CalendarClock}>
-                      <select
+                      <SelectField
                         value={form.workModel}
-                        onChange={(event) => setField("workModel", event.target.value)}
-                        className="h-[56px] w-full rounded-[18px] border border-[#dfe7f7] bg-white px-5 text-base text-[#24365b] outline-none"
-                      >
-                        <option>24 saat nöbet + 8 saat mesai</option>
-                        <option>Standart vardiyalı çalışma</option>
-                        <option>Esnek karma sistem</option>
-                      </select>
+                        onChange={(value) => setField("workModel", value)}
+                        options={[
+                          "24 saat nöbet + 8 saat mesai",
+                          "Standart vardiyalı çalışma",
+                          "Esnek karma sistem",
+                        ]}
+                      />
                     </Field>
                   </div>
                 )}
@@ -742,7 +771,7 @@ export function SignupWizard() {
                       <Button
                         type="submit"
                         disabled={submitting}
-                        className="h-12 rounded-[16px] bg-[#295ae7] px-8 text-base font-bold"
+                        className="h-12 rounded-[16px] bg-[#295ae7] px-6 text-base font-bold"
                       >
                         {submitting ? "Kaydediliyor..." : "Kayıt Ol"}
                       </Button>
@@ -758,6 +787,62 @@ export function SignupWizard() {
   );
 }
 
+function PasswordInput({
+  value,
+  onChange,
+  visible,
+  onToggle,
+  placeholder,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  visible: boolean;
+  onToggle: () => void;
+  placeholder: string;
+}) {
+  return (
+    <div className="relative">
+      <Input
+        type={visible ? "text" : "password"}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        className="h-[60px] rounded-[18px] border-[#dfe7f7] pl-5 pr-12 text-base"
+      />
+      <button
+        type="button"
+        onClick={onToggle}
+        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8c99b0]"
+        aria-label={visible ? "Şifreyi gizle" : "Şifreyi göster"}
+      >
+        {visible ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+      </button>
+    </div>
+  );
+}
+
+function SelectField({
+  value,
+  onChange,
+  options,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  options: string[];
+}) {
+  return (
+    <select
+      value={value}
+      onChange={(event) => onChange(event.target.value)}
+      className="h-[56px] w-full rounded-[18px] border border-[#dfe7f7] bg-white px-5 text-base text-[#24365b] outline-none"
+    >
+      {options.map((option) => (
+        <option key={option}>{option}</option>
+      ))}
+    </select>
+  );
+}
+
 function Field({
   label,
   icon: Icon,
@@ -768,12 +853,12 @@ function Field({
   children: ReactNode;
 }) {
   return (
-    <div>
-      <label className="mb-2 block text-[15px] font-bold text-[#4e6187]">{label}</label>
-      <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-4">
-        <div className="flex h-14 w-14 items-center justify-center rounded-[18px] bg-[#f3f7ff] text-[#295ae7]">
-          <Icon className="h-6 w-6" />
-        </div>
+    <div className="grid gap-3 md:grid-cols-[60px_1fr] md:items-end">
+      <div className="hidden h-[56px] w-[56px] items-center justify-center rounded-[18px] border border-[#e2e9fb] bg-[#f7faff] text-[#295ae7] md:flex">
+        <Icon className="h-6 w-6" />
+      </div>
+      <div className="space-y-2">
+        <label className="text-[15px] font-semibold text-[#31456e]">{label}</label>
         {children}
       </div>
     </div>
@@ -782,11 +867,9 @@ function Field({
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-4">
-      <dt className="text-[#74839d]">{label}</dt>
+    <div className="flex items-center justify-between gap-4 rounded-[16px] border border-[#edf2ff] bg-[#fbfcff] px-4 py-3">
+      <dt className="font-medium text-[#6d7f9f]">{label}</dt>
       <dd className="text-right font-semibold text-[#20325b]">{value}</dd>
     </div>
   );
 }
-
-export default SignupWizard;
