@@ -119,9 +119,7 @@ export function SignupWizard() {
   const canProceedStep2 = Boolean(form.purpose);
 
   const canProceedStep3 = useMemo(() => {
-    if (form.purpose === "personal") {
-      return form.profession.trim().length > 1;
-    }
+    if (form.purpose === "personal") return form.profession.trim().length > 1;
     if (form.purpose === "manager") {
       return (
         form.organizationName.trim().length > 1 &&
@@ -129,9 +127,7 @@ export function SignupWizard() {
         form.unitType.trim().length > 1
       );
     }
-    if (form.purpose === "invite") {
-      return form.inviteCode.trim().length >= 4;
-    }
+    if (form.purpose === "invite") return form.inviteCode.trim().length >= 4;
     return false;
   }, [form]);
 
@@ -217,7 +213,7 @@ export function SignupWizard() {
       </Link>
 
       <section className="mx-auto grid min-h-[calc(100dvh-32px)] w-full max-w-[1380px] overflow-hidden rounded-[32px] border border-[#dfe8ff] bg-white shadow-[0_32px_90px_rgba(53,85,176,0.12)] lg:grid-cols-[0.96fr_1.04fr]">
-        <aside className="relative hidden overflow-hidden lg:flex lg:flex-col">
+        <aside className="relative hidden overflow-hidden lg:block">
           <Image
             src="/images/signup/signup-panel-bg.png"
             alt="MediPlan arka plan görseli"
@@ -226,25 +222,6 @@ export function SignupWizard() {
             sizes="(min-width: 1024px) 560px, 100vw"
             priority
           />
-          <div className="relative z-10 flex h-full flex-col p-8">
-            <div className="flex items-center gap-4">
-              <Image
-                src="/icons/medishift-brand.png"
-                alt="MediPlan"
-                width={54}
-                height={54}
-                unoptimized
-              />
-              <div>
-                <div className="text-[22px] font-extrabold tracking-tight text-[#2453de]">
-                  MediPlan
-                </div>
-                <p className="text-sm leading-6 text-[#253a67]">
-                  Hastane Personel Organizasyon Sistemi
-                </p>
-              </div>
-            </div>
-          </div>
         </aside>
 
         <section className="flex min-w-0 flex-col justify-center bg-white px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
