@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, ReactNode, useMemo, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -17,15 +17,14 @@ import {
   Lock,
   Mail,
   Phone,
-  ShieldCheck,
   User,
   Users,
 } from "lucide-react";
 
-import { register, type RegisterPayload } from "@/lib/auth";
-import { ApiError } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { register, type RegisterPayload } from "@/lib/auth";
+import { ApiError } from "@/lib/api";
 
 type Purpose = "personal" | "manager" | "invite";
 type Step = 1 | 2 | 3 | 4;
@@ -138,9 +137,12 @@ export function SignupWizard() {
 
   const accountSummary = useMemo(() => {
     const map: Record<Purpose, string> = {
-      personal: "Kendi takviminizi oluşturup OCR veya manuel veri ile ilerleyeceksiniz.",
-      manager: "Birim oluşturup vardiya tipleri, kurallar ve personel akışını kuracaksınız.",
-      invite: "Davet kodu ile mevcut birime bağlanıp çalışan olarak devam edeceksiniz.",
+      personal:
+        "Kendi takviminizi oluşturup OCR veya manuel veri ile ilerleyeceksiniz.",
+      manager:
+        "Birim oluşturup vardiya tipleri, kurallar ve personel akışını kuracaksınız.",
+      invite:
+        "Davet kodu ile mevcut birime bağlanıp çalışan olarak devam edeceksiniz.",
     };
     return form.purpose ? map[form.purpose] : "";
   }, [form.purpose]);
@@ -215,13 +217,20 @@ export function SignupWizard() {
       </Link>
 
       <section className="mx-auto grid min-h-[calc(100dvh-32px)] w-full max-w-[1380px] overflow-hidden rounded-[32px] border border-[#dfe8ff] bg-white shadow-[0_32px_90px_rgba(53,85,176,0.12)] lg:grid-cols-[0.96fr_1.04fr]">
-        <aside className="relative hidden overflow-hidden bg-[linear-gradient(180deg,#f8fbff_0%,#eff5ff_100%)] p-8 lg:flex lg:flex-col lg:justify-between">
-          <div className="pointer-events-none absolute right-[-120px] top-[-100px] h-[320px] w-[320px] rounded-full bg-[#dbe8ff]/60" />
-          <div className="relative z-10">
+        <aside className="relative hidden overflow-hidden lg:flex lg:flex-col">
+          <Image
+            src="/images/signup/signup-panel-bg.png"
+            alt="MediPlan arka plan görseli"
+            fill
+            className="pointer-events-none object-cover object-center"
+            sizes="(min-width: 1024px) 560px, 100vw"
+            priority
+          />
+          <div className="relative z-10 flex h-full flex-col p-8">
             <div className="flex items-center gap-4">
               <Image
                 src="/icons/medishift-brand.png"
-                alt="MediShift"
+                alt="MediPlan"
                 width={54}
                 height={54}
                 unoptimized
@@ -230,54 +239,9 @@ export function SignupWizard() {
                 <div className="text-[22px] font-extrabold tracking-tight text-[#2453de]">
                   MediPlan
                 </div>
-                <p className="text-sm leading-6 text-[#5f7196]">
-                  Hastane personel organizasyon sistemi
+                <p className="text-sm leading-6 text-[#253a67]">
+                  Hastane Personel Organizasyon Sistemi
                 </p>
-              </div>
-            </div>
-
-            <div className="mt-10 rounded-[28px] border border-[#e1e9ff] bg-white/75 p-5 shadow-[0_18px_50px_rgba(71,101,188,0.08)]">
-              <div className="relative aspect-[760/1150] w-full overflow-hidden rounded-[24px]">
-                <Image
-                  src="/images/signup/signup-hero.png"
-                  alt="Signup yolculuğu görseli"
-                  fill
-                  className="object-cover"
-                  sizes="(min-width: 1024px) 520px, 100vw"
-                  priority
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="relative z-10 mt-8 rounded-[28px] border border-[#dfe8ff] bg-white/80 p-5 shadow-[0_18px_50px_rgba(71,101,188,0.08)]">
-            <div className="mb-4 flex items-center gap-2 text-[13px] font-bold uppercase tracking-[0.14em] text-[#4d6be5]">
-              <ShieldCheck className="h-4 w-4" />
-              Kurulum Yol Haritası
-            </div>
-            <ul className="space-y-3 text-sm leading-6 text-[#4f6185]">
-              <li className="flex items-start gap-3">
-                <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#4d6be5]" />
-                Kullanıcı önce hesap oluşturur, sonra bağlamını seçer.
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#4d6be5]" />
-                Bireysel kullanım, birim yönetimi ve davetli çalışan akışları ayrılır.
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#4d6be5]" />
-                OCR, fairness ve swap motorları onboarding sonrasında ilgili akışa bağlanır.
-              </li>
-            </ul>
-            <div className="mt-5 overflow-hidden rounded-[22px] border border-[#e4ecff] bg-[#f7faff] p-3">
-              <div className="relative aspect-[1680/945] w-full overflow-hidden rounded-[16px]">
-                <Image
-                  src="/images/signup/signup-architecture-diagram.png"
-                  alt="Kayıt ve onboarding mimarisi"
-                  fill
-                  className="object-cover object-top"
-                  sizes="(min-width: 1024px) 480px, 100vw"
-                />
               </div>
             </div>
           </div>
@@ -296,7 +260,7 @@ export function SignupWizard() {
                         "flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-sm font-bold transition",
                         isActive || isDone
                           ? "border-[#2659e7] bg-[#2659e7] text-white"
-                          : "border-[#d9e4ff] bg-white text-[#7d8dab]"
+                          : "border-[#d9e4ff] bg-white text-[#7d8dab]",
                       )}
                     >
                       {isDone ? <Check className="h-4 w-4" /> : item.id}
@@ -305,7 +269,7 @@ export function SignupWizard() {
                       <div
                         className={cn(
                           "text-[15px] font-semibold",
-                          isActive ? "text-[#2441a3]" : "text-[#7d8dab]"
+                          isActive ? "text-[#2441a3]" : "text-[#7d8dab]",
                         )}
                       >
                         {item.label}
@@ -325,8 +289,8 @@ export function SignupWizard() {
                   Hesabınız hazır
                 </h1>
                 <p className="mt-3 max-w-[560px] text-lg leading-8 text-[#607190]">
-                  Kayıt tamamlandı. Giriş ekranında kullanıcı adı olarak e-posta adresinizi
-                  kullanabilirsiniz.
+                  Kayıt tamamlandı. Giriş ekranında kullanıcı adı olarak e-posta
+                  adresinizi kullanabilirsiniz.
                 </p>
                 <div className="mt-6 rounded-[22px] border border-[#dbe7ff] bg-white p-5">
                   <div className="text-sm font-semibold text-[#70809d]">Giriş bilgisi</div>
@@ -419,7 +383,11 @@ export function SignupWizard() {
                           className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8c99b0]"
                           aria-label={showPassword ? "Şifreyi gizle" : "Şifreyi göster"}
                         >
-                          {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                          {showPassword ? (
+                            <EyeOff className="h-5 w-5" />
+                          ) : (
+                            <Eye className="h-5 w-5" />
+                          )}
                         </button>
                       </div>
                     </Field>
@@ -428,7 +396,9 @@ export function SignupWizard() {
                         <Input
                           type={showConfirmPassword ? "text" : "password"}
                           value={form.confirmPassword}
-                          onChange={(event) => setField("confirmPassword", event.target.value)}
+                          onChange={(event) =>
+                            setField("confirmPassword", event.target.value)
+                          }
                           placeholder="Şifrenizi tekrar giriniz"
                           className="h-[60px] rounded-[18px] border-[#dfe7f7] pl-5 pr-12 text-base"
                         />
@@ -436,9 +406,15 @@ export function SignupWizard() {
                           type="button"
                           onClick={() => setShowConfirmPassword((current) => !current)}
                           className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8c99b0]"
-                          aria-label={showConfirmPassword ? "Şifreyi gizle" : "Şifreyi göster"}
+                          aria-label={
+                            showConfirmPassword ? "Şifreyi gizle" : "Şifreyi göster"
+                          }
                         >
-                          {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                          {showConfirmPassword ? (
+                            <EyeOff className="h-5 w-5" />
+                          ) : (
+                            <Eye className="h-5 w-5" />
+                          )}
                         </button>
                       </div>
                     </Field>
@@ -462,7 +438,7 @@ export function SignupWizard() {
                             "rounded-[24px] border p-5 text-left transition",
                             active
                               ? "border-[#295ae7] bg-[#f5f8ff] shadow-[0_18px_36px_rgba(41,90,231,0.12)]"
-                              : "border-[#e0e8f8] bg-white hover:border-[#bfd0ff]"
+                              : "border-[#e0e8f8] bg-white hover:border-[#bfd0ff]",
                           )}
                         >
                           <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eef3ff] text-[#2859e7]">
@@ -512,8 +488,8 @@ export function SignupWizard() {
                       </select>
                     </Field>
                     <div className="rounded-[22px] border border-[#dce8ff] bg-[#f8fbff] p-5 text-sm leading-7 text-[#5e6f90]">
-                      Bu akış sonunda kişisel takviminiz, OCR içe aktarma ve fairness analizi
-                      için hazır olacaktır.
+                      Bu akış sonunda kişisel takviminiz, OCR içe aktarma ve fairness
+                      analizi için hazır olacaktır.
                     </div>
                   </div>
                 )}
@@ -523,7 +499,9 @@ export function SignupWizard() {
                     <Field label="Kurum Adı" icon={Building2}>
                       <Input
                         value={form.organizationName}
-                        onChange={(event) => setField("organizationName", event.target.value)}
+                        onChange={(event) =>
+                          setField("organizationName", event.target.value)
+                        }
                         placeholder="Ör. Gölhisar Devlet Hastanesi"
                         className="h-[56px] rounded-[18px] border-[#dfe7f7] pl-5 text-base"
                       />
@@ -560,7 +538,7 @@ export function SignupWizard() {
 
                 {step === 3 && form.purpose === "invite" && (
                   <div className="grid gap-5 md:grid-cols-[1fr_320px]">
-                    <Field label="Davet Kodu" icon={ShieldCheck}>
+                    <Field label="Davet Kodu" icon={Users}>
                       <Input
                         value={form.inviteCode}
                         onChange={(event) => setField("inviteCode", event.target.value)}
@@ -569,8 +547,8 @@ export function SignupWizard() {
                       />
                     </Field>
                     <div className="rounded-[22px] border border-[#dce8ff] bg-[#f8fbff] p-5 text-sm leading-7 text-[#5e6f90]">
-                      Davet kodu ile mevcut birime çalışan olarak katılırsınız. Yetkileriniz birim
-                      daveti üzerinden tanımlanır.
+                      Davet kodu ile mevcut birime çalışan olarak katılırsınız. Yetkileriniz
+                      birim daveti üzerinden tanımlanır.
                     </div>
                   </div>
                 )}
@@ -718,7 +696,7 @@ function Field({
 }: {
   label: string;
   icon: typeof User;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <div>
