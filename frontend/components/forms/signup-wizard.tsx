@@ -256,7 +256,7 @@ export default function SignupWizard() {
         <ArrowLeft className="h-5 w-5" />
       </Link>
 
-      <section className="mx-auto grid min-h-[calc(100dvh-32px)] w-full max-w-[1380px] overflow-hidden rounded-[32px] border border-[#dfe8ff] bg-white shadow-[0_32px_90px_rgba(53,85,176,0.12)] lg:grid-cols-[0.96fr_1.04fr]">
+      <section className="mx-auto grid h-[calc(100dvh-32px)] w-full max-w-[1380px] overflow-hidden rounded-[32px] border border-[#dfe8ff] bg-white shadow-[0_32px_90px_rgba(53,85,176,0.12)] lg:grid-cols-[0.96fr_1.04fr]">
         <aside className="relative hidden overflow-hidden bg-[#f7fbff] lg:flex">
           <Image
             src="/images/signup/left-panel-background.png"
@@ -381,9 +381,9 @@ export default function SignupWizard() {
           </div>
         </aside>
 
-        <section className="flex min-w-0 flex-col justify-center bg-white px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
-          <div className="mx-auto w-full max-w-[760px]">
-            <div className="mb-8 grid grid-cols-4 gap-2 sm:gap-4">
+        <section className="flex min-w-0 flex-col overflow-y-auto bg-white px-3 py-3 sm:px-5 lg:px-6 lg:py-5">
+          <div className="mx-auto flex w-full max-w-[540px] flex-1 flex-col justify-center">
+            <div className="mb-6 grid grid-cols-4 gap-2 sm:gap-3">
               {STEPS.map((item) => {
                 const isActive = step === item.id;
                 const isDone = step > item.id || (item.id === 4 && createdUsername);
@@ -391,7 +391,7 @@ export default function SignupWizard() {
                   <div key={item.id} className="flex items-center gap-3">
                     <div
                       className={cn(
-                        "flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-sm font-bold transition",
+                        "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-bold transition",
                         isActive || isDone
                           ? "border-[#2659e7] bg-[#2659e7] text-white"
                           : "border-[#d9e4ff] bg-white text-[#7d8dab]",
@@ -402,7 +402,7 @@ export default function SignupWizard() {
                     <div className="hidden min-w-0 sm:block">
                       <div
                         className={cn(
-                          "text-[15px] font-semibold",
+                          "text-[13px] font-semibold",
                           isActive ? "text-[#2441a3]" : "text-[#7d8dab]",
                         )}
                       >
@@ -415,34 +415,34 @@ export default function SignupWizard() {
             </div>
 
             {createdUsername ? (
-              <div className="rounded-[30px] border border-[#deebff] bg-[#f8fbff] p-8 shadow-[0_20px_60px_rgba(53,85,176,0.08)]">
-                <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#e9f1ff] text-[#2759e7]">
-                  <Check className="h-7 w-7" />
+              <div className="rounded-[24px] border border-[#deebff] bg-[#f8fbff] p-5 shadow-[0_20px_60px_rgba(53,85,176,0.08)] sm:p-6">
+                <div className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#e9f1ff] text-[#2759e7]">
+                  <Check className="h-5 w-5" />
                 </div>
-                <h1 className="text-[44px] font-extrabold tracking-[-0.05em] text-[#1d2e52]">
+                <h1 className="text-[34px] font-extrabold tracking-[-0.05em] text-[#1d2e52]">
                   Hesabınız hazır
                 </h1>
-                <p className="mt-3 max-w-[560px] text-lg leading-8 text-[#607190]">
+                <p className="mt-2 max-w-[460px] text-[15px] leading-7 text-[#607190]">
                   Kayıt tamamlandı. Giriş ekranında kullanıcı adı olarak e-posta
                   adresinizi kullanabilirsiniz.
                 </p>
-                <div className="mt-6 rounded-[22px] border border-[#dbe7ff] bg-white p-5">
-                  <div className="text-sm font-semibold text-[#70809d]">Giriş bilgisi</div>
-                  <div className="mt-2 text-[22px] font-bold text-[#1d2e52]">
+                <div className="mt-5 rounded-[18px] border border-[#dbe7ff] bg-white p-4">
+                  <div className="text-xs font-semibold text-[#70809d]">Giriş bilgisi</div>
+                  <div className="mt-1.5 text-[18px] font-bold text-[#1d2e52]">
                     {createdUsername}
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-[#667792]">{accountSummary}</p>
+                  <p className="mt-1.5 text-[13px] leading-5 text-[#667792]">{accountSummary}</p>
                 </div>
-                <div className="mt-6 flex flex-wrap gap-3">
+                <div className="mt-5 flex flex-wrap gap-2.5">
                   <Link
                     href="/login"
-                    className="inline-flex h-14 items-center justify-center rounded-2xl bg-[#2759e7] px-8 text-base font-bold text-white shadow-[0_14px_32px_rgba(39,89,231,0.28)]"
+                    className="inline-flex h-11 items-center justify-center rounded-xl bg-[#2759e7] px-6 text-sm font-bold text-white shadow-[0_14px_32px_rgba(39,89,231,0.28)]"
                   >
                     Giriş Yap
                   </Link>
                   <Link
                     href="/"
-                    className="inline-flex h-14 items-center justify-center rounded-2xl border border-[#d7e3ff] px-8 text-base font-semibold text-[#2b467e]"
+                    className="inline-flex h-11 items-center justify-center rounded-xl border border-[#d7e3ff] px-6 text-sm font-semibold text-[#2b467e]"
                   >
                     Landing Sayfasına Dön
                   </Link>
@@ -450,11 +450,11 @@ export default function SignupWizard() {
               </div>
             ) : (
               <form
-                className="rounded-[32px] border border-[#e1e9ff] bg-white px-5 py-6 shadow-[0_24px_70px_rgba(53,85,176,0.08)] sm:px-8 lg:px-10 lg:py-8"
+                className="rounded-[24px] border border-[#e1e9ff] bg-white px-3.5 py-4 shadow-[0_24px_70px_rgba(53,85,176,0.08)] sm:px-5 sm:py-5 lg:px-6 lg:py-6"
                 onSubmit={handleSubmit}
               >
-                <div className="mb-8">
-                  <h1 className="text-[clamp(38px,5vw,62px)] font-extrabold tracking-[-0.05em] text-[#1d2e52]">
+                <div className="mb-5">
+                  <h1 className="text-[clamp(28px,4vw,42px)] font-extrabold tracking-[-0.05em] text-[#1d2e52]">
                     {step === 1
                       ? "Hesap oluşturun"
                       : step === 2
@@ -463,7 +463,7 @@ export default function SignupWizard() {
                           ? "Kurulum detaylarını tamamlayın"
                           : "Kurulumu gözden geçirin"}
                   </h1>
-                  <p className="mt-3 text-[17px] leading-7 text-[#6c7c98]">
+                  <p className="mt-2 text-[14px] leading-6 text-[#6c7c98]">
                     {step === 1 &&
                       "MediPlan'a hoş geldiniz. Temel hesap bilgilerinizi girerek başlayın."}
                     {step === 2 &&
@@ -476,7 +476,7 @@ export default function SignupWizard() {
                 </div>
 
                 {step === 1 && (
-                  <div className="space-y-5">
+                  <div className="space-y-4">
                     <Field label="Ad Soyad" icon={User}>
                       <Input
                         value={form.fullName}
@@ -520,14 +520,14 @@ export default function SignupWizard() {
                         placeholder="Şifrenizi tekrar girin"
                       />
                     </Field>
-                    <div className="rounded-[18px] border border-[#e4ebfb] bg-[#f8fbff] px-4 py-3 text-sm text-[#5f7092]">
+                    <div className="rounded-[16px] border border-[#e4ebfb] bg-[#f8fbff] px-3.5 py-2.5 text-[13px] text-[#5f7092]">
                       Şifreniz en az 8 karakter içermelidir.
                     </div>
                   </div>
                 )}
 
                 {step === 2 && (
-                  <div className="grid gap-4 md:grid-cols-3">
+                  <div className="grid gap-3 md:grid-cols-3">
                     {PURPOSE_CARDS.map((item) => {
                       const Icon = item.icon;
                       const active = form.purpose === item.id;
@@ -537,17 +537,17 @@ export default function SignupWizard() {
                           type="button"
                           onClick={() => setField("purpose", item.id)}
                           className={cn(
-                            "rounded-[24px] border p-5 text-left transition",
+                            "rounded-[20px] border p-4 text-left transition",
                             active
                               ? "border-[#295ae7] bg-[#f5f8ff] shadow-[0_18px_36px_rgba(41,90,231,0.12)]"
                               : "border-[#e0e8f8] bg-white hover:border-[#bfd0ff]",
                           )}
                         >
-                          <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eef3ff] text-[#2859e7]">
-                            <Icon className="h-6 w-6" />
+                          <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#eef3ff] text-[#2859e7]">
+                            <Icon className="h-5 w-5" />
                           </div>
-                          <div className="text-xl font-bold text-[#20325b]">{item.title}</div>
-                          <p className="mt-2 text-sm leading-6 text-[#677892]">
+                          <div className="text-[17px] font-bold text-[#20325b]">{item.title}</div>
+                          <p className="mt-1.5 text-[13px] leading-5 text-[#677892]">
                             {item.description}
                           </p>
                         </button>
@@ -557,7 +557,7 @@ export default function SignupWizard() {
                 )}
 
                 {step === 3 && form.purpose === "personal" && (
-                  <div className="grid gap-5 md:grid-cols-2">
+                  <div className="grid gap-4 md:grid-cols-2">
                     <Field label="Meslek / Görev" icon={BriefcaseBusiness}>
                       <Input
                         value={form.profession}
@@ -585,7 +585,7 @@ export default function SignupWizard() {
                         ]}
                       />
                     </Field>
-                    <div className="rounded-[22px] border border-[#dce8ff] bg-[#f8fbff] p-5 text-sm leading-7 text-[#5e6f90]">
+                    <div className="rounded-[18px] border border-[#dce8ff] bg-[#f8fbff] p-4 text-[13px] leading-6 text-[#5e6f90]">
                       Bu akış sonunda kişisel takviminiz, OCR içe aktarma ve fairness
                       analizi için hazır olacaktır.
                     </div>
@@ -593,7 +593,7 @@ export default function SignupWizard() {
                 )}
 
                 {step === 3 && form.purpose === "manager" && (
-                  <div className="grid gap-5 md:grid-cols-2">
+                  <div className="grid gap-4 md:grid-cols-2">
                     <Field label="Kurum Adı" icon={Building2}>
                       <Input
                         value={form.organizationName}
@@ -635,7 +635,7 @@ export default function SignupWizard() {
                 )}
 
                 {step === 3 && form.purpose === "invite" && (
-                  <div className="grid gap-5 md:grid-cols-[1fr_320px]">
+                  <div className="grid gap-4 md:grid-cols-[1fr_240px]">
                     <Field label="Davet Kodu" icon={Users}>
                       <Input
                         value={form.inviteCode}
@@ -644,7 +644,7 @@ export default function SignupWizard() {
                         className="h-[56px] rounded-[18px] border-[#dfe7f7] pl-5 text-base"
                       />
                     </Field>
-                    <div className="rounded-[22px] border border-[#dce8ff] bg-[#f8fbff] p-5 text-sm leading-7 text-[#5e6f90]">
+                    <div className="rounded-[18px] border border-[#dce8ff] bg-[#f8fbff] p-4 text-[13px] leading-6 text-[#5e6f90]">
                       Davet kodu ile mevcut birime çalışan olarak katılırsınız. Yetkileriniz
                       birim daveti üzerinden tanımlanır.
                     </div>
@@ -652,18 +652,18 @@ export default function SignupWizard() {
                 )}
 
                 {step === 4 && (
-                  <div className="space-y-5">
-                    <div className="rounded-[24px] border border-[#dce6ff] bg-[#f8fbff] p-5">
-                      <div className="text-sm font-semibold text-[#6c7a95]">Seçilen akış</div>
-                      <div className="mt-2 text-2xl font-bold text-[#20325b]">
+                  <div className="space-y-4">
+                    <div className="rounded-[20px] border border-[#dce6ff] bg-[#f8fbff] p-4">
+                      <div className="text-xs font-semibold text-[#6c7a95]">Seçilen akış</div>
+                      <div className="mt-1.5 text-[20px] font-bold text-[#20325b]">
                         {PURPOSE_CARDS.find((item) => item.id === form.purpose)?.title ?? "—"}
                       </div>
-                      <p className="mt-2 text-sm leading-7 text-[#607190]">{accountSummary}</p>
+                      <p className="mt-1.5 text-[13px] leading-6 text-[#607190]">{accountSummary}</p>
                     </div>
 
-                    <div className="grid gap-5 md:grid-cols-[1fr_260px]">
-                      <div className="rounded-[24px] border border-[#e1e9ff] bg-white p-5">
-                        <div className="mb-3 text-sm font-semibold text-[#6c7a95]">
+                    <div className="grid gap-4 md:grid-cols-[1fr_200px]">
+                      <div className="rounded-[20px] border border-[#e1e9ff] bg-white p-4">
+                        <div className="mb-2.5 text-xs font-semibold text-[#6c7a95]">
                           Hesap özeti
                         </div>
                         <dl className="space-y-3 text-sm text-[#435473]">
@@ -690,14 +690,14 @@ export default function SignupWizard() {
                         </dl>
                       </div>
 
-                      <div className="overflow-hidden rounded-[24px] border border-[#e1e9ff] bg-white p-3">
-                        <div className="relative aspect-[1680/945] w-full overflow-hidden rounded-[16px]">
+                      <div className="overflow-hidden rounded-[20px] border border-[#e1e9ff] bg-white p-2.5">
+                        <div className="relative aspect-[1680/945] w-full overflow-hidden rounded-[14px]">
                           <Image
                             src="/images/signup/signup-architecture-diagram.png"
                             alt="Mimari diyagram"
                             fill
                             className="object-cover object-left-top"
-                            sizes="260px"
+                            sizes="200px"
                           />
                         </div>
                       </div>
@@ -706,13 +706,13 @@ export default function SignupWizard() {
                 )}
 
                 {error ? (
-                  <p className="mt-5 rounded-[16px] border border-[#f7d1d1] bg-[#fff5f5] px-4 py-3 text-sm text-[#b24c4c]">
+                  <p className="mt-4 rounded-[14px] border border-[#f7d1d1] bg-[#fff5f5] px-3.5 py-2.5 text-[13px] text-[#b24c4c]">
                     {error}
                   </p>
                 ) : null}
 
-                <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
-                  <div className="text-sm text-[#74839d]">
+                <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+                  <div className="text-[13px] text-[#74839d]">
                     Zaten hesabınız var mı?{" "}
                     <Link href="/login" className="font-semibold text-[#295ae7]">
                       Giriş Yap
@@ -725,7 +725,7 @@ export default function SignupWizard() {
                         type="button"
                         variant="outline"
                         onClick={prevStep}
-                        className="h-12 rounded-[16px] border-[#d9e4ff] px-6 text-[#355287]"
+                        className="h-10 rounded-[14px] border-[#d9e4ff] px-5 text-sm text-[#355287]"
                       >
                         Geri
                       </Button>
@@ -736,7 +736,7 @@ export default function SignupWizard() {
                         type="button"
                         onClick={nextStep}
                         disabled={!canProceedStep1}
-                        className="h-12 rounded-[16px] bg-[#295ae7] px-6 text-base font-bold"
+                        className="h-10 rounded-[14px] bg-[#295ae7] px-5 text-sm font-bold"
                       >
                         Devam Et
                         <ArrowRight className="ml-2 h-4 w-4" />
@@ -748,7 +748,7 @@ export default function SignupWizard() {
                         type="button"
                         onClick={nextStep}
                         disabled={!canProceedStep2}
-                        className="h-12 rounded-[16px] bg-[#295ae7] px-6 text-base font-bold"
+                        className="h-10 rounded-[14px] bg-[#295ae7] px-5 text-sm font-bold"
                       >
                         Devam Et
                         <ArrowRight className="ml-2 h-4 w-4" />
@@ -760,7 +760,7 @@ export default function SignupWizard() {
                         type="button"
                         onClick={nextStep}
                         disabled={!canProceedStep3}
-                        className="h-12 rounded-[16px] bg-[#295ae7] px-6 text-base font-bold"
+                        className="h-10 rounded-[14px] bg-[#295ae7] px-5 text-sm font-bold"
                       >
                         Özeti Gör
                         <ArrowRight className="ml-2 h-4 w-4" />
@@ -771,7 +771,7 @@ export default function SignupWizard() {
                       <Button
                         type="submit"
                         disabled={submitting}
-                        className="h-12 rounded-[16px] bg-[#295ae7] px-6 text-base font-bold"
+                        className="h-10 rounded-[14px] bg-[#295ae7] px-5 text-sm font-bold"
                       >
                         {submitting ? "Kaydediliyor..." : "Kayıt Ol"}
                       </Button>
