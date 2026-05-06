@@ -268,55 +268,55 @@ export default function SignupWizard() {
           />
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.1),rgba(255,255,255,0.02))]" />
 
-          <div className="relative z-10 flex h-full w-full flex-col justify-between px-10 py-8 xl:px-12">
-            <div className="space-y-8">
-              <div className="flex items-start gap-6">
+          <div className="relative z-10 flex h-full w-full flex-col justify-between px-7 py-6 xl:px-8">
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
                 <Image
                   src="/icons/medishift-brand.png"
                   alt="MediPlan"
                   width={118}
                   height={118}
                   unoptimized
-                  className="h-[118px] w-[118px] shrink-0"
+                  className="h-[82px] w-[82px] shrink-0"
                 />
-                <div className="space-y-1.5 pt-2">
-                  <div className="text-[52px] font-extrabold leading-none tracking-[-0.05em] text-[#1f57e7]">
+                <div className="space-y-1 pt-1.5">
+                  <div className="text-[36px] font-extrabold leading-none tracking-[-0.05em] text-[#1f57e7]">
                     MediPlan
                   </div>
-                  <p className="max-w-[280px] text-[22px] leading-[1.28] text-[#223768]">
+                  <p className="max-w-[210px] text-[15px] leading-[1.25] text-[#223768]">
                     Hastane Personel Organizasyon Sistemi
                   </p>
                 </div>
               </div>
 
-              <div className="max-w-[470px] space-y-6">
-                <h2 className="text-[clamp(56px,6vw,80px)] font-extrabold leading-[0.98] tracking-[-0.06em] text-[#1b3271]">
+              <div className="max-w-[360px] space-y-4">
+                <h2 className="text-[clamp(38px,4.2vw,56px)] font-extrabold leading-[0.98] tracking-[-0.06em] text-[#1b3271]">
                   Daha adil,
                   <br />
                   daha dengeli,
                   <br />
                   daha verimli çalışma listeleri.
                 </h2>
-                <p className="max-w-[430px] text-[18px] leading-9 text-[#506387]">
+                <p className="max-w-[320px] text-[13px] leading-7 text-[#506387]">
                   Bireysel takvim yönetimi, birim organizasyonu ve akıllı analizlerle
                   adil vardiya planlaması şimdi çok daha kolay.
                 </p>
-                <div className="h-1.5 w-14 rounded-full bg-[#2759e7]" />
+                <div className="h-1 w-10 rounded-full bg-[#2759e7]" />
               </div>
 
-              <div className="space-y-5">
+              <div className="space-y-4">
                 {SIDE_FEATURES.map((item) => {
                   const Icon = item.icon;
                   return (
-                    <div key={item.title} className="flex items-start gap-5">
-                      <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-[28px] border border-[#dbe6ff] bg-[#f4f8ff] text-[#2759e7] shadow-[0_16px_40px_rgba(39,89,231,0.08)]">
-                        <Icon className="h-11 w-11 stroke-[1.7]" />
+                    <div key={item.title} className="flex items-start gap-4">
+                      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[20px] border border-[#dbe6ff] bg-[#f4f8ff] text-[#2759e7] shadow-[0_12px_28px_rgba(39,89,231,0.08)]">
+                        <Icon className="h-7 w-7 stroke-[1.7]" />
                       </div>
-                      <div className="pt-1">
-                        <div className="text-[28px] font-bold tracking-[-0.03em] text-[#2140a5]">
+                      <div className="pt-0.5">
+                        <div className="text-[19px] font-bold tracking-[-0.03em] text-[#2140a5]">
                           {item.title}
                         </div>
-                        <p className="mt-1 max-w-[290px] text-[16px] leading-8 text-[#536585]">
+                        <p className="mt-1 max-w-[220px] text-[12px] leading-6 text-[#536585]">
                           {item.description}
                         </p>
                       </div>
@@ -326,43 +326,43 @@ export default function SignupWizard() {
               </div>
             </div>
 
-            <div className="space-y-8">
-              <div className="max-w-[470px] rounded-[28px] border border-[#dbe6ff] bg-white/72 px-6 py-6 shadow-[0_18px_50px_rgba(39,89,231,0.08)] backdrop-blur-[8px]">
-                <div className="flex items-center gap-5">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-[20px] bg-[#edf4ff] text-[#2759e7]">
-                    <Users className="h-8 w-8 stroke-[1.8]" />
+            <div className="space-y-5">
+              <div className="max-w-[360px] rounded-[20px] border border-[#dbe6ff] bg-white/72 px-4 py-4 shadow-[0_18px_50px_rgba(39,89,231,0.08)] backdrop-blur-[8px]">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#edf4ff] text-[#2759e7]">
+                    <Users className="h-6 w-6 stroke-[1.8]" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-[30px] font-bold tracking-[-0.03em] text-[#2140a5]">
+                    <div className="text-[22px] font-bold tracking-[-0.03em] text-[#2140a5]">
                       Hemen başla!
                     </div>
-                    <p className="text-[16px] leading-7 text-[#5b6d8e]">
+                    <p className="text-[12px] leading-5 text-[#5b6d8e]">
                       Daha iyi bir vardiya planlaması sizi bekliyor.
                     </p>
                   </div>
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#2759e7] text-white shadow-[0_18px_34px_rgba(39,89,231,0.26)]">
-                    <ArrowRight className="h-6 w-6" />
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#2759e7] text-white shadow-[0_14px_28px_rgba(39,89,231,0.26)]">
+                    <ArrowRight className="h-4 w-4" />
                   </div>
                 </div>
               </div>
 
-              <div className="grid max-w-[860px] grid-cols-4 overflow-hidden rounded-[28px] border border-[#dbe6ff] bg-white/88 shadow-[0_18px_44px_rgba(39,89,231,0.08)] backdrop-blur-sm">
+              <div className="grid max-w-[620px] grid-cols-4 overflow-hidden rounded-[20px] border border-[#dbe6ff] bg-white/88 shadow-[0_18px_44px_rgba(39,89,231,0.08)] backdrop-blur-sm">
                 {FOOTER_FEATURES.map((item, index) => {
                   const Icon = item.icon;
                   return (
                     <div
                       key={item.title}
                       className={cn(
-                        "flex flex-col gap-3 px-6 py-6",
+                        "flex flex-col gap-2 px-4 py-4",
                         index !== FOOTER_FEATURES.length - 1 &&
                           "border-r border-[#e6edff]",
                       )}
                     >
-                      <Icon className="h-10 w-10 text-[#2759e7] stroke-[1.75]" />
-                      <div className="text-[18px] font-bold tracking-[-0.02em] text-[#263a67]">
+                      <Icon className="h-7 w-7 text-[#2759e7] stroke-[1.75]" />
+                      <div className="text-[13px] font-bold tracking-[-0.02em] text-[#263a67]">
                         {item.title}
                       </div>
-                      <p className="text-[14px] leading-6 text-[#60708e]">
+                      <p className="text-[11px] leading-5 text-[#60708e]">
                         {item.description}
                       </p>
                     </div>
@@ -376,7 +376,7 @@ export default function SignupWizard() {
               alt=""
               width={620}
               height={760}
-              className="pointer-events-none absolute bottom-0 right-[-2%] z-0 h-auto w-[62%] max-w-[650px]"
+              className="pointer-events-none absolute bottom-0 right-[-1%] z-0 h-auto w-[46%] max-w-[430px]"
             />
           </div>
         </aside>
