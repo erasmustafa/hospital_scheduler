@@ -17,6 +17,8 @@ import {
   Lock,
   Mail,
   Phone,
+  ShieldCheck,
+  Sparkles,
   User,
   Users,
 } from "lucide-react";
@@ -78,6 +80,24 @@ const PURPOSE_CARDS: Array<{
   },
 ] as const;
 
+const SIDE_FEATURES = [
+  {
+    title: "Adil ve Dengeli",
+    description: "Fairness analizleri ile ekip dağılımını daha kontrollü yönetin.",
+    icon: User,
+  },
+  {
+    title: "Akıllı Öneriler",
+    description: "Swap ve vardiya önerileri ile planlama süresini azaltın.",
+    icon: Sparkles,
+  },
+  {
+    title: "Güvenli ve İzlenebilir",
+    description: "Yetki, onay ve kayıt akışı tek yüzeyde denetlenir.",
+    icon: ShieldCheck,
+  },
+] as const;
+
 const initialState: FormState = {
   fullName: "",
   email: "",
@@ -107,14 +127,14 @@ export function SignupWizard() {
   const [error, setError] = useState<string | null>(null);
   const [createdUsername, setCreatedUsername] = useState<string | null>(null);
 
-  const canProceedStep1 = useMemo(() => {
-    return (
+  const canProceedStep1 = useMemo(
+    () =>
       form.fullName.trim().length >= 3 &&
       form.email.trim().length > 5 &&
       form.password.length >= 8 &&
-      form.password === form.confirmPassword
-    );
-  }, [form]);
+      form.password === form.confirmPassword,
+    [form],
+  );
 
   const canProceedStep2 = Boolean(form.purpose);
 
@@ -213,15 +233,87 @@ export function SignupWizard() {
       </Link>
 
       <section className="mx-auto grid min-h-[calc(100dvh-32px)] w-full max-w-[1380px] overflow-hidden rounded-[32px] border border-[#dfe8ff] bg-white shadow-[0_32px_90px_rgba(53,85,176,0.12)] lg:grid-cols-[0.96fr_1.04fr]">
-        <aside className="relative hidden overflow-hidden lg:block">
+        <aside className="relative hidden overflow-hidden bg-[#05070d] lg:flex">
           <Image
-            src="/images/signup/signup-panel-bg.png"
-            alt="MediPlan arka plan görseli"
+            src="/images/signup/signup-panel-illustration-dark.png"
+            alt="Signup panel illüstrasyonu"
             fill
             className="pointer-events-none object-cover object-center"
             sizes="(min-width: 1024px) 560px, 100vw"
             priority
           />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_70%,rgba(112,156,255,0.4),transparent_22%),linear-gradient(180deg,rgba(3,6,18,0.22),rgba(3,6,18,0.66))]" />
+          <div className="relative z-10 flex h-full w-full flex-col justify-between p-8 text-white">
+            <div className="space-y-8">
+              <div className="flex items-center gap-4">
+                <Image
+                  src="/icons/medishift-brand.png"
+                  alt="MediPlan"
+                  width={58}
+                  height={58}
+                  unoptimized
+                />
+                <div>
+                  <div className="text-[24px] font-extrabold tracking-tight text-white">
+                    MediPlan
+                  </div>
+                  <p className="text-sm leading-6 text-white/72">
+                    Hastane Personel Organizasyon Sistemi
+                  </p>
+                </div>
+              </div>
+
+              <div className="max-w-[420px] space-y-4">
+                <h2 className="text-[clamp(38px,5vw,62px)] font-extrabold leading-[1.02] tracking-[-0.05em] text-white">
+                  Daha adil, daha dengeli, daha verimli çalışma listeleri.
+                </h2>
+                <p className="max-w-[380px] text-[17px] leading-8 text-white/74">
+                  Bireysel takvim yönetimi, birim organizasyonu ve akıllı analizlerle
+                  adil vardiya planlaması tek akışta ilerler.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                {SIDE_FEATURES.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div
+                      key={item.title}
+                      className="flex items-start gap-4 rounded-[22px] border border-white/10 bg-white/5 px-4 py-4 backdrop-blur-sm"
+                    >
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[18px] bg-white/10 text-[#8fb4ff]">
+                        <Icon className="h-6 w-6" />
+                      </div>
+                      <div>
+                        <div className="text-[22px] font-bold tracking-[-0.02em] text-white">
+                          {item.title}
+                        </div>
+                        <p className="mt-1 max-w-[300px] text-sm leading-6 text-white/68">
+                          {item.description}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="rounded-[24px] border border-white/12 bg-white/6 p-5 backdrop-blur-md">
+              <div className="flex items-center gap-4">
+                <div className="flex h-14 w-14 items-center justify-center rounded-[18px] bg-[#2458e8] text-white shadow-[0_18px_36px_rgba(36,88,232,0.35)]">
+                  <Users className="h-7 w-7" />
+                </div>
+                <div>
+                  <div className="text-[24px] font-bold tracking-[-0.03em] text-white">
+                    Hemen Başla
+                  </div>
+                  <p className="text-sm leading-6 text-white/70">
+                    Kurulumu tamamlayın, ilk vardiya akışınızı bugün başlatın.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </aside>
 
         <section className="flex min-w-0 flex-col justify-center bg-white px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
