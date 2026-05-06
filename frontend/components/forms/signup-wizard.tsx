@@ -266,11 +266,11 @@ export default function SignupWizard() {
             sizes="(min-width: 1024px) 560px, 100vw"
             priority
           />
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.65),transparent_34%),radial-gradient(circle_at_center_right,rgba(97,139,237,0.12),transparent_42%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.1),rgba(255,255,255,0.02))]" />
 
-          <div className="relative z-10 flex h-full w-full flex-col justify-between px-10 py-8">
-            <div className="space-y-10">
-              <div className="flex items-start gap-5">
+          <div className="relative z-10 flex h-full w-full flex-col justify-between px-10 py-8 xl:px-12">
+            <div className="space-y-8">
+              <div className="flex items-start gap-6">
                 <Image
                   src="/icons/medishift-brand.png"
                   alt="MediPlan"
@@ -289,7 +289,7 @@ export default function SignupWizard() {
                 </div>
               </div>
 
-              <div className="max-w-[460px] space-y-6">
+              <div className="max-w-[470px] space-y-6">
                 <h2 className="text-[clamp(56px,6vw,80px)] font-extrabold leading-[0.98] tracking-[-0.06em] text-[#1b3271]">
                   Daha adil,
                   <br />
@@ -304,7 +304,7 @@ export default function SignupWizard() {
                 <div className="h-1.5 w-14 rounded-full bg-[#2759e7]" />
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-5">
                 {SIDE_FEATURES.map((item) => {
                   const Icon = item.icon;
                   return (
@@ -327,7 +327,7 @@ export default function SignupWizard() {
             </div>
 
             <div className="space-y-8">
-              <div className="max-w-[470px] rounded-[28px] border border-[#dbe6ff] bg-[#f6faff] px-6 py-6 shadow-[0_18px_50px_rgba(39,89,231,0.08)]">
+              <div className="max-w-[470px] rounded-[28px] border border-[#dbe6ff] bg-white/72 px-6 py-6 shadow-[0_18px_50px_rgba(39,89,231,0.08)] backdrop-blur-[8px]">
                 <div className="flex items-center gap-5">
                   <div className="flex h-16 w-16 items-center justify-center rounded-[20px] bg-[#edf4ff] text-[#2759e7]">
                     <Users className="h-8 w-8 stroke-[1.8]" />
@@ -346,7 +346,7 @@ export default function SignupWizard() {
                 </div>
               </div>
 
-              <div className="grid max-w-[860px] grid-cols-4 overflow-hidden rounded-[28px] border border-[#dbe6ff] bg-white/92 shadow-[0_18px_44px_rgba(39,89,231,0.08)] backdrop-blur-sm">
+              <div className="grid max-w-[860px] grid-cols-4 overflow-hidden rounded-[28px] border border-[#dbe6ff] bg-white/88 shadow-[0_18px_44px_rgba(39,89,231,0.08)] backdrop-blur-sm">
                 {FOOTER_FEATURES.map((item, index) => {
                   const Icon = item.icon;
                   return (
@@ -376,7 +376,7 @@ export default function SignupWizard() {
               alt=""
               width={620}
               height={760}
-              className="pointer-events-none absolute bottom-0 right-0 z-0 h-auto w-[58%] max-w-[620px]"
+              className="pointer-events-none absolute bottom-0 right-[-2%] z-0 h-auto w-[62%] max-w-[650px]"
             />
           </div>
         </aside>
