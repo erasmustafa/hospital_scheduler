@@ -8,7 +8,6 @@ import {
   ArrowRight,
   BriefcaseBusiness,
   Building2,
-  Calendar,
   CalendarClock,
   Check,
   Clock3,
@@ -19,14 +18,15 @@ import {
   Mail,
   Phone,
   ShieldCheck,
+  Sparkles,
   User,
   Users,
 } from "lucide-react";
 
-import { ApiError } from "@/lib/api";
-import { register, type RegisterPayload } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { register, type RegisterPayload } from "@/lib/auth";
+import { ApiError } from "@/lib/api";
 
 type Purpose = "personal" | "manager" | "invite";
 type Step = 1 | 2 | 3 | 4;
@@ -62,8 +62,8 @@ const PURPOSE_CARDS: Array<{
 }> = [
   {
     id: "personal",
-    title: "Kişisel Takvim",
-    description: "Kendi çalışma listenizi ve tercihlerinizi yönetirsiniz.",
+    title: "Bireysel Kullanım",
+    description: "Kendi takviminizi, tercihlerinizi ve listenizi yönetirsiniz.",
     icon: User,
   },
   {
@@ -82,41 +82,36 @@ const PURPOSE_CARDS: Array<{
 
 const SIDE_FEATURES = [
   {
-    title: "Adil & Dengeli",
-    description: "Fairness analizleri ile herkes için adil dağılım.",
-    icon: User,
+    title: "Adil ve Dengeli",
+    description: "Adalet skorları ve önerilerle daha dengeli vardiya dağılımı kurun.",
+    icon: ShieldCheck,
   },
   {
     title: "Akıllı Öneriler",
-    description: "Swap önerileri ile listeleri iyileştirin.",
-    icon: Calendar,
+    description: "İçe aktarılan listelerden kural bazlı planlama akışına hızla geçin.",
+    icon: CalendarClock,
   },
   {
-    title: "Güvenli & Güvenilir",
-    description: "Verileriniz güvenle korunur.",
-    icon: ShieldCheck,
+    title: "Kolay Yönetim",
+    description: "Birim, personel ve onay süreçlerini tek bir merkezden yönetin.",
+    icon: Sparkles,
   },
 ] as const;
 
 const FOOTER_FEATURES = [
   {
     title: "Uyumlu Kurallar",
-    description: "Yasal ve kurumsal kurallara uyumlu.",
+    description: "Kurumsal ve yasal kısıtlar planın içine yerleşir.",
     icon: ShieldCheck,
   },
   {
     title: "Zaman Tasarrufu",
-    description: "Otomasyon ile saatler süren işleri dakikalara indirin.",
+    description: "Manuel plan yükünü azaltan daha hızlı kurulum akışı.",
     icon: Clock3,
   },
   {
-    title: "Detaylı Raporlama",
-    description: "Performans panelleri ile tüm verilere hakim olun.",
-    icon: CalendarClock,
-  },
-  {
     title: "Her Yerden Erişim",
-    description: "Web ve mobil ile her zaman yanınızda.",
+    description: "Web ve mobil üzerinden erişilebilen ortak çalışma yüzeyi.",
     icon: Phone,
   },
 ] as const;
@@ -176,12 +171,9 @@ export default function SignupWizard() {
 
   const accountSummary = useMemo(() => {
     const map: Record<Purpose, string> = {
-      personal:
-        "Kendi takviminizi oluşturup OCR veya manuel veri ile ilerleyeceksiniz.",
-      manager:
-        "Birim oluşturup vardiya tipleri, kurallar ve personel akışını kuracaksınız.",
-      invite:
-        "Davet kodu ile mevcut birime bağlanıp çalışan olarak devam edeceksiniz.",
+      personal: "Bireysel takviminizi kurup kişisel planlama ile devam edeceksiniz.",
+      manager: "Birim, personel, kural ve vardiya yapısını siz yöneteceksiniz.",
+      invite: "Davet kodu ile mevcut birime çalışan olarak bağlanacaksınız.",
     };
     return form.purpose ? map[form.purpose] : "";
   }, [form.purpose]);
@@ -205,7 +197,7 @@ export default function SignupWizard() {
     setError(null);
 
     if (!form.purpose) {
-      setError("Lütfen kullanım amacını seçin.");
+      setError("Lütfen kullanım amacınızı seçin.");
       return;
     }
 
@@ -245,155 +237,129 @@ export default function SignupWizard() {
   };
 
   return (
-    <main className="relative min-h-[100dvh] overflow-hidden bg-[linear-gradient(135deg,#edf4ff_0%,#f8fbff_50%,#eef3ff_100%)] px-3 py-4 sm:px-5 lg:px-6">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-[radial-gradient(circle_at_top,rgba(76,117,238,0.12),transparent_68%)]" />
+    <main className="relative min-h-screen overflow-hidden bg-[#edf3ff]">
+      <Image
+        src="/images/signup/signup-background.png"
+        alt=""
+        fill
+        priority
+        className="pointer-events-none object-cover object-center"
+        sizes="100vw"
+      />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(242,247,255,0.88),rgba(255,255,255,0.78),rgba(237,244,255,0.92))]" />
 
-      <Link
-        href="/"
-        className="absolute left-4 top-4 z-20 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-[#dce7ff] bg-white/85 text-[#4568e6] shadow-[0_12px_30px_rgba(74,105,196,0.12)] transition hover:-translate-y-0.5"
-        aria-label="Landing sayfasına dön"
-      >
-        <ArrowLeft className="h-5 w-5" />
-      </Link>
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-[1440px] items-center justify-center p-3 sm:p-5 xl:p-8">
+        <Link
+          href="/"
+          className="absolute left-3 top-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[#dce7ff] bg-white/90 text-[#4568e6] shadow-[0_12px_30px_rgba(74,105,196,0.12)] transition hover:-translate-y-0.5 sm:left-5 sm:top-5"
+          aria-label="Ana sayfaya dön"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Link>
 
-      <section className="mx-auto grid h-[calc(100dvh-32px)] w-full max-w-[1380px] overflow-hidden rounded-[32px] border border-[#dfe8ff] bg-white shadow-[0_32px_90px_rgba(53,85,176,0.12)] lg:grid-cols-[0.96fr_1.04fr]">
-        <aside className="relative hidden overflow-hidden bg-[#f7fbff] lg:flex">
-          <Image
-            src="/images/signup/left-panel-background.png"
-            alt="MediPlan tanıtım arka planı"
-            fill
-            className="pointer-events-none object-cover object-right"
-            sizes="(min-width: 1024px) 560px, 100vw"
-            priority
-          />
-          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))]" />
+        <section className="grid h-[min(90vh,980px)] w-full max-w-[1240px] overflow-hidden rounded-[34px] border border-[#dfe8ff] bg-white/82 shadow-[0_32px_90px_rgba(53,85,176,0.14)] backdrop-blur-xl xl:grid-cols-[0.98fr_0.82fr]">
+          <aside className="relative hidden overflow-hidden xl:flex">
+            <Image
+              src="/images/signup/left-panel-background.png"
+              alt=""
+              fill
+              className="pointer-events-none object-cover object-center"
+              sizes="(min-width: 1280px) 640px, 0px"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(255,255,255,0.28),rgba(255,255,255,0.12),rgba(255,255,255,0.04))]" />
 
-          <div className="relative z-10 flex h-full w-full flex-col justify-between px-7 py-6 xl:px-8">
-            <div className="space-y-6">
-              <div className="flex items-start gap-4">
+            <div className="relative z-10 flex h-full w-full flex-col px-8 pb-7 pt-8">
+              <div className="flex items-center gap-3">
                 <Image
                   src="/icons/medishift-brand.png"
                   alt="MediPlan"
-                  width={118}
-                  height={118}
+                  width={60}
+                  height={60}
                   unoptimized
-                  className="h-[82px] w-[82px] shrink-0"
+                  className="h-12 w-12 shrink-0"
                 />
-                <div className="space-y-1 pt-1.5">
-                  <div className="text-[36px] font-extrabold leading-none tracking-[-0.05em] text-[#1f57e7]">
+                <div>
+                  <div className="text-[15px] font-black tracking-[-0.04em] text-[#1e55e6]">
                     MediPlan
                   </div>
-                  <p className="max-w-[210px] text-[15px] leading-[1.25] text-[#223768]">
-                    Hastane Personel Organizasyon Sistemi
+                  <div className="text-[11px] leading-5 text-[#203f80]">
+                    Hastane Personel
+                    <br />
+                    Organizasyon Sistemi
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 max-w-[330px]">
+                <h1 className="text-[48px] font-black leading-[0.96] tracking-[-0.06em] text-[#19316f]">
+                  Daha düzenli,
+                  <br />
+                  daha hızlı,
+                  <br />
+                  daha doğru kayıt.
+                </h1>
+                <p className="mt-4 max-w-[300px] text-[14px] leading-7 text-[#536786]">
+                  Kurulum akışını kısa sürede tamamlayın, personel organizasyonunuzu tek
+                  ekrandan başlatın.
+                </p>
+              </div>
+
+              <div className="mt-7 h-1 w-14 rounded-full bg-[#295ae7]" />
+
+              <div className="mt-7 space-y-4">
+                {SIDE_FEATURES.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={item.title} className="flex items-start gap-3">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px] border border-[#dce7ff] bg-white/78 text-[#2a5ae8] shadow-[0_14px_32px_rgba(39,89,231,0.08)]">
+                        <Icon className="h-5 w-5 stroke-[1.8]" />
+                      </div>
+                      <div className="pt-0.5">
+                        <div className="text-[15px] font-bold tracking-[-0.03em] text-[#23418f]">
+                          {item.title}
+                        </div>
+                        <p className="mt-1 max-w-[255px] text-[12px] leading-5 text-[#60718e]">
+                          {item.description}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-auto pt-6">
+                <div className="rounded-[24px] border border-white/60 bg-white/72 px-5 py-4 shadow-[0_18px_40px_rgba(56,94,196,0.08)] backdrop-blur-sm">
+                  <div className="text-[17px] font-bold tracking-[-0.03em] text-[#20408d]">
+                    Hemen başla
+                  </div>
+                  <p className="mt-1 text-[12px] leading-5 text-[#667793]">
+                    Hastanenizi veya biriminizi birkaç adımda sisteme alın.
                   </p>
                 </div>
               </div>
 
-              <div className="max-w-[360px] space-y-4">
-                <h2 className="text-[clamp(30px,3.2vw,36px)] font-bold leading-[0.98] tracking-[-0.06em] text-[#1b3271]">
-                  Daha adil,
-                  <br />
-                  daha dengeli,
-                  <br />
-                  daha verimli çalışma listeleri
-                </h2>
-                <p className="max-w-[320px] text-[13px] leading-2 text-[#506387]">
-                  Bireysel takvim yönetimi, birim organizasyonu ve akıllı analizlerle
-                  adil vardiya planlaması şimdi çok daha kolay.
-                </p>
-                <div className="h-1 w-10 rounded-full bg-[#2759e7]" />
-              </div>
-
-              <div className="space-y-4">
-                {SIDE_FEATURES.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <div key={item.title} className="flex items-start gap-4">
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[15px] border border-[#dbe6ff] bg-[#f4f8ff] text-[#2759e7] shadow-[0_12px_28px_rgba(39,89,231,0.08)]">
-                        <Icon className="h-5 w-5 stroke-[1.7]" />
-                      </div>
-                      <div className="pt-0.5">
-                        <div className="text-[19px] font-bold tracking-[-0.03em] text-[#2140a5]">
-                          {item.title}
-                        </div>
-                        <p className="mt-1 max-w-[250px] text-[12px] leading-6 text-[#536585]">
-                          {item.description}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="pointer-events-none absolute bottom-0 right-0 h-[42%] w-[68%]">
+                <Image
+                  src="/images/signup/left-panel-asset.svg"
+                  alt=""
+                  fill
+                  className="object-contain object-bottom-right"
+                  sizes="(min-width: 1280px) 420px, 0px"
+                />
               </div>
             </div>
+          </aside>
 
-            <div className="space-y-20">
-              <div className="max-w-[330px] rounded-[20px] border border-[#dbe6ff] bg-white/72 px-4 py-4 shadow-[0_18px_50px_rgba(39,89,231,0.08)] backdrop-blur-[8px]">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#edf4ff] text-[#2759e7]">
-                    <Users className="h-6 w-6 stroke-[1.8]" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="text-[20px] font-bold tracking-[-0.03em] text-[#2140a5]">
-                      Hemen başla!
-                    </div>
-                    <p className="text-[12px] leading-5 text-[#5b6d8e]">
-                      Daha iyi bir vardiya planlaması sizi bekliyor.
-                    </p>
-                  </div>
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#2759e7] text-white shadow-[0_14px_28px_rgba(39,89,231,0.26)]">
-                    <ArrowRight className="h-4 w-4" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid max-w-[620px] grid-cols-4 overflow-hidden rounded-[20px] border border-[#dbe6ff] bg-white/88 shadow-[0_18px_44px_rgba(39,89,231,0.08)] backdrop-blur-sm">
-                {FOOTER_FEATURES.map((item, index) => {
-                  const Icon = item.icon;
-                  return (
-                    <div
-                      key={item.title}
-                      className={cn(
-                        "flex items-center gap-2 px-3 py-3",
-                        index !== FOOTER_FEATURES.length - 1 &&
-                          "border-r border-[#e6edff]",
-                      )}
-                    >
-                      <Icon className="h-5 w-5 shrink-0 text-[#2759e7] stroke-[1.75]" />
-                      <div className="flex min-w-0 flex-col justify-center">
-                        <div className="text-[12px] font-bold tracking-[-0.02em] text-[#263a67]">
-                          {item.title}
-                        </div>
-                        <p className="text-[10px] leading-5 text-[#60708e]">
-                          {item.description}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <Image
-              src="/images/signup/left-panel-asset.svg"
-              alt=""
-              width={620}
-              height={760}
-              className="pointer-events-none absolute bottom-[23%] right-[7%] z-0 h-auto w-[35%] max-w-[380px] drop-shadow-[0_28px_60px_rgba(72,111,205,0.18)]"
-            />
-          </div>
-        </aside>
-
-        <section className="flex min-w-0 flex-col overflow-y-auto bg-white px-3 py-3 sm:px-5 lg:px-6 lg:py-5">
-          <div className="mx-auto flex w-full max-w-[450px] flex-1 flex-col justify-center">
-            <div className="mb-6 grid grid-cols-4 gap-2 sm:gap-3">
+          <section className="flex min-w-0 flex-col bg-white/58 px-4 py-4 sm:px-6 sm:py-5 xl:px-7 xl:py-6">
+            <div className="mb-4 grid grid-cols-4 gap-2 rounded-[20px] border border-[#e3ebff] bg-white/82 px-4 py-3 shadow-[0_14px_36px_rgba(53,85,176,0.06)]">
               {STEPS.map((item) => {
                 const isActive = step === item.id;
                 const isDone = step > item.id || (item.id === 4 && createdUsername);
                 return (
-                  <div key={item.id} className="flex items-center gap-3">
+                  <div key={item.id} className="flex items-center gap-2">
                     <div
                       className={cn(
-                        "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-bold transition",
+                        "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-[11px] font-bold transition",
                         isActive || isDone
                           ? "border-[#2659e7] bg-[#2659e7] text-white"
                           : "border-[#d9e4ff] bg-white text-[#7d8dab]",
@@ -401,390 +367,379 @@ export default function SignupWizard() {
                     >
                       {isDone ? <Check className="h-4 w-4" /> : item.id}
                     </div>
-                    <div className="hidden min-w-0 sm:block">
-                      <div
-                        className={cn(
-                          "text-[13px] font-semibold",
-                          isActive ? "text-[#2441a3]" : "text-[#7d8dab]",
-                        )}
-                      >
-                        {item.label}
-                      </div>
+                    <div className="min-w-0 text-[11px] font-semibold leading-4 text-[#6d7f9f]">
+                      <span className={isActive ? "text-[#2441a3]" : undefined}>{item.label}</span>
                     </div>
                   </div>
                 );
               })}
             </div>
 
-            {createdUsername ? (
-              <div className="rounded-[24px] border border-[#deebff] bg-[#f8fbff] p-5 shadow-[0_20px_60px_rgba(53,85,176,0.08)] sm:p-6">
-                <div className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#e9f1ff] text-[#2759e7]">
-                  <Check className="h-5 w-5" />
-                </div>
-                <h1 className="text-[34px] font-extrabold tracking-[-0.05em] text-[#1d2e52]">
-                  Hesabınız hazır
-                </h1>
-                <p className="mt-2 max-w-[460px] text-[15px] leading-7 text-[#607190]">
-                  Kayıt tamamlandı. Giriş ekranında kullanıcı adı olarak e-posta
-                  adresinizi kullanabilirsiniz.
-                </p>
-                <div className="mt-5 rounded-[18px] border border-[#dbe7ff] bg-white p-4">
-                  <div className="text-xs font-semibold text-[#70809d]">Giriş bilgisi</div>
-                  <div className="mt-1.5 text-[18px] font-bold text-[#1d2e52]">
-                    {createdUsername}
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[30px] border border-[#dfe8ff] bg-white px-5 py-5 shadow-[0_24px_70px_rgba(53,85,176,0.08)] sm:px-6 sm:py-6">
+              {createdUsername ? (
+                <div className="flex h-full flex-col justify-center">
+                  <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#e9f1ff] text-[#2759e7]">
+                    <Check className="h-5 w-5" />
                   </div>
-                  <p className="mt-1.5 text-[13px] leading-5 text-[#667792]">{accountSummary}</p>
-                </div>
-                <div className="mt-5 flex flex-wrap gap-2.5">
-                  <Link
-                    href="/login"
-                    className="inline-flex h-11 items-center justify-center rounded-xl bg-[#2759e7] px-6 text-sm font-bold text-white shadow-[0_14px_32px_rgba(39,89,231,0.28)]"
-                  >
-                    Giriş Yap
-                  </Link>
-                  <Link
-                    href="/"
-                    className="inline-flex h-11 items-center justify-center rounded-xl border border-[#d7e3ff] px-6 text-sm font-semibold text-[#2b467e]"
-                  >
-                    Landing Sayfasına Dön
-                  </Link>
-                </div>
-              </div>
-            ) : (
-              <form
-                className="rounded-[24px] border border-[#e1e9ff] bg-white px-3.5 py-4 shadow-[0_24px_70px_rgba(53,85,176,0.08)] sm:px-5 sm:py-5 lg:px-6 lg:py-6"
-                onSubmit={handleSubmit}
-              >
-                <div className="mb-4">
-                  <h1 className="text-[clamp(22px,3.2vw,32px)] font-extrabold tracking-[-0.05em] text-[#1d2e52]">
-                    {step === 1
-                      ? "Hesap oluşturun"
-                      : step === 2
-                        ? "Kullanım amacınızı seçin"
-                        : step === 3
-                          ? "Kurulum detaylarını tamamlayın"
-                          : "Kurulumu gözden geçirin"}
-                  </h1>
-                  <p className="mt-1.5 text-[12px] leading-5 text-[#6c7c98]">
-                    {step === 1 &&
-                      "MediPlan'a hoş geldiniz. Temel hesap bilgilerinizi girerek başlayın."}
-                    {step === 2 &&
-                      "Sistemi hangi bağlamda kullanacağınızı seçin. Bu seçim sonraki akışı belirler."}
-                    {step === 3 &&
-                      "Seçtiğiniz kullanım amacına göre gerekli alanları tamamlayın."}
-                    {step === 4 &&
-                      "Kaydı tamamlamadan önce yol haritanızı ve seçtiğiniz akışı kontrol edin."}
+                  <h2 className="text-[38px] font-extrabold tracking-[-0.05em] text-[#1d2e52]">
+                    Hesabınız hazır
+                  </h2>
+                  <p className="mt-3 max-w-[420px] text-[14px] leading-7 text-[#607190]">
+                    Kayıt tamamlandı. Giriş ekranında kullanıcı adı olarak e-posta adresinizi
+                    kullanabilirsiniz.
                   </p>
-                </div>
-
-                {step === 1 && (
-                  <div className="space-y-4">
-                    <Field label="Ad Soyad" icon={User}>
-                      <Input
-                        value={form.fullName}
-                        onChange={(event) => setField("fullName", event.target.value)}
-                        placeholder="Adınızı ve soyadınızı girin"
-                        className="h-[46px] rounded-[14px] border-[#dfe7f7] pl-4 text-sm"
-                      />
-                    </Field>
-                    <Field label="E-posta" icon={Mail}>
-                      <Input
-                        type="email"
-                        value={form.email}
-                        onChange={(event) => setField("email", event.target.value)}
-                        placeholder="ornek@email.com"
-                        className="h-[46px] rounded-[14px] border-[#dfe7f7] pl-4 text-sm"
-                      />
-                    </Field>
-                    <Field label="Telefon Numarası (Opsiyonel)" icon={Phone}>
-                      <Input
-                        value={form.phone}
-                        onChange={(event) => setField("phone", event.target.value)}
-                        placeholder="+90 (5XX) XXX XX XX"
-                        className="h-[46px] rounded-[14px] border-[#dfe7f7] pl-4 text-sm"
-                      />
-                    </Field>
-                    <Field label="Şifre" icon={Lock}>
-                      <PasswordInput
-                        value={form.password}
-                        onChange={(value) => setField("password", value)}
-                        visible={showPassword}
-                        onToggle={() => setShowPassword((current) => !current)}
-                        placeholder="En az 8 karakter"
-                      />
-                    </Field>
-                    <Field label="Şifre (Tekrar)" icon={Lock}>
-                      <PasswordInput
-                        value={form.confirmPassword}
-                        onChange={(value) => setField("confirmPassword", value)}
-                        visible={showConfirmPassword}
-                        onToggle={() => setShowConfirmPassword((current) => !current)}
-                        placeholder="Şifrenizi tekrar girin"
-                      />
-                    </Field>
-                    <div className="rounded-[14px] border border-[#e4ebfb] bg-[#f8fbff] px-3 py-2 text-[12px] text-[#5f7092]">
-                      Şifreniz en az 8 karakter içermelidir.
+                  <div className="mt-5 rounded-[18px] border border-[#dbe7ff] bg-[#fbfdff] p-4">
+                    <div className="text-xs font-semibold text-[#70809d]">Giriş bilgisi</div>
+                    <div className="mt-1.5 text-[18px] font-bold text-[#1d2e52]">
+                      {createdUsername}
                     </div>
+                    <p className="mt-2 text-[13px] leading-6 text-[#667792]">{accountSummary}</p>
                   </div>
-                )}
-
-                {step === 2 && (
-                  <div className="grid gap-3 md:grid-cols-3">
-                    {PURPOSE_CARDS.map((item) => {
-                      const Icon = item.icon;
-                      const active = form.purpose === item.id;
-                      return (
-                        <button
-                          key={item.id}
-                          type="button"
-                          onClick={() => setField("purpose", item.id)}
-                          className={cn(
-                            "rounded-[20px] border p-4 text-left transition",
-                            active
-                              ? "border-[#295ae7] bg-[#f5f8ff] shadow-[0_18px_36px_rgba(41,90,231,0.12)]"
-                              : "border-[#e0e8f8] bg-white hover:border-[#bfd0ff]",
-                          )}
-                        >
-                          <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#eef3ff] text-[#2859e7]">
-                            <Icon className="h-5 w-5" />
-                          </div>
-                          <div className="text-[17px] font-bold text-[#20325b]">{item.title}</div>
-                          <p className="mt-1.5 text-[13px] leading-5 text-[#677892]">
-                            {item.description}
-                          </p>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {step === 3 && form.purpose === "personal" && (
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <Field label="Meslek / Görev" icon={BriefcaseBusiness}>
-                      <Input
-                        value={form.profession}
-                        onChange={(event) => setField("profession", event.target.value)}
-                        placeholder="Hemşire, doktor, tekniker..."
-                        className="h-[46px] rounded-[14px] border-[#dfe7f7] pl-4 text-sm"
-                      />
-                    </Field>
-                    <Field label="Çalışma Modeli" icon={Clock3}>
-                      <SelectField
-                        value={form.workModel}
-                        onChange={(value) => setField("workModel", value)}
-                        options={["Mesaili", "Nöbetli", "Karma"]}
-                      />
-                    </Field>
-                    <Field label="Liste Aktarma Yöntemi" icon={FileUp}>
-                      <SelectField
-                        value={form.importMethod}
-                        onChange={(value) => setField("importMethod", value)}
-                        options={[
-                          "Şimdilik boş başla",
-                          "Fotoğraf yükle",
-                          "PDF / Excel yükle",
-                          "Manuel takvimden ekle",
-                        ]}
-                      />
-                    </Field>
-                    <div className="rounded-[18px] border border-[#dce8ff] bg-[#f8fbff] p-4 text-[13px] leading-6 text-[#5e6f90]">
-                      Bu akış sonunda kişisel takviminiz, OCR içe aktarma ve fairness
-                      analizi için hazır olacaktır.
-                    </div>
-                  </div>
-                )}
-
-                {step === 3 && form.purpose === "manager" && (
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <Field label="Kurum Adı" icon={Building2}>
-                      <Input
-                        value={form.organizationName}
-                        onChange={(event) =>
-                          setField("organizationName", event.target.value)
-                        }
-                        placeholder="Ör. Gölhisar Devlet Hastanesi"
-                        className="h-[46px] rounded-[14px] border-[#dfe7f7] pl-4 text-sm"
-                      />
-                    </Field>
-                    <Field label="Birim Adı" icon={Users}>
-                      <Input
-                        value={form.unitName}
-                        onChange={(event) => setField("unitName", event.target.value)}
-                        placeholder="Ör. Ameliyathane"
-                        className="h-[46px] rounded-[14px] border-[#dfe7f7] pl-4 text-sm"
-                      />
-                    </Field>
-                    <Field label="Birim Türü" icon={BriefcaseBusiness}>
-                      <Input
-                        value={form.unitType}
-                        onChange={(event) => setField("unitType", event.target.value)}
-                        placeholder="Anestezi / Acil / Yoğun Bakım"
-                        className="h-[46px] rounded-[14px] border-[#dfe7f7] pl-4 text-sm"
-                      />
-                    </Field>
-                    <Field label="Çalışma Modeli" icon={CalendarClock}>
-                      <SelectField
-                        value={form.workModel}
-                        onChange={(value) => setField("workModel", value)}
-                        options={[
-                          "24 saat nöbet + 8 saat mesai",
-                          "Standart vardiyalı çalışma",
-                          "Esnek karma sistem",
-                        ]}
-                      />
-                    </Field>
-                  </div>
-                )}
-
-                {step === 3 && form.purpose === "invite" && (
-                  <div className="grid gap-4 md:grid-cols-[1fr_240px]">
-                    <Field label="Davet Kodu" icon={Users}>
-                      <Input
-                        value={form.inviteCode}
-                        onChange={(event) => setField("inviteCode", event.target.value)}
-                        placeholder="Ör. MEDI-2026-ACIL"
-                        className="h-[56px] rounded-[18px] border-[#dfe7f7] pl-5 text-base"
-                      />
-                    </Field>
-                    <div className="rounded-[18px] border border-[#dce8ff] bg-[#f8fbff] p-4 text-[13px] leading-6 text-[#5e6f90]">
-                      Davet kodu ile mevcut birime çalışan olarak katılırsınız. Yetkileriniz
-                      birim daveti üzerinden tanımlanır.
-                    </div>
-                  </div>
-                )}
-
-                {step === 4 && (
-                  <div className="space-y-4">
-                    <div className="rounded-[20px] border border-[#dce6ff] bg-[#f8fbff] p-4">
-                      <div className="text-xs font-semibold text-[#6c7a95]">Seçilen akış</div>
-                      <div className="mt-1.5 text-[20px] font-bold text-[#20325b]">
-                        {PURPOSE_CARDS.find((item) => item.id === form.purpose)?.title ?? "—"}
-                      </div>
-                      <p className="mt-1.5 text-[13px] leading-6 text-[#607190]">{accountSummary}</p>
-                    </div>
-
-                    <div className="grid gap-4 md:grid-cols-[1fr_200px]">
-                      <div className="rounded-[20px] border border-[#e1e9ff] bg-white p-4">
-                        <div className="mb-2.5 text-xs font-semibold text-[#6c7a95]">
-                          Hesap özeti
-                        </div>
-                        <dl className="space-y-3 text-sm text-[#435473]">
-                          <Row label="Ad Soyad" value={form.fullName} />
-                          <Row label="E-posta" value={form.email} />
-                          <Row label="Telefon" value={form.phone || "Belirtilmedi"} />
-                          {form.purpose === "personal" && (
-                            <>
-                              <Row label="Meslek" value={form.profession} />
-                              <Row label="Çalışma modeli" value={form.workModel} />
-                              <Row label="İçe aktarma" value={form.importMethod} />
-                            </>
-                          )}
-                          {form.purpose === "manager" && (
-                            <>
-                              <Row label="Kurum" value={form.organizationName} />
-                              <Row label="Birim" value={form.unitName} />
-                              <Row label="Birim türü" value={form.unitType} />
-                            </>
-                          )}
-                          {form.purpose === "invite" && (
-                            <Row label="Davet kodu" value={form.inviteCode} />
-                          )}
-                        </dl>
-                      </div>
-
-                      <div className="overflow-hidden rounded-[20px] border border-[#e1e9ff] bg-white p-2.5">
-                        <div className="relative aspect-[1680/945] w-full overflow-hidden rounded-[14px]">
-                          <Image
-                            src="/images/signup/signup-architecture-diagram.png"
-                            alt="Mimari diyagram"
-                            fill
-                            className="object-cover object-left-top"
-                            sizes="200px"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {error ? (
-                  <p className="mt-4 rounded-[14px] border border-[#f7d1d1] bg-[#fff5f5] px-3.5 py-2.5 text-[13px] text-[#b24c4c]">
-                    {error}
-                  </p>
-                ) : null}
-
-                <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-                  <div className="text-[13px] text-[#74839d]">
-                    Zaten hesabınız var mı?{" "}
-                    <Link href="/login" className="font-semibold text-[#295ae7]">
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <Link
+                      href="/login"
+                      className="inline-flex h-10 items-center justify-center rounded-xl bg-[#2759e7] px-5 text-sm font-bold text-white shadow-[0_14px_32px_rgba(39,89,231,0.28)]"
+                    >
                       Giriş Yap
                     </Link>
+                    <Link
+                      href="/"
+                      className="inline-flex h-10 items-center justify-center rounded-xl border border-[#d7e3ff] px-5 text-sm font-semibold text-[#2b467e]"
+                    >
+                      Ana Sayfaya Dön
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+                  <div className="mb-5">
+                    <h2 className="text-[42px] font-extrabold tracking-[-0.05em] text-[#1d2e52]">
+                      {step === 1
+                        ? "Hesap oluşturun"
+                        : step === 2
+                          ? "Amaç seçin"
+                          : step === 3
+                            ? "Bilgileri tamamlayın"
+                            : "Kaydı gözden geçirin"}
+                    </h2>
+                    <p className="mt-2 text-[14px] leading-6 text-[#667792]">
+                      {step === 1 &&
+                        "MediPlan'a hoş geldiniz. Temel hesap bilgilerinizi girerek başlayın."}
+                      {step === 2 &&
+                        "Sistemi hangi bağlamda kullanacağınızı seçin. Sonraki adımlar bu seçime göre şekillenir."}
+                      {step === 3 &&
+                        "Seçtiğiniz kullanım amacına göre gerekli alanları tamamlayın."}
+                      {step === 4 &&
+                        "Kayıt tamamlanmadan önce seçtiğiniz akışı ve hesap özetini kontrol edin."}
+                    </p>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-3">
-                    {step > 1 && step < 4 && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={prevStep}
-                        className="h-10 rounded-[14px] border-[#d9e4ff] px-5 text-sm text-[#355287]"
-                      >
-                        Geri
-                      </Button>
-                    )}
-
+                  <div className="min-h-0 flex-1 overflow-y-auto pr-1">
                     {step === 1 && (
-                      <Button
-                        type="button"
-                        onClick={nextStep}
-                        disabled={!canProceedStep1}
-                        className="h-10 rounded-[14px] bg-[#295ae7] px-5 text-sm font-bold"
-                      >
-                        Devam Et
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
+                      <div className="space-y-3">
+                        <Field label="Ad Soyad" icon={User}>
+                          <Input
+                            value={form.fullName}
+                            onChange={(event) => setField("fullName", event.target.value)}
+                            placeholder="Adınızı ve soyadınızı girin"
+                            className="h-[50px] rounded-[16px] border-[#dfe7f7] pl-4 text-[15px]"
+                          />
+                        </Field>
+                        <Field label="E-posta" icon={Mail}>
+                          <Input
+                            type="email"
+                            value={form.email}
+                            onChange={(event) => setField("email", event.target.value)}
+                            placeholder="ornek@email.com"
+                            className="h-[50px] rounded-[16px] border-[#dfe7f7] pl-4 text-[15px]"
+                          />
+                        </Field>
+                        <Field label="Telefon Numarası (Opsiyonel)" icon={Phone}>
+                          <Input
+                            value={form.phone}
+                            onChange={(event) => setField("phone", event.target.value)}
+                            placeholder="+90 (5XX) XXX XX XX"
+                            className="h-[50px] rounded-[16px] border-[#dfe7f7] pl-4 text-[15px]"
+                          />
+                        </Field>
+                        <Field label="Şifre" icon={Lock}>
+                          <PasswordInput
+                            value={form.password}
+                            onChange={(value) => setField("password", value)}
+                            visible={showPassword}
+                            onToggle={() => setShowPassword((current) => !current)}
+                            placeholder="En az 8 karakter"
+                          />
+                        </Field>
+                        <Field label="Şifre (Tekrar)" icon={Lock}>
+                          <PasswordInput
+                            value={form.confirmPassword}
+                            onChange={(value) => setField("confirmPassword", value)}
+                            visible={showConfirmPassword}
+                            onToggle={() => setShowConfirmPassword((current) => !current)}
+                            placeholder="Şifrenizi tekrar girin"
+                          />
+                        </Field>
+                        <div className="rounded-[14px] border border-[#e4ebfb] bg-[#f8fbff] px-4 py-3 text-[12px] text-[#5f7092]">
+                          Şifreniz en az 8 karakter içermelidir.
+                        </div>
+                      </div>
                     )}
 
                     {step === 2 && (
-                      <Button
-                        type="button"
-                        onClick={nextStep}
-                        disabled={!canProceedStep2}
-                        className="h-10 rounded-[14px] bg-[#295ae7] px-5 text-sm font-bold"
-                      >
-                        Devam Et
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
+                      <div className="grid gap-3">
+                        {PURPOSE_CARDS.map((item) => {
+                          const Icon = item.icon;
+                          const active = form.purpose === item.id;
+                          return (
+                            <button
+                              key={item.id}
+                              type="button"
+                              onClick={() => setField("purpose", item.id)}
+                              className={cn(
+                                "rounded-[18px] border p-4 text-left transition",
+                                active
+                                  ? "border-[#295ae7] bg-[#f5f8ff] shadow-[0_18px_36px_rgba(41,90,231,0.12)]"
+                                  : "border-[#e0e8f8] bg-white hover:border-[#bfd0ff]",
+                              )}
+                            >
+                              <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#eef3ff] text-[#2859e7]">
+                                <Icon className="h-5 w-5" />
+                              </div>
+                              <div className="text-[16px] font-bold text-[#20325b]">{item.title}</div>
+                              <p className="mt-1.5 text-[13px] leading-6 text-[#677892]">
+                                {item.description}
+                              </p>
+                            </button>
+                          );
+                        })}
+                      </div>
                     )}
 
-                    {step === 3 && (
-                      <Button
-                        type="button"
-                        onClick={nextStep}
-                        disabled={!canProceedStep3}
-                        className="h-10 rounded-[14px] bg-[#295ae7] px-5 text-sm font-bold"
-                      >
-                        Özeti Gör
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
+                    {step === 3 && form.purpose === "personal" && (
+                      <div className="grid gap-3">
+                        <Field label="Meslek / Görev" icon={BriefcaseBusiness}>
+                          <Input
+                            value={form.profession}
+                            onChange={(event) => setField("profession", event.target.value)}
+                            placeholder="Hemşire, doktor, tekniker..."
+                            className="h-[50px] rounded-[16px] border-[#dfe7f7] pl-4 text-[15px]"
+                          />
+                        </Field>
+                        <Field label="Çalışma Modeli" icon={Clock3}>
+                          <SelectField
+                            value={form.workModel}
+                            onChange={(value) => setField("workModel", value)}
+                            options={["Mesaili", "Nöbetli", "Karma"]}
+                          />
+                        </Field>
+                        <Field label="Liste Aktarma Yöntemi" icon={FileUp}>
+                          <SelectField
+                            value={form.importMethod}
+                            onChange={(value) => setField("importMethod", value)}
+                            options={[
+                              "Şimdilik boş başla",
+                              "Fotoğraf yükle",
+                              "PDF / Excel yükle",
+                              "Manuel takvimden ekle",
+                            ]}
+                          />
+                        </Field>
+                      </div>
+                    )}
+
+                    {step === 3 && form.purpose === "manager" && (
+                      <div className="grid gap-3">
+                        <Field label="Kurum Adı" icon={Building2}>
+                          <Input
+                            value={form.organizationName}
+                            onChange={(event) => setField("organizationName", event.target.value)}
+                            placeholder="Ör. Gölhisar Devlet Hastanesi"
+                            className="h-[50px] rounded-[16px] border-[#dfe7f7] pl-4 text-[15px]"
+                          />
+                        </Field>
+                        <Field label="Birim Adı" icon={Users}>
+                          <Input
+                            value={form.unitName}
+                            onChange={(event) => setField("unitName", event.target.value)}
+                            placeholder="Ör. Ameliyathane"
+                            className="h-[50px] rounded-[16px] border-[#dfe7f7] pl-4 text-[15px]"
+                          />
+                        </Field>
+                        <Field label="Birim Türü" icon={BriefcaseBusiness}>
+                          <Input
+                            value={form.unitType}
+                            onChange={(event) => setField("unitType", event.target.value)}
+                            placeholder="Anestezi / Acil / Yoğun Bakım"
+                            className="h-[50px] rounded-[16px] border-[#dfe7f7] pl-4 text-[15px]"
+                          />
+                        </Field>
+                        <Field label="Çalışma Modeli" icon={CalendarClock}>
+                          <SelectField
+                            value={form.workModel}
+                            onChange={(value) => setField("workModel", value)}
+                            options={[
+                              "24 saat nöbet + 8 saat mesai",
+                              "Standart vardiyalı çalışma",
+                              "Esnek karma sistem",
+                            ]}
+                          />
+                        </Field>
+                      </div>
+                    )}
+
+                    {step === 3 && form.purpose === "invite" && (
+                      <div className="grid gap-3">
+                        <Field label="Davet Kodu" icon={Users}>
+                          <Input
+                            value={form.inviteCode}
+                            onChange={(event) => setField("inviteCode", event.target.value)}
+                            placeholder="Ör. MEDI-2026-ACIL"
+                            className="h-[50px] rounded-[16px] border-[#dfe7f7] pl-4 text-[15px]"
+                          />
+                        </Field>
+                        <div className="rounded-[16px] border border-[#dce8ff] bg-[#f8fbff] p-4 text-[13px] leading-6 text-[#5e6f90]">
+                          Davet kodu ile mevcut birime çalışan olarak katılırsınız. Yetkileriniz
+                          davet yapısına göre tanımlanır.
+                        </div>
+                      </div>
                     )}
 
                     {step === 4 && (
-                      <Button
-                        type="submit"
-                        disabled={submitting}
-                        className="h-10 rounded-[14px] bg-[#295ae7] px-5 text-sm font-bold"
-                      >
-                        {submitting ? "Kaydediliyor..." : "Kayıt Ol"}
-                      </Button>
+                      <div className="space-y-4">
+                        <div className="rounded-[18px] border border-[#dce6ff] bg-[#f8fbff] p-4">
+                          <div className="text-xs font-semibold text-[#6c7a95]">Seçilen akış</div>
+                          <div className="mt-1.5 text-[18px] font-bold text-[#20325b]">
+                            {PURPOSE_CARDS.find((item) => item.id === form.purpose)?.title ?? "—"}
+                          </div>
+                          <p className="mt-2 text-[13px] leading-6 text-[#607190]">{accountSummary}</p>
+                        </div>
+
+                        <div className="rounded-[18px] border border-[#e1e9ff] bg-white p-4">
+                          <div className="mb-2 text-xs font-semibold text-[#6c7a95]">Hesap özeti</div>
+                          <dl className="space-y-2.5 text-sm text-[#435473]">
+                            <Row label="Ad Soyad" value={form.fullName} />
+                            <Row label="E-posta" value={form.email} />
+                            <Row label="Telefon" value={form.phone || "Belirtilmedi"} />
+                            {form.purpose === "personal" && (
+                              <>
+                                <Row label="Meslek" value={form.profession} />
+                                <Row label="Çalışma modeli" value={form.workModel} />
+                                <Row label="İçe aktarma" value={form.importMethod} />
+                              </>
+                            )}
+                            {form.purpose === "manager" && (
+                              <>
+                                <Row label="Kurum" value={form.organizationName} />
+                                <Row label="Birim" value={form.unitName} />
+                                <Row label="Birim türü" value={form.unitType} />
+                              </>
+                            )}
+                            {form.purpose === "invite" && (
+                              <Row label="Davet kodu" value={form.inviteCode} />
+                            )}
+                          </dl>
+                        </div>
+                      </div>
                     )}
                   </div>
-                </div>
-              </form>
-            )}
-          </div>
+
+                  {error ? (
+                    <p className="mt-4 rounded-[14px] border border-[#f7d1d1] bg-[#fff5f5] px-3.5 py-2.5 text-[13px] text-[#b24c4c]">
+                      {error}
+                    </p>
+                  ) : null}
+
+                  <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-[#eef2ff] pt-4">
+                    <div className="text-[13px] text-[#74839d]">
+                      Zaten hesabınız var mı?{" "}
+                      <Link href="/login" className="font-semibold text-[#295ae7]">
+                        Giriş Yap
+                      </Link>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-3">
+                      {step > 1 && step < 4 && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={prevStep}
+                          className="h-10 rounded-[14px] border-[#d9e4ff] px-5 text-sm text-[#355287]"
+                        >
+                          Geri
+                        </Button>
+                      )}
+
+                      {step === 1 && (
+                        <Button
+                          type="button"
+                          onClick={nextStep}
+                          disabled={!canProceedStep1}
+                          className="h-10 rounded-[14px] bg-[#295ae7] px-5 text-sm font-bold"
+                        >
+                          Devam Et
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      )}
+
+                      {step === 2 && (
+                        <Button
+                          type="button"
+                          onClick={nextStep}
+                          disabled={!canProceedStep2}
+                          className="h-10 rounded-[14px] bg-[#295ae7] px-5 text-sm font-bold"
+                        >
+                          Devam Et
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      )}
+
+                      {step === 3 && (
+                        <Button
+                          type="button"
+                          onClick={nextStep}
+                          disabled={!canProceedStep3}
+                          className="h-10 rounded-[14px] bg-[#295ae7] px-5 text-sm font-bold"
+                        >
+                          Özeti Gör
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      )}
+
+                      {step === 4 && (
+                        <Button
+                          type="submit"
+                          disabled={submitting}
+                          className="h-10 rounded-[14px] bg-[#295ae7] px-5 text-sm font-bold"
+                        >
+                          {submitting ? "Kaydediliyor..." : "Kayıt Ol"}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </form>
+              )}
+            </div>
+
+            <div className="mt-4 grid gap-3 rounded-[24px] border border-[#e6ecfb] bg-white/88 px-4 py-4 sm:grid-cols-3">
+              {FOOTER_FEATURES.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div key={item.title} className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] bg-[#f3f7ff] text-[#2759e7]">
+                      <Icon className="h-4.5 w-4.5 stroke-[1.8]" />
+                    </div>
+                    <div>
+                      <div className="text-[13px] font-bold text-[#223768]">{item.title}</div>
+                      <p className="mt-0.5 text-[11px] leading-5 text-[#60708e]">{item.description}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
         </section>
-      </section>
+      </div>
     </main>
   );
 }
@@ -809,15 +764,15 @@ function PasswordInput({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="h-[46px] rounded-[14px] border-[#dfe7f7] pl-4 pr-10 text-sm"
+        className="h-[50px] rounded-[16px] border-[#dfe7f7] pl-4 pr-11 text-[15px]"
       />
       <button
         type="button"
         onClick={onToggle}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8c99b0]"
+        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8c99b0]"
         aria-label={visible ? "Şifreyi gizle" : "Şifreyi göster"}
       >
-        {visible ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+        {visible ? <EyeOff className="h-4.5 w-4.5" /> : <Eye className="h-4.5 w-4.5" />}
       </button>
     </div>
   );
@@ -836,7 +791,7 @@ function SelectField({
     <select
       value={value}
       onChange={(event) => onChange(event.target.value)}
-      className="h-[46px] w-full rounded-[14px] border border-[#dfe7f7] bg-white px-4 text-sm text-[#24365b] outline-none"
+      className="h-[50px] w-full rounded-[16px] border border-[#dfe7f7] bg-white px-4 text-[15px] text-[#24365b] outline-none"
     >
       {options.map((option) => (
         <option key={option}>{option}</option>
@@ -855,12 +810,12 @@ function Field({
   children: ReactNode;
 }) {
   return (
-    <div className="grid gap-2.5 md:grid-cols-[48px_1fr] md:items-end">
-      <div className="hidden h-[46px] w-[46px] items-center justify-center rounded-[14px] border border-[#e2e9fb] bg-[#f7faff] text-[#295ae7] md:flex">
+    <div className="grid gap-2.5 md:grid-cols-[50px_1fr] md:items-end">
+      <div className="hidden h-[50px] w-[50px] items-center justify-center rounded-[16px] border border-[#e2e9fb] bg-[#f7faff] text-[#295ae7] md:flex">
         <Icon className="h-5 w-5" />
       </div>
       <div className="space-y-1.5">
-        <label className="text-[13px] font-semibold text-[#31456e]">{label}</label>
+        <label className="text-[14px] font-semibold text-[#31456e]">{label}</label>
         {children}
       </div>
     </div>
@@ -869,7 +824,7 @@ function Field({
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-[16px] border border-[#edf2ff] bg-[#fbfcff] px-4 py-3">
+    <div className="flex items-center justify-between gap-4 rounded-[14px] border border-[#edf2ff] bg-[#fbfcff] px-3.5 py-2.5">
       <dt className="font-medium text-[#6d7f9f]">{label}</dt>
       <dd className="text-right font-semibold text-[#20325b]">{value}</dd>
     </div>
