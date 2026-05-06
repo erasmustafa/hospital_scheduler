@@ -82,36 +82,36 @@ const PURPOSE_CARDS: Array<{
 
 const SIDE_FEATURES = [
   {
-    title: "Adil ve Dengeli",
-    description: "Adalet skorları ve önerilerle daha dengeli vardiya dağılımı kurun.",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Akıllı Öneriler",
-    description: "İçe aktarılan listelerden kural bazlı planlama akışına hızla geçin.",
+    title: "Akıllı Planlama",
+    description: "Personel ihtiyaçlarını öngörün ve planlamanızı kolayca yapın.",
     icon: CalendarClock,
   },
   {
-    title: "Kolay Yönetim",
-    description: "Birim, personel ve onay süreçlerini tek bir merkezden yönetin.",
+    title: "Veriye Dayalı Kararlar",
+    description: "Analiz ve raporlarla doğru kararlar alın, performansı artırın.",
     icon: Sparkles,
+  },
+  {
+    title: "Güvenli ve Erişilebilir",
+    description: "Verileriniz güvende, sisteminiz her yerden erişilebilir.",
+    icon: ShieldCheck,
   },
 ] as const;
 
 const FOOTER_FEATURES = [
   {
-    title: "Uyumlu Kurallar",
-    description: "Kurumsal ve yasal kısıtlar planın içine yerleşir.",
+    title: "KVKK Uyumlu",
+    description: "Kişisel verileriniz mevzuata uygun şekilde korunur.",
     icon: ShieldCheck,
   },
   {
-    title: "Zaman Tasarrufu",
-    description: "Manuel plan yükünü azaltan daha hızlı kurulum akışı.",
-    icon: Clock3,
+    title: "Güvenli Erişim",
+    description: "Endüstri standartlarında şifreleme ile verileriniz güvende.",
+    icon: Lock,
   },
   {
-    title: "Her Yerden Erişim",
-    description: "Web ve mobil üzerinden erişilebilen ortak çalışma yüzeyi.",
+    title: "7/24 Destek",
+    description: "Her zaman yanınızdayız. Destek ekibimizle iletişime geçin.",
     icon: Phone,
   },
 ] as const;
@@ -248,7 +248,7 @@ export default function SignupWizard() {
       />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(242,247,255,0.88),rgba(255,255,255,0.78),rgba(237,244,255,0.92))]" />
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-[1440px] items-center justify-center p-3 sm:p-5 xl:p-8">
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-[1460px] items-center justify-center p-3 sm:p-5 xl:p-8">
         <Link
           href="/"
           className="absolute left-3 top-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[#dce7ff] bg-white/90 text-[#4568e6] shadow-[0_12px_30px_rgba(74,105,196,0.12)] transition hover:-translate-y-0.5 sm:left-5 sm:top-5"
@@ -257,32 +257,32 @@ export default function SignupWizard() {
           <ArrowLeft className="h-4 w-4" />
         </Link>
 
-        <section className="grid h-[min(90vh,980px)] w-full max-w-[1240px] overflow-hidden rounded-[34px] border border-[#dfe8ff] bg-white/82 shadow-[0_32px_90px_rgba(53,85,176,0.14)] backdrop-blur-xl xl:grid-cols-[0.98fr_0.82fr]">
+        <section className="grid h-[min(92vh,1000px)] w-full max-w-[1320px] overflow-hidden rounded-[34px] border border-[#dfe8ff] bg-white/88 shadow-[0_32px_90px_rgba(53,85,176,0.14)] backdrop-blur-xl xl:grid-cols-[0.98fr_0.88fr]">
           <aside className="relative hidden overflow-hidden xl:flex">
             <Image
-              src="/images/signup/left-panel-background.png"
+              src="/images/signup/signup-background.png"
               alt=""
               fill
               className="pointer-events-none object-cover object-center"
               sizes="(min-width: 1280px) 640px, 0px"
             />
-            <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(255,255,255,0.28),rgba(255,255,255,0.12),rgba(255,255,255,0.04))]" />
+            <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(255,255,255,0.22),rgba(255,255,255,0.08),rgba(255,255,255,0.02))]" />
 
-            <div className="relative z-10 flex h-full w-full flex-col px-8 pb-7 pt-8">
+            <div className="relative z-10 flex h-full w-full flex-col px-8 pb-6 pt-7">
               <div className="flex items-center gap-3">
                 <Image
                   src="/icons/medishift-brand.png"
                   alt="MediPlan"
-                  width={60}
-                  height={60}
+                  width={56}
+                  height={56}
                   unoptimized
-                  className="h-12 w-12 shrink-0"
+                  className="h-11 w-11 shrink-0"
                 />
                 <div>
-                  <div className="text-[15px] font-black tracking-[-0.04em] text-[#1e55e6]">
+                  <div className="text-[16px] font-black tracking-[-0.04em] text-[#1e55e6]">
                     MediPlan
                   </div>
-                  <div className="text-[11px] leading-5 text-[#203f80]">
+                  <div className="text-[10px] leading-4 text-[#203f80]">
                     Hastane Personel
                     <br />
                     Organizasyon Sistemi
@@ -290,35 +290,40 @@ export default function SignupWizard() {
                 </div>
               </div>
 
-              <div className="mt-8 max-w-[330px]">
-                <h1 className="text-[48px] font-black leading-[0.96] tracking-[-0.06em] text-[#19316f]">
+              <div className="mt-10 inline-flex w-fit items-center gap-2 rounded-full border border-[#dce8ff] bg-white/72 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.06em] text-[#295ae7]">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Hastane Personel Organizasyon Sistemi
+              </div>
+
+              <div className="mt-8 max-w-[360px]">
+                <h1 className="text-[46px] font-black leading-[0.98] tracking-[-0.06em] text-[#19316f]">
                   Daha düzenli,
                   <br />
-                  daha hızlı,
+                  daha verimli,
                   <br />
-                  daha doğru kayıt.
+                  <span className="text-[#2c63f2]">daha iyi bir sağlık yönetimi.</span>
                 </h1>
-                <p className="mt-4 max-w-[300px] text-[14px] leading-7 text-[#536786]">
-                  Kurulum akışını kısa sürede tamamlayın, personel organizasyonunuzu tek
-                  ekrandan başlatın.
+                <p className="mt-4 max-w-[360px] text-[14px] leading-7 text-[#536786]">
+                  MediPlan ile personel planlamanızı kolaylaştırın, süreçlerinizi optimize edin,
+                  veriye dayalı kararlarla fark yaratın.
                 </p>
               </div>
 
-              <div className="mt-7 h-1 w-14 rounded-full bg-[#295ae7]" />
+              <div className="mt-6 h-1 w-14 rounded-full bg-[#295ae7]" />
 
-              <div className="mt-7 space-y-4">
+              <div className="mt-7 space-y-5">
                 {SIDE_FEATURES.map((item) => {
                   const Icon = item.icon;
                   return (
                     <div key={item.title} className="flex items-start gap-3">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px] border border-[#dce7ff] bg-white/78 text-[#2a5ae8] shadow-[0_14px_32px_rgba(39,89,231,0.08)]">
-                        <Icon className="h-5 w-5 stroke-[1.8]" />
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px] border border-[#dce7ff] bg-white/76 text-[#2a5ae8] shadow-[0_14px_32px_rgba(39,89,231,0.08)]">
+                        <Icon className="h-5 w-5 stroke-[1.7]" />
                       </div>
                       <div className="pt-0.5">
                         <div className="text-[15px] font-bold tracking-[-0.03em] text-[#23418f]">
                           {item.title}
                         </div>
-                        <p className="mt-1 max-w-[255px] text-[12px] leading-5 text-[#60718e]">
+                        <p className="mt-1 max-w-[270px] text-[12px] leading-6 text-[#60718e]">
                           {item.description}
                         </p>
                       </div>
@@ -327,31 +332,11 @@ export default function SignupWizard() {
                 })}
               </div>
 
-              <div className="mt-auto pt-6">
-                <div className="rounded-[24px] border border-white/60 bg-white/72 px-5 py-4 shadow-[0_18px_40px_rgba(56,94,196,0.08)] backdrop-blur-sm">
-                  <div className="text-[17px] font-bold tracking-[-0.03em] text-[#20408d]">
-                    Hemen başla
-                  </div>
-                  <p className="mt-1 text-[12px] leading-5 text-[#667793]">
-                    Hastanenizi veya biriminizi birkaç adımda sisteme alın.
-                  </p>
-                </div>
-              </div>
-
-              <div className="pointer-events-none absolute bottom-0 right-0 h-[42%] w-[68%]">
-                <Image
-                  src="/images/signup/left-panel-asset.svg"
-                  alt=""
-                  fill
-                  className="object-contain object-bottom-right"
-                  sizes="(min-width: 1280px) 420px, 0px"
-                />
-              </div>
             </div>
           </aside>
 
-          <section className="flex min-w-0 flex-col bg-white/58 px-4 py-4 sm:px-6 sm:py-5 xl:px-7 xl:py-6">
-            <div className="mb-4 grid grid-cols-4 gap-2 rounded-[20px] border border-[#e3ebff] bg-white/82 px-4 py-3 shadow-[0_14px_36px_rgba(53,85,176,0.06)]">
+          <section className="flex min-w-0 flex-col bg-white/52 px-5 py-5 sm:px-6 sm:py-6 xl:px-8 xl:py-7">
+            <div className="mb-5 grid grid-cols-4 gap-2 rounded-[22px] border border-[#e3ebff] bg-white/86 px-4 py-3 shadow-[0_14px_36px_rgba(53,85,176,0.06)]">
               {STEPS.map((item) => {
                 const isActive = step === item.id;
                 const isDone = step > item.id || (item.id === 4 && createdUsername);
@@ -375,7 +360,7 @@ export default function SignupWizard() {
               })}
             </div>
 
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[30px] border border-[#dfe8ff] bg-white px-5 py-5 shadow-[0_24px_70px_rgba(53,85,176,0.08)] sm:px-6 sm:py-6">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[32px] border border-[#dfe8ff] bg-white/96 px-6 py-6 shadow-[0_28px_72px_rgba(53,85,176,0.08)] sm:px-7 sm:py-7">
               {createdUsername ? (
                 <div className="flex h-full flex-col justify-center">
                   <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#e9f1ff] text-[#2759e7]">
@@ -721,7 +706,7 @@ export default function SignupWizard() {
               )}
             </div>
 
-            <div className="mt-4 grid gap-3 rounded-[24px] border border-[#e6ecfb] bg-white/88 px-4 py-4 sm:grid-cols-3">
+            <div className="mt-5 grid gap-3 rounded-[24px] border border-[#e6ecfb] bg-white/88 px-5 py-4 sm:grid-cols-3">
               {FOOTER_FEATURES.map((item) => {
                 const Icon = item.icon;
                 return (
