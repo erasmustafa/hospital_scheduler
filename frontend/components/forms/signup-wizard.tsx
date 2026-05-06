@@ -239,7 +239,7 @@ export default function SignupWizard() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#edf3ff]">
       <Image
-        src="/images/signup/signup-background.png"
+        src="/images/signup/main-background.png"
         alt=""
         fill
         priority
@@ -279,13 +279,8 @@ export default function SignupWizard() {
                   className="h-11 w-11 shrink-0"
                 />
                 <div>
-                  <div className="text-[16px] font-black tracking-[-0.04em] text-[#1e55e6]">
+                  <div className="text-[46px] font-black tracking-[-0.04em] text-[#1e55e6]">
                     MediPlan
-                  </div>
-                  <div className="text-[10px] leading-4 text-[#203f80]">
-                    Hastane Personel
-                    <br />
-                    Organizasyon Sistemi
                   </div>
                 </div>
               </div>
