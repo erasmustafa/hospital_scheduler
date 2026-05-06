@@ -262,11 +262,11 @@ export default function SignupWizard() {
             src="/images/signup/left-panel-background.png"
             alt="MediPlan tanıtım arka planı"
             fill
-            className="pointer-events-none object-cover object-center"
+            className="pointer-events-none object-cover object-right"
             sizes="(min-width: 1024px) 560px, 100vw"
             priority
           />
-          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.1),rgba(255,255,255,0.02))]" />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))]" />
 
           <div className="relative z-10 flex h-full w-full flex-col justify-between px-7 py-6 xl:px-8">
             <div className="space-y-6">
@@ -290,14 +290,14 @@ export default function SignupWizard() {
               </div>
 
               <div className="max-w-[360px] space-y-4">
-                <h2 className="text-[clamp(38px,4.2vw,56px)] font-extrabold leading-[0.98] tracking-[-0.06em] text-[#1b3271]">
+                <h2 className="text-[clamp(30px,3.2vw,36px)] font-bold leading-[0.98] tracking-[-0.06em] text-[#1b3271]">
                   Daha adil,
                   <br />
                   daha dengeli,
                   <br />
-                  daha verimli çalışma listeleri.
+                  daha verimli çalışma listeleri
                 </h2>
-                <p className="max-w-[320px] text-[13px] leading-7 text-[#506387]">
+                <p className="max-w-[320px] text-[13px] leading-2 text-[#506387]">
                   Bireysel takvim yönetimi, birim organizasyonu ve akıllı analizlerle
                   adil vardiya planlaması şimdi çok daha kolay.
                 </p>
@@ -309,14 +309,14 @@ export default function SignupWizard() {
                   const Icon = item.icon;
                   return (
                     <div key={item.title} className="flex items-start gap-4">
-                      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[20px] border border-[#dbe6ff] bg-[#f4f8ff] text-[#2759e7] shadow-[0_12px_28px_rgba(39,89,231,0.08)]">
-                        <Icon className="h-7 w-7 stroke-[1.7]" />
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[15px] border border-[#dbe6ff] bg-[#f4f8ff] text-[#2759e7] shadow-[0_12px_28px_rgba(39,89,231,0.08)]">
+                        <Icon className="h-5 w-5 stroke-[1.7]" />
                       </div>
                       <div className="pt-0.5">
                         <div className="text-[19px] font-bold tracking-[-0.03em] text-[#2140a5]">
                           {item.title}
                         </div>
-                        <p className="mt-1 max-w-[220px] text-[12px] leading-6 text-[#536585]">
+                        <p className="mt-1 max-w-[250px] text-[12px] leading-6 text-[#536585]">
                           {item.description}
                         </p>
                       </div>
@@ -326,14 +326,14 @@ export default function SignupWizard() {
               </div>
             </div>
 
-            <div className="space-y-5">
-              <div className="max-w-[360px] rounded-[20px] border border-[#dbe6ff] bg-white/72 px-4 py-4 shadow-[0_18px_50px_rgba(39,89,231,0.08)] backdrop-blur-[8px]">
+            <div className="space-y-20">
+              <div className="max-w-[330px] rounded-[20px] border border-[#dbe6ff] bg-white/72 px-4 py-4 shadow-[0_18px_50px_rgba(39,89,231,0.08)] backdrop-blur-[8px]">
                 <div className="flex items-center gap-4">
                   <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#edf4ff] text-[#2759e7]">
                     <Users className="h-6 w-6 stroke-[1.8]" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-[22px] font-bold tracking-[-0.03em] text-[#2140a5]">
+                    <div className="text-[20px] font-bold tracking-[-0.03em] text-[#2140a5]">
                       Hemen başla!
                     </div>
                     <p className="text-[12px] leading-5 text-[#5b6d8e]">
@@ -376,7 +376,7 @@ export default function SignupWizard() {
               alt=""
               width={620}
               height={760}
-              className="pointer-events-none absolute bottom-0 right-[-1%] z-0 h-auto w-[46%] max-w-[430px]"
+              className="pointer-events-none absolute bottom-[8%] right-[8%] z-0 h-auto w-[42%] max-w-[380px] drop-shadow-[0_28px_60px_rgba(72,111,205,0.18)]"
             />
           </div>
         </aside>
