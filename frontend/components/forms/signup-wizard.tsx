@@ -257,16 +257,18 @@ export default function SignupWizard() {
           <ArrowLeft className="h-4 w-4" />
         </Link>
 
-        <section className="grid h-[min(82vh,780px)] w-full max-w-[1060px] overflow-hidden rounded-[26px] border border-[#dfe8ff] bg-white/88 shadow-[0_22px_56px_rgba(53,85,176,0.14)] backdrop-blur-xl xl:grid-cols-[0.92fr_0.84fr]">
+        <section className="relative grid h-[min(82vh,780px)] w-full max-w-[1060px] overflow-hidden rounded-[26px] border border-[#dfe8ff] bg-white/88 shadow-[0_22px_56px_rgba(53,85,176,0.14)] backdrop-blur-xl xl:grid-cols-[0.92fr_0.84fr]">
+          <Image
+            src="/images/signup/signup-background.png"
+            alt=""
+            fill
+            priority
+            className="pointer-events-none object-cover object-center"
+            sizes="1060px"
+          />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(160deg,rgba(255,255,255,0.18),rgba(255,255,255,0.08),rgba(255,255,255,0.04))]" />
+
           <aside className="relative hidden overflow-hidden xl:flex">
-            <Image
-              src="/images/signup/signup-background.png"
-              alt=""
-              fill
-              className="pointer-events-none object-cover object-center"
-              sizes="(min-width: 1280px) 640px, 0px"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(255,255,255,0.22),rgba(255,255,255,0.08),rgba(255,255,255,0.02))]" />
 
             <div className="relative z-10 flex h-full w-full flex-col px-5 pb-3 pt-4">
               <div className="flex items-center gap-3">
@@ -330,7 +332,7 @@ export default function SignupWizard() {
             </div>
           </aside>
 
-          <section className="flex min-w-0 flex-col bg-white/52 px-3 py-3 sm:px-4 sm:py-4 xl:px-5 xl:py-5">
+          <section className="relative flex min-w-0 flex-col bg-white/28 px-3 py-3 sm:px-4 sm:py-4 xl:px-5 xl:py-5">
             <div className="mb-3 grid grid-cols-4 gap-2 rounded-[16px] border border-[#e3ebff] bg-white/86 px-3 py-2 shadow-[0_10px_24px_rgba(53,85,176,0.06)]">
               {STEPS.map((item) => {
                 const isActive = step === item.id;
