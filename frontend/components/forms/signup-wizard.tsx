@@ -353,18 +353,20 @@ export default function SignupWizard() {
                     <div
                       key={item.title}
                       className={cn(
-                        "flex flex-col gap-2 px-4 py-4",
+                        "flex items-center gap-2 px-3 py-3",
                         index !== FOOTER_FEATURES.length - 1 &&
                           "border-r border-[#e6edff]",
                       )}
                     >
-                      <Icon className="h-7 w-7 text-[#2759e7] stroke-[1.75]" />
-                      <div className="text-[13px] font-bold tracking-[-0.02em] text-[#263a67]">
-                        {item.title}
+                      <Icon className="h-5 w-5 shrink-0 text-[#2759e7] stroke-[1.75]" />
+                      <div className="flex min-w-0 flex-col justify-center">
+                        <div className="text-[12px] font-bold tracking-[-0.02em] text-[#263a67]">
+                          {item.title}
+                        </div>
+                        <p className="text-[10px] leading-5 text-[#60708e]">
+                          {item.description}
+                        </p>
                       </div>
-                      <p className="text-[11px] leading-5 text-[#60708e]">
-                        {item.description}
-                      </p>
                     </div>
                   );
                 })}
@@ -376,7 +378,7 @@ export default function SignupWizard() {
               alt=""
               width={620}
               height={760}
-              className="pointer-events-none absolute bottom-[8%] right-[8%] z-0 h-auto w-[42%] max-w-[380px] drop-shadow-[0_28px_60px_rgba(72,111,205,0.18)]"
+              className="pointer-events-none absolute bottom-[23%] right-[7%] z-0 h-auto w-[35%] max-w-[380px] drop-shadow-[0_28px_60px_rgba(72,111,205,0.18)]"
             />
           </div>
         </aside>
