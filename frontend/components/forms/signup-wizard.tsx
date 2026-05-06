@@ -246,7 +246,7 @@ export default function SignupWizard() {
         className="pointer-events-none object-cover object-center"
         sizes="100vw"
       />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(242,247,255,0.88),rgba(255,255,255,0.78),rgba(237,244,255,0.92))]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(242,247,255,0.48),rgba(255,255,255,0.34),rgba(237,244,255,0.52))]" />
 
       <div className="relative z-10 mx-auto flex min-h-screen max-w-[1320px] items-center justify-center p-2 sm:p-4 xl:p-6">
         <Link
@@ -257,7 +257,7 @@ export default function SignupWizard() {
           <ArrowLeft className="h-4 w-4" />
         </Link>
 
-        <section className="relative grid h-[min(82vh,780px)] w-full max-w-[1060px] overflow-hidden rounded-[26px] border border-[#dfe8ff] bg-white/88 shadow-[0_22px_56px_rgba(53,85,176,0.14)] backdrop-blur-xl xl:grid-cols-[0.92fr_0.84fr]">
+        <section className="relative grid h-[min(82vh,1080px)] w-full max-w-[1060px] overflow-hidden rounded-[26px] border border-[#dfe8ff] bg-white/62 shadow-[0_22px_56px_rgba(53,85,176,0.14)] backdrop-blur-[4px] xl:grid-cols-[0.92fr_0.84fr]">
           <Image
             src="/images/signup/signup-background.png"
             alt=""
@@ -266,7 +266,7 @@ export default function SignupWizard() {
             className="pointer-events-none object-cover object-center"
             sizes="1060px"
           />
-          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(160deg,rgba(255,255,255,0.18),rgba(255,255,255,0.08),rgba(255,255,255,0.04))]" />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(160deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03),rgba(255,255,255,0.01))]" />
 
           <aside className="relative hidden overflow-hidden xl:flex">
 
@@ -313,7 +313,7 @@ export default function SignupWizard() {
                   const Icon = item.icon;
                   return (
                     <div key={item.title} className="flex items-start gap-2">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[12px] border border-[#dce7ff] bg-white/76 text-[#2a5ae8] shadow-[0_10px_20px_rgba(39,89,231,0.08)]">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[12px] border border-[#dce7ff] bg-white/84 text-[#2a5ae8] shadow-[0_10px_20px_rgba(39,89,231,0.08)]">
                         <Icon className="h-4 w-4 stroke-[1.7]" />
                       </div>
                       <div className="pt-0.5">
@@ -332,8 +332,8 @@ export default function SignupWizard() {
             </div>
           </aside>
 
-          <section className="relative flex min-w-0 flex-col bg-white/28 px-3 py-3 sm:px-4 sm:py-4 xl:px-5 xl:py-5">
-            <div className="mb-3 grid grid-cols-4 gap-2 rounded-[16px] border border-[#e3ebff] bg-white/86 px-3 py-2 shadow-[0_10px_24px_rgba(53,85,176,0.06)]">
+          <section className="relative flex min-w-0 flex-col bg-white/16 px-3 py-3 sm:px-4 sm:py-4 xl:px-5 xl:py-5">
+            <div className="mb-3 grid grid-cols-4 gap-2 rounded-[16px] border border-[#e3ebff] bg-white/76 px-3 py-2 shadow-[0_10px_24px_rgba(53,85,176,0.06)]">
               {STEPS.map((item) => {
                 const isActive = step === item.id;
                 const isDone = step > item.id || (item.id === 4 && createdUsername);
@@ -357,7 +357,7 @@ export default function SignupWizard() {
               })}
             </div>
 
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[22px] border border-[#dfe8ff] bg-white/96 px-3.5 py-3.5 shadow-[0_18px_42px_rgba(53,85,176,0.08)] sm:px-4 sm:py-4">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[22px] border border-[#dfe8ff] bg-white/90 px-3.5 py-3.5 shadow-[0_18px_42px_rgba(53,85,176,0.08)] sm:px-4 sm:py-4">
               {createdUsername ? (
                 <div className="flex h-full flex-col justify-center">
                   <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#e9f1ff] text-[#2759e7]">
@@ -703,7 +703,7 @@ export default function SignupWizard() {
               )}
             </div>
 
-            <div className="mt-3 grid gap-2 rounded-[18px] border border-[#e6ecfb] bg-white/88 px-3 py-2.5 sm:grid-cols-3">
+            <div className="mt-3 grid gap-2 rounded-[18px] border border-[#e6ecfb] bg-white/74 px-3 py-2.5 sm:grid-cols-3">
               {FOOTER_FEATURES.map((item) => {
                 const Icon = item.icon;
                 return (
