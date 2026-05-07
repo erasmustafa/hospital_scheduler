@@ -272,37 +272,37 @@ export default function SignupWizard() {
 
           <aside className="relative hidden overflow-hidden xl:flex">
 
-            <div className="relative z-10 flex h-full w-full flex-col px-5 pb-3 pt-4">
-              <div className="flex items-center gap-3">
+            <div className="ml-2 relative z-10 flex h-full w-full flex-col px-5 pb-3 pt-4">
+              <div className="ml-3 flex items-center gap-3">
                 <Image
-                  src="/icons/medishift-brand.png"
+                  src="/icons/medishift-brand-blue.png"
                   alt="MediPlan"
-                  width={44}
-                  height={44}
+                  width={54}
+                  height={54}
                   unoptimized
                   className="h-8 w-8 shrink-0"
                 />
                 <div>
-                  <div className="text-[28px] font-black tracking-[-0.04em] text-[#1e55e6]">
+                  <div className="text-[38px] font-black tracking-[-0.04em] text-[#1e55e6]">
                     MediPlan
                   </div>
                 </div>
               </div>
 
-              <div className="mt-5 inline-flex w-fit items-center gap-1.5 rounded-full border border-[#dce8ff] bg-white/72 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.05em] text-[#295ae7]">
-                <ShieldCheck className="h-3 w-3" />
+              <div className="mt-4 inline-flex w-fit items-center gap-1.5 rounded-full border border-[#dce8ff] bg-white/72 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.05em] text-[#295ae7]">
+                <ShieldCheck className="h-5 w-5" />
                 Hastane Personel Organizasyon Sistemi
               </div>
 
-              <div className="mt-5 max-w-[260px]">
-                <h1 className="text-[28px] font-black leading-[1] tracking-[-0.06em] text-[#19316f]">
+              <div className="mt-5 max-w-[350px]">
+                <h1 className="text-[50px] font-black leading-[1] tracking-[-0.06em] text-[#19316f]">
                   Daha düzenli,
                   <br />
                   daha verimli,
                   <br />
                   <span className="text-[#2c63f2]">daha iyi bir sağlık yönetimi.</span>
                 </h1>
-                <p className="mt-2.5 max-w-[270px] text-[11px] leading-5 text-[#536786]">
+                <p className="mt-2.5 max-w-[400px] text-[13px] leading-5 text-[#536786]">
                   MediPlan ile personel planlamanızı kolaylaştırın, süreçlerinizi optimize edin,
                   veriye dayalı kararlarla fark yaratın.
                 </p>
@@ -755,15 +755,15 @@ function PasswordInput({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="h-[50px] rounded-[16px] border-[#dfe7f7] pl-4 pr-11 text-[15px]"
+        className="h-[36px] rounded-[12px] border-[#dfe7f7] pl-3 pr-10 text-[12px]"
       />
       <button
         type="button"
         onClick={onToggle}
-        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8c99b0]"
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8c99b0]"
         aria-label={visible ? "Şifreyi gizle" : "Şifreyi göster"}
       >
-        {visible ? <EyeOff className="h-4.5 w-4.5" /> : <Eye className="h-4.5 w-4.5" />}
+        {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
       </button>
     </div>
   );
@@ -782,7 +782,7 @@ function SelectField({
     <select
       value={value}
       onChange={(event) => onChange(event.target.value)}
-      className="h-[50px] w-full rounded-[16px] border border-[#dfe7f7] bg-white px-4 text-[15px] text-[#24365b] outline-none"
+      className="h-[36px] w-full rounded-[12px] border border-[#dfe7f7] bg-white px-3 text-[12px] text-[#24365b] outline-none"
     >
       {options.map((option) => (
         <option key={option}>{option}</option>
@@ -801,12 +801,12 @@ function Field({
   children: ReactNode;
 }) {
   return (
-    <div className="grid gap-2.5 md:grid-cols-[50px_1fr] md:items-end">
-      <div className="hidden h-[50px] w-[50px] items-center justify-center rounded-[16px] border border-[#e2e9fb] bg-[#f7faff] text-[#295ae7] md:flex">
-        <Icon className="h-5 w-5" />
+    <div className="grid gap-2 md:grid-cols-[36px_1fr] md:items-end">
+      <div className="hidden h-[36px] w-[36px] items-center justify-center rounded-[12px] border border-[#e2e9fb] bg-[#f7faff] text-[#295ae7] md:flex">
+        <Icon className="h-4 w-4" />
       </div>
       <div className="space-y-1.5">
-        <label className="text-[14px] font-semibold text-[#31456e]">{label}</label>
+        <label className="text-[12px] font-semibold text-[#31456e]">{label}</label>
         {children}
       </div>
     </div>
@@ -815,9 +815,9 @@ function Field({
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-[14px] border border-[#edf2ff] bg-[#fbfcff] px-3.5 py-2.5">
-      <dt className="font-medium text-[#6d7f9f]">{label}</dt>
-      <dd className="text-right font-semibold text-[#20325b]">{value}</dd>
+    <div className="flex items-center justify-between gap-3 rounded-[12px] border border-[#edf2ff] bg-[#fbfcff] px-3 py-2">
+      <dt className="text-[11px] font-medium text-[#6d7f9f]">{label}</dt>
+      <dd className="text-right text-[11px] font-semibold text-[#20325b]">{value}</dd>
     </div>
   );
 }
