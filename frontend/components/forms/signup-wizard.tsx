@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
-import { FormEvent, ReactNode, useMemo, useState } from "react";
+import { CSSProperties, FormEvent, ReactNode, useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -136,6 +136,55 @@ function cn(...parts: Array<string | false | null | undefined>) {
   return parts.filter(Boolean).join(" ");
 }
 
+const DESIGN_WIDTH = 1060;
+const DESIGN_HEIGHT = 720;
+const DESIGN_GUTTER = 24;
+const DESIGN_MAX_SCALE = 1.22;
+
+function useScaledDesignArea(
+  width: number,
+  height: number,
+  gutter = DESIGN_GUTTER,
+  maxScale = DESIGN_MAX_SCALE,
+) {
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const calculateScale = () => {
+      const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
+      const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+      const availableWidth = Math.max(0, viewportWidth - gutter * 2);
+      const availableHeight = Math.max(0, viewportHeight - gutter * 2);
+      const nextScale = Math.min(maxScale, availableWidth / width, availableHeight / height);
+
+      setScale(Number(Math.max(0.1, nextScale).toFixed(4)));
+    };
+
+    calculateScale();
+    window.addEventListener("resize", calculateScale);
+    window.visualViewport?.addEventListener("resize", calculateScale);
+
+    return () => {
+      window.removeEventListener("resize", calculateScale);
+      window.visualViewport?.removeEventListener("resize", calculateScale);
+    };
+  }, [gutter, height, maxScale, width]);
+
+  const frameStyle: CSSProperties = {
+    width: width * scale,
+    height: height * scale,
+  };
+
+  const canvasStyle: CSSProperties = {
+    width,
+    height,
+    transform: `scale(${scale})`,
+    transformOrigin: "top left",
+  };
+
+  return { frameStyle, canvasStyle, scale };
+}
+
 export default function SignupWizard() {
   const [step, setStep] = useState<Step>(1);
   const [form, setForm] = useState<FormState>(initialState);
@@ -144,6 +193,7 @@ export default function SignupWizard() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [createdUsername, setCreatedUsername] = useState<string | null>(null);
+  const { frameStyle, canvasStyle } = useScaledDesignArea(DESIGN_WIDTH, DESIGN_HEIGHT);
 
   const canProceedStep1 = useMemo(
     () =>
@@ -249,16 +299,18 @@ export default function SignupWizard() {
       />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(242,247,255,0.28),rgba(255,255,255,0.16),rgba(237,244,255,0.3))]" />
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-[1320px] items-center justify-center p-2 sm:p-4 xl:p-6">
-        <Link
-          href="/"
-          className="absolute left-3 top-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[#dce7ff] bg-white/90 text-[#4568e6] shadow-[0_12px_30px_rgba(74,105,196,0.12)] transition hover:-translate-y-0.5 sm:left-5 sm:top-5"
-          aria-label="Ana sayfaya dön"
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </Link>
+      <div className="relative z-10 flex min-h-screen w-full items-center justify-center overflow-hidden p-3 sm:p-5">
+        <div className="relative shrink-0" style={frameStyle}>
+          <div className="absolute left-0 top-0" style={canvasStyle}>
+            <Link
+              href="/"
+              className="absolute left-3 top-3 z-30 inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[#dce7ff] bg-white/90 text-[#4568e6] shadow-[0_12px_30px_rgba(74,105,196,0.12)] transition hover:-translate-y-0.5"
+              aria-label="Ana sayfaya dön"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
 
-        <section className="relative grid h-[min(82vh,1080px)] w-full max-w-[1060px] overflow-hidden rounded-[26px] border border-[#dfe8ff] bg-white/18 shadow-[0_22px_56px_rgba(53,85,176,0.14)] xl:grid-cols-[0.92fr_0.84fr]">
+            <section className="relative grid h-[720px] w-[1060px] grid-cols-[0.92fr_0.84fr] overflow-hidden rounded-[26px] border border-[#dfe8ff] bg-white/18 shadow-[0_22px_56px_rgba(53,85,176,0.14)]">
           <Image
             src="/images/signup/signup-background.png"
             alt=""
@@ -266,44 +318,44 @@ export default function SignupWizard() {
             priority
             quality={100}
             unoptimized
-            className="pointer-events-none object-cover object-center"
+            className="pointer-events-none object-cover object-[50%_0%]"
             sizes="1060px"
           />
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(160deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01),rgba(255,255,255,0))]" />
 
-          <aside className="relative hidden overflow-hidden xl:flex">
+          <aside className="relative flex overflow-hidden">
 
             <div className="ml-2 relative z-10 flex h-full w-full flex-col px-5 pb-3 pt-4">
               <div className="ml-3 flex items-center gap-3">
                 <Image
                   src="/icons/medishift-brand-blue.png"
                   alt="MediPlan"
-                  width={54}
-                  height={54}
+                  width={44}
+                  height={44}
                   unoptimized
                   className="h-9 w-auto shrink-0 object-contain"
                 />
                 <div>
-                  <div className="text-[38px] font-black tracking-[-0.04em] text-[#1e55e6]">
+                  <div className="text-[36px] font-black tracking-[-0.04em] text-[#1e55e6]">
                     MediPlan
                   </div>
                 </div>
               </div>
 
-              <div className="mt-4 inline-flex w-fit items-center gap-1.5 rounded-full border border-[#dce8ff] bg-white/72 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.05em] text-[#295ae7]">
-                <ShieldCheck className="h-5 w-5" />
+              <div className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full border border-[#dce8ff] bg-white/72 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.05em] text-[#295ae7]">
+                <ShieldCheck className="h-4 w-4" />
                 Hastane Personel Organizasyon Sistemi
               </div>
 
-              <div className="mt-5 max-w-[350px]">
-                <h1 className="text-[50px] font-black leading-[1] tracking-[-0.06em] text-[#19316f]">
+              <div className="mt-4 max-w-[250px]">
+                <h1 className="text-[34px] font-black leading-[1] tracking-[-0.06em] text-[#19316f]">
                   Daha düzenli,
-                  <br />
+                  <br/>
                   daha verimli,
                   <br />
                   <span className="text-[#2c63f2]">daha iyi bir sağlık yönetimi.</span>
                 </h1>
-                <p className="mt-2.5 max-w-[400px] text-[13px] leading-5 text-[#536786]">
+                <p className="mt-2.5 max-w-[400px] text-[13px] leading-4 text-[#536786]">
                   MediPlan ile personel planlamanızı kolaylaştırın, süreçlerinizi optimize edin,
                   veriye dayalı kararlarla fark yaratın.
                 </p>
@@ -311,7 +363,7 @@ export default function SignupWizard() {
 
               <div className="mt-4 h-1 w-10 rounded-full bg-[#295ae7]" />
 
-              <div className="mt-4 grid gap-0 sm:grid-cols-3">
+              <div className="mt-4 grid grid-cols-3 gap-0">
                 {SIDE_FEATURES.map((item) => {
                   const Icon = item.icon;
                   return (
@@ -320,7 +372,7 @@ export default function SignupWizard() {
                       className={cn(
                         "flex min-w-0 items-center gap-2.5 px-2 py-1.5",
                         item.title !== SIDE_FEATURES[SIDE_FEATURES.length - 1].title &&
-                          "sm:border-r sm:border-[#d9e5ff]",
+                          "border-r border-[#d9e5ff]",
                       )}
                     >
                       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[12px] border border-[#dce7ff] bg-white/88 text-[#2a5ae8] shadow-[0_8px_18px_rgba(39,89,231,0.08)]">
@@ -342,7 +394,7 @@ export default function SignupWizard() {
             </div>
           </aside>
 
-          <section className="relative flex min-w-0 flex-col bg-white/8 px-3 py-3 sm:px-4 sm:py-4 xl:px-5 xl:py-5">
+          <section className="relative flex min-w-0 flex-col bg-white/8 px-5 py-5">
             <div className="mb-3 grid grid-cols-4 gap-2 rounded-[16px] border border-[#e3ebff] bg-white/66 px-3 py-2 shadow-[0_10px_24px_rgba(53,85,176,0.06)]">
               {STEPS.map((item) => {
                 const isActive = step === item.id;
@@ -367,7 +419,7 @@ export default function SignupWizard() {
               })}
             </div>
 
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[22px] border border-[#dfe8ff] bg-white/84 px-3.5 py-3.5 shadow-[0_18px_42px_rgba(53,85,176,0.08)] sm:px-4 sm:py-4">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[22px] border border-[#dfe8ff] bg-white/84 px-4 py-4 shadow-[0_18px_42px_rgba(53,85,176,0.08)]">
               {createdUsername ? (
                 <div className="flex h-full flex-col justify-center">
                   <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#e9f1ff] text-[#2759e7]">
@@ -428,7 +480,7 @@ export default function SignupWizard() {
 
                     <div className="min-h-0 flex-1 overflow-y-auto pr-0.5">
                     {step === 1 && (
-                      <div className="space-y-2">
+                      <div className="space-y-1">
                         <Field label="Ad Soyad" icon={User}>
                           <Input
                             value={form.fullName}
@@ -715,7 +767,7 @@ export default function SignupWizard() {
               )}
             </div>
 
-            <div className="mt-3 grid gap-2 rounded-[18px] border border-[#e6ecfb] bg-white/62 px-3 py-2.5 sm:grid-cols-3">
+            <div className="mt-3 grid grid-cols-3 gap-2 rounded-[18px] border border-[#e6ecfb] bg-white/62 px-3 py-2.5">
               {FOOTER_FEATURES.map((item) => {
                 const Icon = item.icon;
                 return (
@@ -731,8 +783,10 @@ export default function SignupWizard() {
                 );
               })}
             </div>
-          </section>
-        </section>
+              </section>
+            </section>
+          </div>
+        </div>
       </div>
     </main>
   );
@@ -804,8 +858,8 @@ function Field({
   children: ReactNode;
 }) {
   return (
-    <div className="grid gap-1.5 md:grid-cols-[28px_1fr] md:items-start">
-      <div className="hidden h-[28px] w-[28px] items-center justify-center rounded-[10px] border border-[#e2e9fb] bg-[#f7faff] text-[#295ae7] md:flex md:translate-y-[23px]">
+    <div className="grid grid-cols-[28px_1fr] items-start gap-1.5">
+      <div className="flex h-[28px] w-[28px] translate-y-[23px] items-center justify-center rounded-[10px] border border-[#e2e9fb] bg-[#f7faff] text-[#295ae7]">
         <Icon className="h-3.5 w-3.5" />
       </div>
       <div className="space-y-1.5">
