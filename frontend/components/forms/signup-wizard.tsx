@@ -310,19 +310,26 @@ export default function SignupWizard() {
 
               <div className="mt-4 h-1 w-10 rounded-full bg-[#295ae7]" />
 
-              <div className="mt-4 space-y-3">
+              <div className="mt-4 grid gap-0 sm:grid-cols-3">
                 {SIDE_FEATURES.map((item) => {
                   const Icon = item.icon;
                   return (
-                    <div key={item.title} className="flex items-start gap-2">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[12px] border border-[#dce7ff] bg-white/84 text-[#2a5ae8] shadow-[0_10px_20px_rgba(39,89,231,0.08)]">
+                    <div
+                      key={item.title}
+                      className={cn(
+                        "flex min-w-0 items-center gap-2.5 px-2 py-1.5",
+                        item.title !== SIDE_FEATURES[SIDE_FEATURES.length - 1].title &&
+                          "sm:border-r sm:border-[#d9e5ff]",
+                      )}
+                    >
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[12px] border border-[#dce7ff] bg-white/88 text-[#2a5ae8] shadow-[0_8px_18px_rgba(39,89,231,0.08)]">
                         <Icon className="h-4 w-4 stroke-[1.7]" />
                       </div>
-                      <div className="pt-0.5">
-                        <div className="text-[12px] font-bold tracking-[-0.03em] text-[#23418f]">
+                      <div className="min-w-0">
+                        <div className="text-[11px] font-bold tracking-[-0.03em] text-[#23418f]">
                           {item.title}
                         </div>
-                        <p className="mt-0.5 max-w-[210px] text-[10px] leading-4 text-[#60718e]">
+                        <p className="mt-0.5 text-[9px] leading-4 text-[#60718e]">
                           {item.description}
                         </p>
                       </div>
