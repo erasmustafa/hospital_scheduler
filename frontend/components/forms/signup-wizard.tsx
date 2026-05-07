@@ -281,7 +281,7 @@ export default function SignupWizard() {
                   width={54}
                   height={54}
                   unoptimized
-                  className="h-8 w-8 shrink-0"
+                  className="h-9 w-auto shrink-0 object-contain"
                 />
                 <div>
                   <div className="text-[38px] font-black tracking-[-0.04em] text-[#1e55e6]">
@@ -804,9 +804,9 @@ function Field({
   children: ReactNode;
 }) {
   return (
-    <div className="grid gap-2 md:grid-cols-[36px_1fr] md:items-end">
-      <div className="hidden h-[36px] w-[36px] items-center justify-center rounded-[12px] border border-[#e2e9fb] bg-[#f7faff] text-[#295ae7] md:flex">
-        <Icon className="h-4 w-4" />
+    <div className="grid gap-1.5 md:grid-cols-[28px_1fr] md:items-start">
+      <div className="hidden h-[28px] w-[28px] items-center justify-center rounded-[10px] border border-[#e2e9fb] bg-[#f7faff] text-[#295ae7] md:flex md:translate-y-[23px]">
+        <Icon className="h-3.5 w-3.5" />
       </div>
       <div className="space-y-1.5">
         <label className="text-[12px] font-semibold text-[#31456e]">{label}</label>
