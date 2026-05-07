@@ -48,8 +48,8 @@ type FormState = {
 };
 
 const STEPS = [
-  { id: 1, label: "Hesap OluÅŸturma" },
-  { id: 2, label: "AmaÃ§ SeÃ§imi" },
+  { id: 1, label: "Hesap Oluşturma" },
+  { id: 2, label: "Amaç Seçimi" },
   { id: 3, label: "Bilgiler" },
   { id: 4, label: "Tamamla" },
 ] as const;
@@ -62,38 +62,38 @@ const PURPOSE_CARDS: Array<{
 }> = [
   {
     id: "personal",
-    title: "Bireysel KullanÄ±m",
-    description: "Kendi takviminizi, tercihlerinizi ve listenizi yÃ¶netirsiniz.",
+    title: "Bireysel Kullanım",
+    description: "Kendi takviminizi, tercihlerinizi ve listenizi yönetirsiniz.",
     icon: User,
   },
   {
     id: "manager",
-    title: "Birim YÃ¶netimi",
-    description: "Birim kurar, vardiya tipleri ve plan akÄ±ÅŸÄ±nÄ± yÃ¶netirsiniz.",
+    title: "Birim Yönetimi",
+    description: "Birim kurar, vardiya tipleri ve plan akışını yönetirsiniz.",
     icon: Building2,
   },
   {
     id: "invite",
-    title: "Davet ile KatÄ±lÄ±m",
-    description: "Mevcut birime davet kodu ile Ã§alÄ±ÅŸan olarak katÄ±lÄ±rsÄ±nÄ±z.",
+    title: "Davet ile Katılım",
+    description: "Mevcut birime davet kodu ile çalışan olarak katılırsınız.",
     icon: Users,
   },
 ] as const;
 
 const SIDE_FEATURES = [
   {
-    title: "AkÄ±llÄ± Planlama",
-    description: "Personel ihtiyaÃ§larÄ±nÄ± Ã¶ngÃ¶rÃ¼n ve planlamanÄ±zÄ± kolayca yapÄ±n.",
+    title: "Akıllı Planlama",
+    description: "Personel ihtiyaçlarını öngörün ve planlamanızı kolayca yapın.",
     icon: CalendarClock,
   },
   {
-    title: "Veriye DayalÄ± Kararlar",
-    description: "Analiz ve raporlarla doÄŸru kararlar alÄ±n, performansÄ± artÄ±rÄ±n.",
+    title: "Veriye Dayalı Kararlar",
+    description: "Analiz ve raporlarla doğru kararlar alın, performansı artırın.",
     icon: Sparkles,
   },
   {
-    title: "GÃ¼venli ve EriÅŸilebilir",
-    description: "Verileriniz gÃ¼vende, sisteminiz her yerden eriÅŸilebilir.",
+    title: "Güvenli ve Erişilebilir",
+    description: "Verileriniz güvende, sisteminiz her yerden erişilebilir.",
     icon: ShieldCheck,
   },
 ] as const;
@@ -101,17 +101,17 @@ const SIDE_FEATURES = [
 const FOOTER_FEATURES = [
   {
     title: "KVKK Uyumlu",
-    description: "KiÅŸisel verileriniz mevzuata uygun ÅŸekilde korunur.",
+    description: "Kişisel verileriniz mevzuata uygun şekilde korunur.",
     icon: ShieldCheck,
   },
   {
-    title: "GÃ¼venli EriÅŸim",
-    description: "EndÃ¼stri standartlarÄ±nda ÅŸifreleme ile verileriniz gÃ¼vende.",
+    title: "Güvenli Erişim",
+    description: "Endüstri standartlarında şifreleme ile verileriniz güvende.",
     icon: Lock,
   },
   {
     title: "7/24 Destek",
-    description: "Her zaman yanÄ±nÄ±zdayÄ±z. Destek ekibimizle iletiÅŸime geÃ§in.",
+    description: "Her zaman yanınızdayız. Destek ekibimizle iletişime geçin.",
     icon: Phone,
   },
 ] as const;
@@ -125,7 +125,7 @@ const initialState: FormState = {
   purpose: null,
   profession: "",
   workModel: "Karma",
-  importMethod: "Åimdilik boÅŸ baÅŸla",
+  importMethod: "Şimdilik boş başla",
   organizationName: "",
   unitName: "",
   unitType: "",
@@ -172,9 +172,9 @@ export default function SignupWizard() {
 
   const accountSummary = useMemo(() => {
     const map: Record<Purpose, string> = {
-      personal: "Bireysel takviminizi kurup kiÅŸisel planlama ile devam edeceksiniz.",
-      manager: "Birim, personel, kural ve vardiya yapÄ±sÄ±nÄ± siz yÃ¶neteceksiniz.",
-      invite: "Davet kodu ile mevcut birime Ã§alÄ±ÅŸan olarak baÄŸlanacaksÄ±nÄ±z.",
+      personal: "Bireysel takviminizi kurup kişisel planlama ile devam edeceksiniz.",
+      manager: "Birim, personel, kural ve vardiya yapısını siz yöneteceksiniz.",
+      invite: "Davet kodu ile mevcut birime çalışan olarak bağlanacaksınız.",
     };
     return form.purpose ? map[form.purpose] : "";
   }, [form.purpose]);
@@ -198,7 +198,7 @@ export default function SignupWizard() {
     setError(null);
 
     if (!form.purpose) {
-      setError("LÃ¼tfen kullanÄ±m amacÄ±nÄ±zÄ± seÃ§in.");
+      setError("Lütfen kullanım amacınızı seçin.");
       return;
     }
 
@@ -230,7 +230,7 @@ export default function SignupWizard() {
       } else if (caught instanceof Error) {
         setError(caught.message);
       } else {
-        setError("KayÄ±t sÄ±rasÄ±nda beklenmeyen bir hata oluÅŸtu.");
+        setError("Kayıt sırasında beklenmeyen bir hata oluştu.");
       }
     } finally {
       setSubmitting(false);
@@ -253,7 +253,7 @@ export default function SignupWizard() {
         <Link
           href="/"
           className="absolute left-3 top-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[#dce7ff] bg-white/90 text-[#4568e6] shadow-[0_12px_30px_rgba(74,105,196,0.12)] transition hover:-translate-y-0.5 sm:left-5 sm:top-5"
-          aria-label="Ana sayfaya dÃ¶n"
+          aria-label="Ana sayfaya dön"
         >
           <ArrowLeft className="h-4 w-4" />
         </Link>
@@ -297,15 +297,15 @@ export default function SignupWizard() {
 
               <div className="mt-5 max-w-[350px]">
                 <h1 className="text-[50px] font-black leading-[1] tracking-[-0.06em] text-[#19316f]">
-                  Daha dÃ¼zenli,
+                  Daha düzenli,
                   <br />
                   daha verimli,
                   <br />
-                  <span className="text-[#2c63f2]">daha iyi bir saÄŸlÄ±k yÃ¶netimi.</span>
+                  <span className="text-[#2c63f2]">daha iyi bir sağlık yönetimi.</span>
                 </h1>
                 <p className="mt-2.5 max-w-[400px] text-[13px] leading-5 text-[#536786]">
-                  MediPlan ile personel planlamanÄ±zÄ± kolaylaÅŸtÄ±rÄ±n, sÃ¼reÃ§lerinizi optimize edin,
-                  veriye dayalÄ± kararlarla fark yaratÄ±n.
+                  MediPlan ile personel planlamanızı kolaylaştırın, süreçlerinizi optimize edin,
+                  veriye dayalı kararlarla fark yaratın.
                 </p>
               </div>
 
@@ -374,14 +374,14 @@ export default function SignupWizard() {
                     <Check className="h-5 w-5" />
                   </div>
                     <h2 className="text-[26px] font-extrabold tracking-[-0.05em] text-[#1d2e52]">
-                    HesabÄ±nÄ±z hazÄ±r
+                    Hesabınız hazır
                   </h2>
                     <p className="mt-1.5 max-w-[320px] text-[12px] leading-5 text-[#607190]">
-                    KayÄ±t tamamlandÄ±. GiriÅŸ ekranÄ±nda kullanÄ±cÄ± adÄ± olarak e-posta adresinizi
+                    Kayıt tamamlandı. Giriş ekranında kullanıcı adı olarak e-posta adresinizi
                     kullanabilirsiniz.
                   </p>
                   <div className="mt-3 rounded-[14px] border border-[#dbe7ff] bg-[#fbfdff] p-3">
-                    <div className="text-xs font-semibold text-[#70809d]">GiriÅŸ bilgisi</div>
+                    <div className="text-xs font-semibold text-[#70809d]">Giriş bilgisi</div>
                     <div className="mt-1 text-[15px] font-bold text-[#1d2e52]">
                       {createdUsername}
                     </div>
@@ -392,13 +392,13 @@ export default function SignupWizard() {
                       href="/login"
                       className="inline-flex h-8 items-center justify-center rounded-xl bg-[#2759e7] px-3.5 text-[12px] font-bold text-white shadow-[0_14px_32px_rgba(39,89,231,0.28)]"
                     >
-                      GiriÅŸ Yap
+                      Giriş Yap
                     </Link>
                     <Link
                       href="/"
                       className="inline-flex h-8 items-center justify-center rounded-xl border border-[#d7e3ff] px-3.5 text-[12px] font-semibold text-[#2b467e]"
                     >
-                      Ana Sayfaya DÃ¶n
+                      Ana Sayfaya Dön
                     </Link>
                   </div>
                 </div>
@@ -407,22 +407,22 @@ export default function SignupWizard() {
                     <div className="mb-3">
                     <h2 className="text-[24px] font-extrabold tracking-[-0.05em] text-[#1d2e52]">
                       {step === 1
-                        ? "Hesap oluÅŸturun"
+                        ? "Hesap oluşturun"
                         : step === 2
-                          ? "AmaÃ§ seÃ§in"
-                          : step === 3
-                            ? "Bilgileri tamamlayÄ±n"
-                            : "KaydÄ± gÃ¶zden geÃ§irin"}
+                          ? "Amaç seçin"
+                        : step === 3
+                            ? "Bilgileri tamamlayın"
+                            : "Kaydı gözden geçirin"}
                     </h2>
                     <p className="mt-1 text-[11px] leading-4 text-[#667792]">
                       {step === 1 &&
-                        "MediPlan'a hoÅŸ geldiniz. Temel hesap bilgilerinizi girerek baÅŸlayÄ±n."}
+                        "MediPlan'a hoş geldiniz. Temel hesap bilgilerinizi girerek başlayın."}
                       {step === 2 &&
-                        "Sistemi hangi baÄŸlamda kullanacaÄŸÄ±nÄ±zÄ± seÃ§in. Sonraki adÄ±mlar bu seÃ§ime gÃ¶re ÅŸekillenir."}
+                        "Sistemi hangi bağlamda kullanacağınızı seçin. Sonraki adımlar bu seçime göre şekillenir."}
                       {step === 3 &&
-                        "SeÃ§tiÄŸiniz kullanÄ±m amacÄ±na gÃ¶re gerekli alanlarÄ± tamamlayÄ±n."}
+                        "Seçtiğiniz kullanım amacına göre gerekli alanları tamamlayın."}
                       {step === 4 &&
-                        "KayÄ±t tamamlanmadan Ã¶nce seÃ§tiÄŸiniz akÄ±ÅŸÄ± ve hesap Ã¶zetini kontrol edin."}
+                        "Kayıt tamamlanmadan önce seçtiğiniz akışı ve hesap özetini kontrol edin."}
                     </p>
                   </div>
 
@@ -433,7 +433,7 @@ export default function SignupWizard() {
                           <Input
                             value={form.fullName}
                             onChange={(event) => setField("fullName", event.target.value)}
-                            placeholder="AdÄ±nÄ±zÄ± ve soyadÄ±nÄ±zÄ± girin"
+                            placeholder="Adınızı ve soyadınızı girin"
                             className="h-[36px] rounded-[12px] border-[#dfe7f7] pl-3 text-[12px]"
                           />
                         </Field>
@@ -446,7 +446,7 @@ export default function SignupWizard() {
                             className="h-[36px] rounded-[12px] border-[#dfe7f7] pl-3 text-[12px]"
                           />
                         </Field>
-                        <Field label="Telefon NumarasÄ± (Opsiyonel)" icon={Phone}>
+                        <Field label="Telefon Numarası (Opsiyonel)" icon={Phone}>
                           <Input
                             value={form.phone}
                             onChange={(event) => setField("phone", event.target.value)}
@@ -454,7 +454,7 @@ export default function SignupWizard() {
                             className="h-[36px] rounded-[12px] border-[#dfe7f7] pl-3 text-[12px]"
                           />
                         </Field>
-                        <Field label="Åifre" icon={Lock}>
+                        <Field label="Şifre" icon={Lock}>
                           <PasswordInput
                             value={form.password}
                             onChange={(value) => setField("password", value)}
@@ -465,16 +465,16 @@ export default function SignupWizard() {
                         </Field>
                         {showPasswordHint ? (
                           <p className="-mt-0.5 text-[10px] text-[#b24c4c]">
-                            Åifreniz en az 8 karakter iÃ§ermelidir.
+                            Şifreniz en az 8 karakter içermelidir.
                           </p>
                         ) : null}
-                        <Field label="Åifre (Tekrar)" icon={Lock}>
+                        <Field label="Şifre (Tekrar)" icon={Lock}>
                           <PasswordInput
                             value={form.confirmPassword}
                             onChange={(value) => setField("confirmPassword", value)}
                             visible={showConfirmPassword}
                             onToggle={() => setShowConfirmPassword((current) => !current)}
-                            placeholder="Åifrenizi tekrar girin"
+                            placeholder="Şifrenizi tekrar girin"
                           />
                         </Field>
                       </div>
@@ -512,29 +512,29 @@ export default function SignupWizard() {
 
                     {step === 3 && form.purpose === "personal" && (
                       <div className="grid gap-3">
-                        <Field label="Meslek / GÃ¶rev" icon={BriefcaseBusiness}>
+                        <Field label="Meslek / Görev" icon={BriefcaseBusiness}>
                           <Input
                             value={form.profession}
                             onChange={(event) => setField("profession", event.target.value)}
-                            placeholder="HemÅŸire, doktor, tekniker..."
+                            placeholder="Hemşire, doktor, tekniker..."
                             className="h-[36px] rounded-[12px] border-[#dfe7f7] pl-3 text-[12px]"
                           />
                         </Field>
-                        <Field label="Ã‡alÄ±ÅŸma Modeli" icon={Clock3}>
+                        <Field label="Çalışma Modeli" icon={Clock3}>
                           <SelectField
                             value={form.workModel}
                             onChange={(value) => setField("workModel", value)}
-                            options={["Mesaili", "NÃ¶betli", "Karma"]}
+                            options={["Mesaili", "Nöbetli", "Karma"]}
                           />
                         </Field>
-                        <Field label="Liste Aktarma YÃ¶ntemi" icon={FileUp}>
+                        <Field label="Liste Aktarma Yöntemi" icon={FileUp}>
                           <SelectField
                             value={form.importMethod}
                             onChange={(value) => setField("importMethod", value)}
                             options={[
-                              "Åimdilik boÅŸ baÅŸla",
-                              "FotoÄŸraf yÃ¼kle",
-                              "PDF / Excel yÃ¼kle",
+                              "Şimdilik boş başla",
+                              "Fotoğraf yükle",
+                              "PDF / Excel yükle",
                               "Manuel takvimden ekle",
                             ]}
                           />
@@ -544,37 +544,37 @@ export default function SignupWizard() {
 
                     {step === 3 && form.purpose === "manager" && (
                       <div className="grid gap-3">
-                        <Field label="Kurum AdÄ±" icon={Building2}>
+                        <Field label="Kurum Adı" icon={Building2}>
                           <Input
                             value={form.organizationName}
                             onChange={(event) => setField("organizationName", event.target.value)}
-                            placeholder="Ã–r. GÃ¶lhisar Devlet Hastanesi"
+                            placeholder="Ör. Gölhisar Devlet Hastanesi"
                             className="h-[36px] rounded-[12px] border-[#dfe7f7] pl-3 text-[12px]"
                           />
                         </Field>
-                        <Field label="Birim AdÄ±" icon={Users}>
+                        <Field label="Birim Adı" icon={Users}>
                           <Input
                             value={form.unitName}
                             onChange={(event) => setField("unitName", event.target.value)}
-                            placeholder="Ã–r. Ameliyathane"
+                            placeholder="Ör. Ameliyathane"
                             className="h-[36px] rounded-[12px] border-[#dfe7f7] pl-3 text-[12px]"
                           />
                         </Field>
-                        <Field label="Birim TÃ¼rÃ¼" icon={BriefcaseBusiness}>
+                        <Field label="Birim Türü" icon={BriefcaseBusiness}>
                           <Input
                             value={form.unitType}
                             onChange={(event) => setField("unitType", event.target.value)}
-                            placeholder="Anestezi / Acil / YoÄŸun BakÄ±m"
+                            placeholder="Anestezi / Acil / Yoğun Bakım"
                             className="h-[36px] rounded-[12px] border-[#dfe7f7] pl-3 text-[12px]"
                           />
                         </Field>
-                        <Field label="Ã‡alÄ±ÅŸma Modeli" icon={CalendarClock}>
+                        <Field label="Çalışma Modeli" icon={CalendarClock}>
                           <SelectField
                             value={form.workModel}
                             onChange={(value) => setField("workModel", value)}
                             options={[
-                              "24 saat nÃ¶bet + 8 saat mesai",
-                              "Standart vardiyalÄ± Ã§alÄ±ÅŸma",
+                              "24 saat nöbet + 8 saat mesai",
+                              "Standart vardiyalı çalışma",
                               "Esnek karma sistem",
                             ]}
                           />
@@ -588,13 +588,13 @@ export default function SignupWizard() {
                           <Input
                             value={form.inviteCode}
                             onChange={(event) => setField("inviteCode", event.target.value)}
-                            placeholder="Ã–r. MEDI-2026-ACIL"
+                            placeholder="Ör. MEDI-2026-ACIL"
                             className="h-[36px] rounded-[12px] border-[#dfe7f7] pl-3 text-[12px]"
                           />
                         </Field>
                         <div className="rounded-[12px] border border-[#dce8ff] bg-[#f8fbff] p-3 text-[11px] leading-4 text-[#5e6f90]">
-                          Davet kodu ile mevcut birime Ã§alÄ±ÅŸan olarak katÄ±lÄ±rsÄ±nÄ±z. Yetkileriniz
-                          davet yapÄ±sÄ±na gÃ¶re tanÄ±mlanÄ±r.
+                          Davet kodu ile mevcut birime çalışan olarak katılırsınız. Yetkileriniz
+                          davet yapısına göre tanımlanır.
                         </div>
                       </div>
                     )}
@@ -602,15 +602,15 @@ export default function SignupWizard() {
                     {step === 4 && (
                       <div className="space-y-4">
                         <div className="rounded-[14px] border border-[#dce6ff] bg-[#f8fbff] p-3">
-                          <div className="text-xs font-semibold text-[#6c7a95]">SeÃ§ilen akÄ±ÅŸ</div>
+                          <div className="text-xs font-semibold text-[#6c7a95]">Seçilen akış</div>
                           <div className="mt-1 text-[14px] font-bold text-[#20325b]">
-                            {PURPOSE_CARDS.find((item) => item.id === form.purpose)?.title ?? "â€”"}
+                            {PURPOSE_CARDS.find((item) => item.id === form.purpose)?.title ?? "—"}
                           </div>
                           <p className="mt-1.5 text-[11px] leading-4 text-[#607190]">{accountSummary}</p>
                         </div>
 
                         <div className="rounded-[14px] border border-[#e1e9ff] bg-white p-3">
-                          <div className="mb-2 text-xs font-semibold text-[#6c7a95]">Hesap Ã¶zeti</div>
+                          <div className="mb-2 text-xs font-semibold text-[#6c7a95]">Hesap özeti</div>
                             <dl className="space-y-2 text-[12px] text-[#435473]">
                             <Row label="Ad Soyad" value={form.fullName} />
                             <Row label="E-posta" value={form.email} />
@@ -618,15 +618,15 @@ export default function SignupWizard() {
                             {form.purpose === "personal" && (
                               <>
                                 <Row label="Meslek" value={form.profession} />
-                                <Row label="Ã‡alÄ±ÅŸma modeli" value={form.workModel} />
-                                <Row label="Ä°Ã§e aktarma" value={form.importMethod} />
+                                <Row label="Çalışma modeli" value={form.workModel} />
+                                <Row label="İçe aktarma" value={form.importMethod} />
                               </>
                             )}
                             {form.purpose === "manager" && (
                               <>
                                 <Row label="Kurum" value={form.organizationName} />
                                 <Row label="Birim" value={form.unitName} />
-                                <Row label="Birim tÃ¼rÃ¼" value={form.unitType} />
+                                <Row label="Birim türü" value={form.unitType} />
                               </>
                             )}
                             {form.purpose === "invite" && (
@@ -646,9 +646,9 @@ export default function SignupWizard() {
 
                   <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-[#eef2ff] pt-2.5">
                     <div className="text-[11px] text-[#74839d]">
-                      Zaten hesabÄ±nÄ±z var mÄ±?{" "}
+                      Zaten hesabınız var mı?{" "}
                       <Link href="/login" className="font-semibold text-[#295ae7]">
-                        GiriÅŸ Yap
+                        Giriş Yap
                       </Link>
                     </div>
 
@@ -695,7 +695,7 @@ export default function SignupWizard() {
                           disabled={!canProceedStep3}
                           className="h-8 rounded-[10px] bg-[#295ae7] px-3 text-[12px] font-bold"
                         >
-                          Ã–zeti GÃ¶r
+                          Özeti Gör
                           <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                       )}
@@ -706,7 +706,7 @@ export default function SignupWizard() {
                           disabled={submitting}
                           className="h-8 rounded-[10px] bg-[#295ae7] px-3 text-[12px] font-bold"
                         >
-                          {submitting ? "Kaydediliyor..." : "KayÄ±t Ol"}
+                          {submitting ? "Kaydediliyor..." : "Kayıt Ol"}
                         </Button>
                       )}
                     </div>
@@ -764,7 +764,7 @@ function PasswordInput({
         type="button"
         onClick={onToggle}
         className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8c99b0]"
-        aria-label={visible ? "Åifreyi gizle" : "Åifreyi gÃ¶ster"}
+        aria-label={visible ? "Şifreyi gizle" : "Şifreyi göster"}
       >
         {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
       </button>
