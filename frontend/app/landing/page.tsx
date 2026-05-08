@@ -9,6 +9,8 @@ import {
   Clock3,
   Cloud,
   Headphones,
+  Home,
+  Info,
   LockKeyhole,
   MessageSquareMore,
   ShieldCheck,
@@ -20,6 +22,7 @@ import {
 
 import { HeroPreviewCarousel } from "@/components/landing/hero-preview-carousel";
 import { TypewriterHeading } from "@/components/landing/typewriter-heading";
+import { DynamicNavigation } from "@/components/lightswind/dynamic-navigation";
 
 const features: Array<{
   title: string;
@@ -56,6 +59,14 @@ const features: Array<{
       "Ekip i\u00e7i ileti\u015fimi g\u00fc\u00e7lendirir, bilgi ak\u0131\u015f\u0131n\u0131 kolayla\u015ft\u0131r\u0131r, i\u015f birli\u011fini art\u0131r\u0131r.",
     icon: MessageSquareMore,
   },
+];
+
+const navigationLinks = [
+  { id: "home", label: "Ana Sayfa", href: "#hero", icon: <Home /> },
+  { id: "features", label: "\u00d6zellikler", href: "#features", icon: <Sparkles /> },
+  { id: "how", label: "Nas\u0131l \u00c7al\u0131\u015f\u0131r?", href: "#how-it-works", icon: <CalendarDays /> },
+  { id: "about", label: "Hakk\u0131m\u0131zda", href: "#about", icon: <Info /> },
+  { id: "contact", label: "\u0130leti\u015fim", href: "#faq", icon: <Headphones /> },
 ];
 
 const teamHours = [
@@ -176,7 +187,7 @@ export default function LandingPage() {
   return (
     <main className="overflow-x-hidden bg-[#f6f8fe] text-[#14213d]">
       <div className="-ml-[5%] [width:110%] [zoom:1.1]">
-        <section className="min-h-[100svh] overflow-hidden rounded-b-[36px] bg-[linear-gradient(135deg,#4f6df7_0%,#5d7cff_42%,#7ea0ff_100%)] text-white">
+        <section id="hero" className="min-h-[100svh] overflow-hidden rounded-b-[36px] bg-[linear-gradient(135deg,#4f6df7_0%,#5d7cff_42%,#7ea0ff_100%)] text-white">
           <div className="mx-auto flex min-h-[100svh] w-full max-w-[1280px] flex-col px-5 pb-10 pt-4 sm:px-6 md:pb-12 lg:px-8 lg:pb-16 lg:pt-6">
             <header className="flex items-center justify-between gap-4 py-4 lg:py-5">
               <div className="flex items-center gap-3">
@@ -192,20 +203,7 @@ export default function LandingPage() {
                 <span className="text-[30px] font-extrabold tracking-tight">MediShift</span>
               </div>
 
-              <nav className="hidden items-center gap-10 text-sm font-medium text-white/90 md:flex">
-                <a href="#features" className="transition hover:text-white">
-                  {"\u00d6zellikler"}
-                </a>
-                <a href="#how-it-works" className="transition hover:text-white">
-                  {"Nas\u0131l \u00c7al\u0131\u015f\u0131r?"}
-                </a>
-                <a href="#about" className="transition hover:text-white">
-                  {"Hakk\u0131m\u0131zda"}
-                </a>
-                <a href="#faq" className="transition hover:text-white">
-                  SSS
-                </a>
-              </nav>
+              <DynamicNavigation links={navigationLinks} theme="dark" glowIntensity={5} />
 
               <Link
                 href="/login"
