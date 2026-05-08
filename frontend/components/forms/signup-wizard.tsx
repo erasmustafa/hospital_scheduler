@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
 import { CSSProperties, FormEvent, ReactNode, useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
@@ -342,18 +343,18 @@ export default function SignupWizard() {
                 </div>
               </div>
 
-              <div className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full border border-[#dce8ff] bg-white/72 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.05em] text-[#295ae7]">
-                <ShieldCheck className="h-4 w-4" />
+              <div className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full border border-[#dce8ff] bg-white/72 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.05em] text-[#295ae7]">
+                <ShieldCheck className="h-3 w-3" />
                 Hastane Personel Organizasyon Sistemi
               </div>
 
-              <div className="mt-4 max-w-[250px]">
-                <h1 className="text-[34px] font-black leading-[1] tracking-[-0.06em] text-[#19316f]">
+              <div className="mt-4 max-w-[350px]">
+                <h1 className="text-[36px] font-black leading-[1] tracking-[-0.06em] text-[#19316f]">
                   Daha düzenli,
                   <br/>
                   daha verimli,
                   <br />
-                  <span className="text-[#2c63f2]">daha iyi bir sağlık yönetimi.</span>
+                  <span className="text-[#2c63f2]">daha iyi bir sağlık yönetimi</span>
                 </h1>
                 <p className="mt-2.5 max-w-[400px] text-[13px] leading-4 text-[#536786]">
                   MediPlan ile personel planlamanızı kolaylaştırın, süreçlerinizi optimize edin,
@@ -379,10 +380,10 @@ export default function SignupWizard() {
                         <Icon className="h-4 w-4 stroke-[1.7]" />
                       </div>
                       <div className="min-w-0">
-                        <div className="text-[11px] font-bold tracking-[-0.03em] text-[#23418f]">
+                        <div className="text-[12px] font-bold tracking-[-0.03em] text-[#23418f]">
                           {item.title}
                         </div>
-                        <p className="mt-0.5 text-[9px] leading-4 text-[#60718e]">
+                        <p className="mt-0.5 text-[11px] leading-4 text-[#60718e]">
                           {item.description}
                         </p>
                       </div>
@@ -456,6 +457,15 @@ export default function SignupWizard() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                      key={step}
+                      initial={{ opacity: 0, y: 10, filter: "blur(2px)" }}
+                      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, y: -8, filter: "blur(2px)" }}
+                      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                      className="flex min-h-0 flex-1 flex-col"
+                    >
                     <div className="mb-3">
                     <h2 className="text-[24px] font-extrabold tracking-[-0.05em] text-[#1d2e52]">
                       {step === 1
@@ -478,7 +488,7 @@ export default function SignupWizard() {
                     </p>
                   </div>
 
-                    <div className="min-h-0 flex-1 overflow-y-auto pr-0.5">
+                    <div className="min-h-0 flex-2 pr-0.5">
                     {step === 1 && (
                       <div className="space-y-1">
                         <Field label="Ad Soyad" icon={User}>
@@ -689,6 +699,8 @@ export default function SignupWizard() {
                       </div>
                     )}
                   </div>
+                  </motion.div>
+                  </AnimatePresence>
 
                   {error ? (
                     <p className="mt-2.5 rounded-[10px] border border-[#f7d1d1] bg-[#fff5f5] px-3 py-1.5 text-[11px] text-[#b24c4c]">
