@@ -842,16 +842,7 @@ function SignupStepper({
               <div className="mt-3 text-center">
                 <div
                   className={cn(
-                    "text-[13px] font-black leading-none",
-                    isLit ? "text-blue-700" : "text-slate-400",
-                  )}
-                >
-                  {String(item.id).padStart(2, "0")}
-                </div>
-
-                <div
-                  className={cn(
-                    "mt-1 text-[9px] font-semibold leading-3",
+                    "text-[9px] font-semibold leading-3",
                     isLit ? "text-blue-800" : "text-slate-500",
                   )}
                 >
