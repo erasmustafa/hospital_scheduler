@@ -889,14 +889,6 @@ function SignupStepper({
                 >
                   {item.label}
                 </div>
-                <div
-                  className={cn(
-                    "mt-0.5 text-[8px] font-semibold uppercase tracking-[0.12em]",
-                    isActive ? "text-blue-600" : isCompleted ? "text-blue-500" : "text-slate-300",
-                  )}
-                >
-                  {statusLabel}
-                </div>
               </div>
             </div>
           );
