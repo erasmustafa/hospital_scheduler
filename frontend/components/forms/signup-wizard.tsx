@@ -310,7 +310,7 @@ export default function SignupWizard() {
       <div className="relative z-10 flex min-h-screen w-full items-center justify-center overflow-hidden p-3 sm:p-5">
         <div className="relative shrink-0" style={frameStyle}>
           <div className="absolute left-0 top-0" style={canvasStyle}>
-            <section className="relative grid h-[720px] w-[1060px] grid-cols-[0.92fr_0.84fr] overflow-hidden rounded-[26px] border border-[#dfe8ff] bg-white/18 shadow-[0_22px_56px_rgba(53,85,176,0.14)]">
+            <section className="relative z-10 grid h-[720px] w-[1060px] grid-cols-[0.92fr_0.69fr] overflow-hidden rounded-[26px] border border-[#dfe8ff] bg-white/18 shadow-[0_22px_56px_rgba(53,85,176,0.14)] backdrop-blur-[12px]">
           <Image
             src="/images/signup/signup-background.png"
             alt=""
@@ -328,12 +328,12 @@ export default function SignupWizard() {
             <div className="ml-2 relative z-10 flex h-full w-full flex-col px-5 pb-3 pt-4">
               <div className="ml-3 flex items-center gap-3">
                 <Image
-                  src="/icons/medishift-brand-blue.png"
+                  src="/icons/medishift-brand-blue.svg"
                   alt="MediPlan"
-                  width={44}
-                  height={44}
+                  width={30}
+                  height={30}
                   unoptimized
-                  className="h-9 w-auto shrink-0 object-contain"
+                  className="h-8 w-auto shrink-0 object-contain"
                 />
                 <div>
                   <div className="text-[36px] font-black tracking-[-0.04em] text-[#1e55e6]">
@@ -878,5 +878,4 @@ function Row({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
-
 
