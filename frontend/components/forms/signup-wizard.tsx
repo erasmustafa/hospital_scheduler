@@ -831,11 +831,15 @@ function SignupStepper({
           return (
             <div key={item.id} className="relative flex flex-col items-center" role="listitem">
               {index !== STEPS.length - 1 && (
-                <div className="absolute left-1/2 top-[18px] h-[2px] w-full">
-                  <div className="mx-6 h-full rounded-full bg-blue-100" />
-                  {(completed || item.id < currentStep) && (
-                    <div className="absolute left-6 top-0 h-full w-[calc(100%-3rem)] rounded-full bg-gradient-to-r from-blue-600 to-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.28)] transition-all duration-300" />
-                  )}
+                <div className="absolute left-1/2 top-[18px] h-[2px] w-full px-6">
+                  <div className="relative h-full overflow-hidden rounded-full bg-blue-100">
+                    <div
+                      className={cn(
+                        "absolute inset-y-0 left-0 w-full origin-left rounded-full bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.28)] transition-transform duration-700 ease-out",
+                        completed || item.id < currentStep ? "scale-x-100" : "scale-x-0",
+                      )}
+                    />
+                  </div>
                 </div>
               )}
 
