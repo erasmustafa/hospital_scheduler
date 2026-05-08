@@ -225,6 +225,13 @@ export default function SignupWizard() {
     return false;
   }, [form]);
 
+  const maxReachableStep = useMemo<Step>(() => {
+    if (!canProceedStep1) return 1;
+    if (!canProceedStep2) return 2;
+    if (!canProceedStep3) return 3;
+    return 4;
+  }, [canProceedStep1, canProceedStep2, canProceedStep3]);
+
   const accountSummary = useMemo(() => {
     const map: Record<Purpose, string> = {
       personal: "Bireysel takviminizi kurup kişisel planlama ile devam edeceksiniz.",
@@ -246,6 +253,12 @@ export default function SignupWizard() {
   const prevStep = () => {
     setError(null);
     setStep((current) => Math.max(1, current - 1) as Step);
+  };
+
+  const selectStep = (targetStep: Step) => {
+    if (!createdUsername && targetStep > maxReachableStep) return;
+    setError(null);
+    setStep(targetStep);
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -400,7 +413,12 @@ export default function SignupWizard() {
           </aside>
 
           <section className="relative flex min-w-0 flex-col bg-white/14 px-5 py-5">
-            <SignupStepper currentStep={step} completed={Boolean(createdUsername)} />
+            <SignupStepper
+              currentStep={step}
+              completed={Boolean(createdUsername)}
+              maxReachableStep={maxReachableStep}
+              onStepSelect={selectStep}
+            />
 
             <div className="flex min-h-0 flex-col overflow-hidden rounded-[22px] border border-[#dfe8ff] bg-white/90 px-4 pb-2.5 pt-4 shadow-[0_18px_42px_rgba(53,85,176,0.08)]">
               {createdUsername ? (
@@ -791,38 +809,53 @@ export default function SignupWizard() {
 function SignupStepper({
   currentStep,
   completed,
+  maxReachableStep,
+  onStepSelect,
 }: {
   currentStep: Step;
   completed: boolean;
+  maxReachableStep: Step;
+  onStepSelect: (step: Step) => void;
 }) {
   return (
-    <div className="relative mb-3 w-full px-0 py-2">
-      <div className="relative grid grid-cols-4 items-start">
+    <nav aria-label="Kayıt adımları" className="relative mb-3 w-full px-0 py-2">
+      <div className="relative grid grid-cols-4 items-start" role="list">
         {STEPS.map((item, index) => {
           const Icon = item.icon;
           const isCompleted = completed || item.id < currentStep;
           const isActive = !completed && item.id === currentStep;
           const isLit = isActive || isCompleted;
+          const isReachable = completed || item.id <= maxReachableStep;
+          const statusLabel = isCompleted ? "Tamamlandı" : isActive ? "Aktif" : isReachable ? "Hazır" : "Kilitli";
 
           return (
-            <div key={item.id} className="relative flex flex-col items-center">
+            <div key={item.id} className="relative flex flex-col items-center" role="listitem">
               {index !== STEPS.length - 1 && (
                 <div className="absolute left-1/2 top-[18px] h-[2px] w-full">
                   <div className="mx-6 h-full rounded-full bg-blue-100" />
-                  {isLit && (
-                    <div className="absolute left-6 top-0 h-full w-[calc(100%-3rem)] rounded-full bg-gradient-to-r from-blue-600 to-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.28)]" />
+                  {(completed || item.id < currentStep) && (
+                    <div className="absolute left-6 top-0 h-full w-[calc(100%-3rem)] rounded-full bg-gradient-to-r from-blue-600 to-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.28)] transition-all duration-300" />
                   )}
                 </div>
               )}
 
-              <div
+              <button
+                type="button"
+                aria-current={isActive ? "step" : undefined}
+                aria-label={`${item.label}: ${statusLabel}`}
+                disabled={!isReachable}
+                onClick={() => onStepSelect(item.id)}
                 className={cn(
-                  "relative z-10 flex h-9 w-9 items-center justify-center rounded-full border transition-all duration-300",
+                  "group relative z-10 flex h-9 w-9 items-center justify-center rounded-full border outline-none transition-all duration-300",
                   isActive
-                    ? "border-blue-400 bg-blue-600 text-white shadow-[0_10px_24px_rgba(37,99,235,0.30)]"
+                    ? "scale-105 border-blue-400 bg-blue-600 text-white shadow-[0_10px_24px_rgba(37,99,235,0.30)]"
                     : isCompleted
-                      ? "border-blue-200 bg-blue-50 text-blue-600 shadow-[0_8px_20px_rgba(59,130,246,0.12)]"
-                      : "border-blue-100 bg-white text-blue-500 shadow-[0_8px_20px_rgba(59,130,246,0.10)]",
+                      ? "border-blue-200 bg-blue-50 text-blue-600 shadow-[0_8px_20px_rgba(59,130,246,0.12)] hover:-translate-y-0.5 hover:border-blue-300"
+                      : isReachable
+                        ? "border-blue-100 bg-white text-blue-500 shadow-[0_8px_20px_rgba(59,130,246,0.10)] hover:-translate-y-0.5 hover:border-blue-300 hover:bg-blue-50"
+                        : "cursor-not-allowed border-slate-100 bg-white/70 text-slate-300 shadow-[0_8px_18px_rgba(148,163,184,0.08)]",
+                  isReachable &&
+                    "focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
                 )}
               >
                 <div
@@ -841,7 +874,7 @@ function SignupStepper({
                 {isActive && (
                   <div className="absolute -bottom-2 h-0 w-0 border-x-[5px] border-t-[7px] border-x-transparent border-t-blue-600" />
                 )}
-              </div>
+              </button>
 
               <div className="mt-3 text-center">
                 <div
@@ -852,12 +885,20 @@ function SignupStepper({
                 >
                   {item.label}
                 </div>
+                <div
+                  className={cn(
+                    "mt-0.5 text-[8px] font-semibold uppercase tracking-[0.12em]",
+                    isActive ? "text-blue-600" : isCompleted ? "text-blue-500" : "text-slate-300",
+                  )}
+                >
+                  {statusLabel}
+                </div>
               </div>
             </div>
           );
         })}
       </div>
-    </div>
+    </nav>
   );
 }
 
