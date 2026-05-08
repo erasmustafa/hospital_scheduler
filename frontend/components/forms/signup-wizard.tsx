@@ -330,8 +330,8 @@ export default function SignupWizard() {
 
           <aside className="relative flex overflow-hidden">
 
-            <div className="ml-2 relative z-10 flex h-full w-full flex-col px-5 pb-3 pt-4">
-              <div className="ml-3 flex items-center gap-3">
+            <div className="ml-4 relative z-10 flex h-full w-full flex-col px-5 pb-3 pt-4">
+              <div className="ml-1 flex items-center gap-3">
                 <Image
                   src="/icons/medishift-brand-blue.svg"
                   alt="MediPlan"
@@ -341,26 +341,26 @@ export default function SignupWizard() {
                   className="h-8 w-auto shrink-0 object-contain"
                 />
                 <div>
-                  <div className="text-[36px] font-black tracking-[-0.04em] text-[#1e55e6]">
+                  <div className="text-[34px] font-bold tracking-[-0.04em] text-[#1e55e6]">
                     MediPlan
                   </div>
                 </div>
               </div>
 
-              <div className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full border border-[#dce8ff] bg-white/72 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.05em] text-[#295ae7]">
+              <div className="mt-4 inline-flex w-fit items-center gap-1.5 rounded-full border border-[#dce8ff] bg-white/72 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.05em] text-[#295ae7]">
                 <ShieldCheck className="h-3 w-3" />
                 Hastane Personel Organizasyon Sistemi
               </div>
 
               <div className="mt-4 max-w-[350px]">
-                <h1 className="text-[36px] font-black leading-[1] tracking-[-0.06em] text-[#19316f]">
+                <h1 className="text-[38px] font-bold leading-[1] tracking-[-0.06em] text-[#19316f]">
                   Daha düzenli,
                   <br/>
                   daha verimli,
                   <br />
                   <span className="text-[#2c63f2]">daha iyi bir sağlık yönetimi</span>
                 </h1>
-                <p className="mt-2.5 max-w-[400px] text-[13px] leading-4 text-[#536786]">
+                <p className="mt-4 max-w-[400px] text-[13px] leading-4 text-[#536786]">
                   MediPlan ile personel planlamanızı kolaylaştırın, süreçlerinizi optimize edin,
                   veriye dayalı kararlarla fark yaratın.
                 </p>
@@ -368,7 +368,7 @@ export default function SignupWizard() {
 
               <div className="mt-4 h-1 w-10 rounded-full bg-[#295ae7]" />
 
-              <div className="mt-2 grid grid-cols-3 gap-0">
+              <div className="mt-3 grid grid-cols-3 gap-0">
                 {SIDE_FEATURES.map((item) => {
                   const Icon = item.icon;
                   return (
@@ -472,7 +472,7 @@ export default function SignupWizard() {
 
                     <div className="min-h-0 flex-2 pr-0.5">
                     {step === 1 && (
-                      <div className="max-w-[330px] space-y-1">
+                      <div className="space-y-1">
                         <Field label="Ad Soyad" icon={User}>
                           <Input
                             value={form.fullName}
@@ -535,19 +535,21 @@ export default function SignupWizard() {
                               type="button"
                               onClick={() => setField("purpose", item.id)}
                               className={cn(
-                                "rounded-[16px] border p-3 text-left transition",
+                                "flex items-center gap-3 rounded-[16px] border p-3 text-left transition",
                                 active
                                   ? "border-[#295ae7] bg-[#f5f8ff] shadow-[0_18px_36px_rgba(41,90,231,0.12)]"
                                   : "border-[#e0e8f8] bg-white hover:border-[#bfd0ff]",
                               )}
                             >
-                              <div className="mb-2 inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[#eef3ff] text-[#2859e7]">
+                              <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[12px] bg-[#eef3ff] text-[#2859e7]">
                                 <Icon className="h-3.5 w-3.5" />
                               </div>
-                              <div className="text-[13px] font-bold text-[#20325b]">{item.title}</div>
-                              <p className="mt-1 text-[11px] leading-4 text-[#677892]">
-                                {item.description}
-                              </p>
+                              <div className="min-w-0">
+                                <div className="text-[13px] font-bold text-[#20325b]">{item.title}</div>
+                                <p className="mt-0.5 text-[11px] leading-4 text-[#677892]">
+                                  {item.description}
+                                </p>
+                              </div>
                             </button>
                           );
                         })}
