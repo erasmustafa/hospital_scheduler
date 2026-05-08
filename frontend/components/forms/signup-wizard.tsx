@@ -394,7 +394,7 @@ export default function SignupWizard() {
             </div>
           </aside>
 
-          <section className="relative flex min-w-0 flex-col bg-white/8 px-5 py-5">
+          <section className="relative flex min-w-0 flex-col bg-white/14 px-5 py-5">
             <div className="mb-3 grid grid-cols-4 gap-2 rounded-[16px] border border-[#e3ebff] bg-white/66 px-3 py-2 shadow-[0_10px_24px_rgba(53,85,176,0.06)]">
               {STEPS.map((item) => {
                 const isActive = step === item.id;
@@ -419,7 +419,7 @@ export default function SignupWizard() {
               })}
             </div>
 
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[22px] border border-[#dfe8ff] bg-white/84 px-4 py-4 shadow-[0_18px_42px_rgba(53,85,176,0.08)]">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[22px] border border-[#dfe8ff] bg-white/90 px-4 py-4 shadow-[0_18px_42px_rgba(53,85,176,0.08)]">
               {createdUsername ? (
                 <div className="flex h-full flex-col justify-center">
                   <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#e9f1ff] text-[#2759e7]">
@@ -878,4 +878,3 @@ function Row({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
-
