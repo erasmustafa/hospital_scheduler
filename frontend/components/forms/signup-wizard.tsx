@@ -763,7 +763,7 @@ export default function SignupWizard() {
               )}
             </div>
 
-            <div className="mt-3 grid grid-cols-3 gap-2 rounded-[18px] border border-[#e6ecfb] bg-white/62 px-3 py-2.5">
+            <div className="mt-3 grid grid-cols-3 gap-2 rounded-[18px] border border-[#e6ecfb] bg-white/82 px-3 py-2.5">
               {FOOTER_FEATURES.map((item) => {
                 const Icon = item.icon;
                 return (
@@ -773,12 +773,12 @@ export default function SignupWizard() {
                     </div>
                     <div>
                       <div className="text-[11px] font-bold text-[#223768]">{item.title}</div>
-                      <p className="mt-0.5 text-[9px] leading-3.5 text-[#60708e]">{item.description}</p>
                     </div>
                   </div>
                 );
               })}
             </div>
+
               </section>
             </section>
           </div>
