@@ -328,10 +328,7 @@ export default function SignupWizard() {
       <div className="relative z-10 flex min-h-screen w-full items-center justify-center overflow-hidden p-3 sm:p-5">
         <div className="relative shrink-0" style={frameStyle}>
           <div className="absolute left-0 top-0" style={canvasStyle}>
-            <section
-              className="relative z-10 grid h-[720px] w-[1060px] grid-cols-[0.92fr_0.69fr] overflow-hidden rounded-[26px] border border-white/80 bg-white/18 shadow-[0_34px_90px_rgba(36,63,142,0.24),0_12px_28px_rgba(91,126,218,0.16),inset_0_1px_0_rgba(255,255,255,0.92),inset_0_-28px_60px_rgba(31,67,151,0.08)] backdrop-blur-[12px]"
-              style={{ transform: "perspective(1400px) rotateX(1deg)", transformStyle: "preserve-3d" }}
-            >
+            <section className="relative z-10 grid h-[720px] w-[1060px] grid-cols-[0.92fr_0.69fr] overflow-hidden rounded-[26px] border border-[#dfe8ff] bg-white/18 shadow-[0_22px_56px_rgba(53,85,176,0.14)] backdrop-blur-[12px]">
           <Image
             src="/images/signup/signup-background.png"
             alt=""
