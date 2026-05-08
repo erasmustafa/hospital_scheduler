@@ -11,7 +11,9 @@ import {
   Building2,
   CalendarClock,
   Check,
+  CheckCircle2,
   Clock3,
+  ClipboardList,
   Eye,
   EyeOff,
   FileUp,
@@ -20,7 +22,9 @@ import {
   Phone,
   ShieldCheck,
   Sparkles,
+  Target,
   User,
+  UserRoundPlus,
   Users,
 } from "lucide-react";
 
@@ -49,10 +53,10 @@ type FormState = {
 };
 
 const STEPS = [
-  { id: 1, label: "Hesap Oluşturma" },
-  { id: 2, label: "Amaç Seçimi" },
-  { id: 3, label: "Bilgiler" },
-  { id: 4, label: "Tamamla" },
+  { id: 1, label: "Hesap Oluşturma", icon: UserRoundPlus },
+  { id: 2, label: "Amaç Seçimi", icon: Target },
+  { id: 3, label: "Bilgiler", icon: ClipboardList },
+  { id: 4, label: "Tamamla", icon: CheckCircle2 },
 ] as const;
 
 const PURPOSE_CARDS: Array<{
@@ -396,29 +400,7 @@ export default function SignupWizard() {
           </aside>
 
           <section className="relative flex min-w-0 flex-col bg-white/14 px-5 py-5">
-            <div className="mb-3 grid grid-cols-4 gap-2 rounded-[16px] border border-[#e3ebff] bg-white/66 px-3 py-2 shadow-[0_10px_24px_rgba(53,85,176,0.06)]">
-              {STEPS.map((item) => {
-                const isActive = step === item.id;
-                const isDone = step > item.id || (item.id === 4 && createdUsername);
-                return (
-                  <div key={item.id} className="flex items-center gap-2">
-                    <div
-                      className={cn(
-                        "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[9px] font-bold transition",
-                        isActive || isDone
-                          ? "border-[#2659e7] bg-[#2659e7] text-white"
-                          : "border-[#d9e4ff] bg-white text-[#7d8dab]",
-                      )}
-                    >
-                      {isDone ? <Check className="h-4 w-4" /> : item.id}
-                    </div>
-                    <div className="min-w-0 text-[9px] font-semibold leading-3.5 text-[#6d7f9f]">
-                      <span className={isActive ? "text-[#2441a3]" : undefined}>{item.label}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <SignupStepper currentStep={step} completed={Boolean(createdUsername)} />
 
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[22px] border border-[#dfe8ff] bg-white/90 px-4 py-4 shadow-[0_18px_42px_rgba(53,85,176,0.08)]">
               {createdUsername ? (
@@ -801,6 +783,86 @@ export default function SignupWizard() {
         </div>
       </div>
     </main>
+  );
+}
+
+function SignupStepper({
+  currentStep,
+  completed,
+}: {
+  currentStep: Step;
+  completed: boolean;
+}) {
+  return (
+    <div className="relative mb-3 w-full overflow-hidden rounded-[18px] border border-[#e3ebff] bg-white/88 px-3 py-3 shadow-[0_14px_34px_rgba(68,96,190,0.10)] backdrop-blur-md">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_14%_20%,rgba(80,115,255,0.08),transparent_28%),radial-gradient(circle_at_85%_70%,rgba(147,197,253,0.10),transparent_26%)]" />
+
+      <div className="relative grid grid-cols-4 items-start">
+        {STEPS.map((item, index) => {
+          const Icon = item.icon;
+          const isCompleted = completed || item.id < currentStep;
+          const isActive = !completed && item.id === currentStep;
+          const isLit = isActive || isCompleted;
+
+          return (
+            <div key={item.id} className="relative flex flex-col items-center">
+              {index !== STEPS.length - 1 && (
+                <div className="absolute left-1/2 top-[18px] h-[2px] w-full">
+                  <div className="mx-6 h-full rounded-full bg-blue-100" />
+                  {isLit && (
+                    <div className="absolute left-6 top-0 h-full w-[calc(100%-3rem)] rounded-full bg-gradient-to-r from-blue-600 to-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.28)]" />
+                  )}
+                </div>
+              )}
+
+              <div
+                className={cn(
+                  "relative z-10 flex h-9 w-9 items-center justify-center rounded-full border transition-all duration-300",
+                  isActive
+                    ? "border-blue-400 bg-blue-600 text-white shadow-[0_10px_24px_rgba(37,99,235,0.30)]"
+                    : isCompleted
+                      ? "border-blue-200 bg-blue-50 text-blue-600 shadow-[0_8px_20px_rgba(59,130,246,0.12)]"
+                      : "border-blue-100 bg-white text-blue-500 shadow-[0_8px_20px_rgba(59,130,246,0.10)]",
+                )}
+              >
+                <div
+                  className={cn(
+                    "flex h-6 w-6 items-center justify-center rounded-full",
+                    isActive ? "bg-white text-blue-600" : "bg-blue-50",
+                  )}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                </div>
+
+                {isActive && (
+                  <div className="absolute -bottom-2 h-0 w-0 border-x-[5px] border-t-[7px] border-x-transparent border-t-blue-600" />
+                )}
+              </div>
+
+              <div className="mt-3 text-center">
+                <div
+                  className={cn(
+                    "text-[13px] font-black leading-none",
+                    isLit ? "text-blue-700" : "text-slate-400",
+                  )}
+                >
+                  {String(item.id).padStart(2, "0")}
+                </div>
+
+                <div
+                  className={cn(
+                    "mt-1 text-[9px] font-semibold leading-3",
+                    isLit ? "text-blue-800" : "text-slate-500",
+                  )}
+                >
+                  {item.label}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
