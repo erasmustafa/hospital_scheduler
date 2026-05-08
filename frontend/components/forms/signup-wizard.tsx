@@ -299,17 +299,17 @@ export default function SignupWizard() {
       />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(242,247,255,0.28),rgba(255,255,255,0.16),rgba(237,244,255,0.3))]" />
 
+      <Link
+        href="/"
+        className="absolute left-3 top-3 z-20 inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[#dce7ff] bg-white/90 text-[#4568e6] shadow-[0_12px_30px_rgba(74,105,196,0.12)] transition hover:-translate-y-0.5 sm:left-5 sm:top-5"
+        aria-label="Ana sayfaya dÃ¶n"
+      >
+        <ArrowLeft className="h-4 w-4" />
+      </Link>
+
       <div className="relative z-10 flex min-h-screen w-full items-center justify-center overflow-hidden p-3 sm:p-5">
         <div className="relative shrink-0" style={frameStyle}>
           <div className="absolute left-0 top-0" style={canvasStyle}>
-            <Link
-              href="/"
-              className="absolute left-[-18px] top-[-18px] z-30 inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[#dce7ff] bg-white/90 text-[#4568e6] shadow-[0_12px_30px_rgba(74,105,196,0.12)] transition hover:-translate-y-0.5"
-              aria-label="Ana sayfaya dÃ¶n"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-
             <section className="relative grid h-[720px] w-[1060px] grid-cols-[0.92fr_0.84fr] overflow-hidden rounded-[26px] border border-[#dfe8ff] bg-white/18 shadow-[0_22px_56px_rgba(53,85,176,0.14)]">
           <Image
             src="/images/signup/signup-background.png"
