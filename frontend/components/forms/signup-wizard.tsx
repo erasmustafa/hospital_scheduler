@@ -472,7 +472,7 @@ export default function SignupWizard() {
 
                     <div className="min-h-0 flex-2 pr-0.5">
                     {step === 1 && (
-                      <div className="space-y-1">
+                      <div className="max-w-[330px] space-y-1">
                         <Field label="Ad Soyad" icon={User}>
                           <Input
                             value={form.fullName}
@@ -826,11 +826,15 @@ function SignupStepper({
                 <div
                   className={cn(
                     "flex h-6 w-6 items-center justify-center rounded-full",
-                    isActive ? "bg-white text-blue-600" : "bg-blue-50",
-                  )}
-                >
-                  <Icon className="h-3.5 w-3.5" />
-                </div>
+                      isActive
+                        ? "bg-white text-blue-600"
+                        : isCompleted
+                          ? "bg-blue-600 text-white"
+                          : "bg-blue-50",
+                    )}
+                  >
+                    {isCompleted ? <Check className="h-3.5 w-3.5" /> : <Icon className="h-3.5 w-3.5" />}
+                  </div>
 
                 {isActive && (
                   <div className="absolute -bottom-2 h-0 w-0 border-x-[5px] border-t-[7px] border-x-transparent border-t-blue-600" />
