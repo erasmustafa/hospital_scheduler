@@ -535,19 +535,21 @@ export default function SignupWizard() {
                               type="button"
                               onClick={() => setField("purpose", item.id)}
                               className={cn(
-                                "rounded-[16px] border p-3 text-left transition",
+                                "flex items-center gap-3 rounded-[16px] border p-3 text-left transition",
                                 active
                                   ? "border-[#295ae7] bg-[#f5f8ff] shadow-[0_18px_36px_rgba(41,90,231,0.12)]"
                                   : "border-[#e0e8f8] bg-white hover:border-[#bfd0ff]",
                               )}
                             >
-                              <div className="mb-2 inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[#eef3ff] text-[#2859e7]">
+                              <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[12px] bg-[#eef3ff] text-[#2859e7]">
                                 <Icon className="h-3.5 w-3.5" />
                               </div>
-                              <div className="text-[13px] font-bold text-[#20325b]">{item.title}</div>
-                              <p className="mt-1 text-[11px] leading-4 text-[#677892]">
-                                {item.description}
-                              </p>
+                              <div className="min-w-0">
+                                <div className="text-[13px] font-bold text-[#20325b]">{item.title}</div>
+                                <p className="mt-0.5 text-[11px] leading-4 text-[#677892]">
+                                  {item.description}
+                                </p>
+                              </div>
                             </button>
                           );
                         })}
