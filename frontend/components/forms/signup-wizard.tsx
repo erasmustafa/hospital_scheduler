@@ -446,7 +446,7 @@ export default function SignupWizard() {
                       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                       exit={{ opacity: 0, y: -8, filter: "blur(2px)" }}
                       transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-                      className="flex min-h-0 flex-1 flex-col"
+                      className="flex min-h-0 flex-col"
                     >
                     <div className="mb-3">
                     <h2 className="text-[24px] font-extrabold tracking-[-0.05em] text-[#1d2e52]">
@@ -692,7 +692,7 @@ export default function SignupWizard() {
                     </p>
                   ) : null}
 
-                  <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-[#eef2ff] pt-2.5">
+                  <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2 border-t border-[#eef2ff] pt-1.5">
                     <div className="text-[11px] text-[#74839d]">
                       Zaten hesabınız var mı?{" "}
                       <Link href="/login" className="font-semibold text-[#295ae7]">
@@ -796,7 +796,7 @@ function SignupStepper({
   completed: boolean;
 }) {
   return (
-    <div className="relative mb-3 w-full px-3 py-2">
+    <div className="relative mb-3 w-full px-0 py-2">
       <div className="relative grid grid-cols-4 items-start">
         {STEPS.map((item, index) => {
           const Icon = item.icon;
@@ -827,7 +827,7 @@ function SignupStepper({
               >
                 <div
                   className={cn(
-                    "flex h-6 w-6 items-center justify-center rounded-full",
+                    "flex h-7 w-7 items-center justify-center rounded-full",
                       isActive
                         ? "bg-white text-blue-600"
                         : isCompleted
