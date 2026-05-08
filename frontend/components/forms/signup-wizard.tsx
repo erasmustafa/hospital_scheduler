@@ -794,9 +794,7 @@ function SignupStepper({
   completed: boolean;
 }) {
   return (
-    <div className="relative mb-3 w-full overflow-hidden rounded-[18px] border border-[#e3ebff] bg-white/88 px-3 py-3 shadow-[0_14px_34px_rgba(68,96,190,0.10)] backdrop-blur-md">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_14%_20%,rgba(80,115,255,0.08),transparent_28%),radial-gradient(circle_at_85%_70%,rgba(147,197,253,0.10),transparent_26%)]" />
-
+    <div className="relative mb-3 w-full px-3 py-2">
       <div className="relative grid grid-cols-4 items-start">
         {STEPS.map((item, index) => {
           const Icon = item.icon;
