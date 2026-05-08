@@ -402,7 +402,7 @@ export default function SignupWizard() {
           <section className="relative flex min-w-0 flex-col bg-white/14 px-5 py-5">
             <SignupStepper currentStep={step} completed={Boolean(createdUsername)} />
 
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[22px] border border-[#dfe8ff] bg-white/90 px-4 py-4 shadow-[0_18px_42px_rgba(53,85,176,0.08)]">
+            <div className="flex min-h-0 flex-col overflow-hidden rounded-[22px] border border-[#dfe8ff] bg-white/90 px-4 pb-2.5 pt-4 shadow-[0_18px_42px_rgba(53,85,176,0.08)]">
               {createdUsername ? (
                 <div className="flex h-full flex-col justify-center">
                   <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#e9f1ff] text-[#2759e7]">
@@ -438,7 +438,7 @@ export default function SignupWizard() {
                   </div>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+                <form onSubmit={handleSubmit} className="flex min-h-0 flex-col">
                   <AnimatePresence mode="wait" initial={false}>
                     <motion.div
                       key={step}
@@ -449,7 +449,7 @@ export default function SignupWizard() {
                       className="flex min-h-0 flex-col"
                     >
                     <div className="mb-3">
-                    <h2 className="text-[24px] font-extrabold tracking-[-0.05em] text-[#1d2e52]">
+                    <h2 className="text-[24px] font-bold tracking-[-0.05em] text-[#1d2e52]">
                       {step === 1
                         ? "Hesap oluşturun"
                         : step === 2
@@ -692,7 +692,7 @@ export default function SignupWizard() {
                     </p>
                   ) : null}
 
-                  <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2 border-t border-[#eef2ff] pt-1.5">
+                  <div className="mt-3.5 flex flex-wrap items-center justify-between gap-2 border-t border-[#eef2ff] pt-1.5">
                     <div className="text-[11px] text-[#74839d]">
                       Zaten hesabınız var mı?{" "}
                       <Link href="/login" className="font-semibold text-[#295ae7]">
