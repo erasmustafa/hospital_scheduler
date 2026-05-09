@@ -144,7 +144,7 @@ function cn(...parts: Array<string | false | null | undefined>) {
 const DESIGN_WIDTH = 1060;
 const DESIGN_HEIGHT = 720;
 const DESIGN_GUTTER = 24;
-const DESIGN_MAX_SCALE = 1.22;
+const DESIGN_MAX_SCALE = 1.16;
 
 function useScaledDesignArea(
   width: number,
@@ -412,7 +412,7 @@ export default function SignupWizard() {
             </div>
           </aside>
 
-          <section className="relative flex min-w-0 flex-col bg-white/14 px-5 py-5">
+          <section className="relative flex min-w-0 -translate-x-2 flex-col bg-white/14 px-5 py-5">
             <SignupStepper
               currentStep={step}
               completed={Boolean(createdUsername)}
