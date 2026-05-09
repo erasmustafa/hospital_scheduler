@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type ElementType, type ReactNode } from "react";
 import {
   ArrowRight,
+  Ambulance,
+  Baby,
   BarChart3,
   Building2,
   CalendarDays,
@@ -17,6 +19,7 @@ import {
   Megaphone,
   MessageCircle,
   MessageSquareMore,
+  Microscope,
   Send,
   ShieldCheck,
   Sparkles,
@@ -97,6 +100,7 @@ type DemoChatGroup = {
   id: string;
   title: string;
   description: string;
+  icon: LucideIcon;
   unread: number;
   online: number;
   accent: string;
@@ -154,6 +158,7 @@ const demoChatGroups: DemoChatGroup[] = [
     id: "anestezi",
     title: "Anestezi",
     description: "Ameliyathane koordinasyonu",
+    icon: Stethoscope,
     unread: 3,
     online: 8,
     accent: "#4772e8",
@@ -192,6 +197,7 @@ const demoChatGroups: DemoChatGroup[] = [
     id: "acil-servis",
     title: "Acil Servis",
     description: "Triyaj ve n\u00f6bet ak\u0131\u015f\u0131",
+    icon: Ambulance,
     unread: 5,
     online: 14,
     accent: "#ef4444",
@@ -223,6 +229,7 @@ const demoChatGroups: DemoChatGroup[] = [
     id: "pediatri",
     title: "Pediatri",
     description: "G\u00fcnl\u00fck ekip mesajlar\u0131",
+    icon: Baby,
     unread: 2,
     online: 11,
     accent: "#8b5cf6",
@@ -254,6 +261,7 @@ const demoChatGroups: DemoChatGroup[] = [
     id: "laboratuvar",
     title: "Laboratuvar",
     description: "Sonu\u00e7 ve numune takibi",
+    icon: Microscope,
     unread: 1,
     online: 6,
     accent: "#14b8a6",
@@ -551,6 +559,7 @@ function DemoChatPanel() {
 
   const activeGroupIndex = Math.floor(tick / 5) % demoChatGroups.length;
   const activeGroup = demoChatGroups[activeGroupIndex];
+  const ActiveGroupIcon = activeGroup.icon;
   const visibleMessageCount = Math.min(3, (tick % activeGroup.messages.length) + 1);
   const visibleMessages = useMemo(
     () => activeGroup.messages.slice(0, visibleMessageCount),
@@ -574,6 +583,7 @@ function DemoChatPanel() {
         <div className="space-y-2">
           {demoChatGroups.map((group, index) => {
             const isActive = index === activeGroupIndex;
+            const GroupIcon = group.icon;
 
             return (
               <div
@@ -589,7 +599,7 @@ function DemoChatPanel() {
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white shadow-sm"
                   style={{ backgroundColor: group.accent }}
                 >
-                  <Stethoscope className="h-[17px] w-[17px]" />
+                  <GroupIcon className="h-[17px] w-[17px]" />
                 </div>
 
                 <div className="min-w-0 flex-1">
@@ -617,7 +627,7 @@ function DemoChatPanel() {
               className="flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-sm"
               style={{ backgroundColor: activeGroup.accent }}
             >
-              <Users className="h-5 w-5" />
+              <ActiveGroupIcon className="h-5 w-5" />
             </div>
 
             <div>
