@@ -33,7 +33,6 @@ export default function LoginPage() {
         <ArrowLeft className="h-6 w-6 stroke-[2.2]" />
       </Link>
       <section className="relative z-10 grid w-full max-w-[560px] grid-cols-1 overflow-hidden rounded-[28px] border border-white/15 bg-white/10 shadow-[0_36px_90px_rgba(40,74,158,0.24)] backdrop-blur-[12px] md:rounded-[34px] lg:max-w-[1180px] lg:grid-cols-[minmax(0,1.18fr)_minmax(420px,0.82fr)] lg:rounded-[38px] lg:min-h-[min(760px,calc(100dvh-32px))] lg:max-h-[calc(100dvh-24px)]">
-        
 
         <section
           className="relative order-2 flex flex-col justify-between bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.18),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.08),transparent_28%),linear-gradient(160deg,rgba(255,255,255,0.06)_0%,rgba(255,255,255,0.02)_100%)] text-white max-lg:min-h-0 lg:order-1"
@@ -50,8 +49,8 @@ export default function LoginPage() {
                 height={44}
                 unoptimized
               />
-              <span className="font-['Plus_Jakarta_Sans','Aptos','Segoe_UI',sans-serif] text-[30px] font-extrabold tracking-[-0.04em]">
-                MediShift
+              <span className="font-['Plus_Jakarta_Sans','Aptos','Segoe_UI',sans-serif] text-[32px] font-extrabold tracking-[-0.04em]">
+                MediPlan
               </span>
             </div>
             <h1
@@ -112,7 +111,7 @@ export default function LoginPage() {
                 unoptimized
               />
               <span className="font-['Plus_Jakarta_Sans','Aptos','Segoe_UI',sans-serif] text-[34px] font-extrabold tracking-[-0.05em] text-[#27459f]">
-                MediShift
+                MediPlan
               </span>
             </div>
 
