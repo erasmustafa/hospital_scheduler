@@ -299,6 +299,8 @@ const steps = [
     description:
       "Y\u00f6netici olarak sisteme kaydolun ve ilk y\u00f6netici hesab\u0131n\u0131z\u0131 olu\u015fturun.",
     icon: UserPlus,
+    action: "Kay\u0131t Ol",
+    href: "/signup",
   },
   {
     step: "2",
@@ -306,6 +308,8 @@ const steps = [
     description:
       "Hastanenize ait birimi olu\u015fturun ve ekibinizi sisteme davet edin.",
     icon: Building2,
+    action: "Birim Olu\u015ftur",
+    href: "/dashboard/units",
   },
   {
     step: "3",
@@ -313,6 +317,8 @@ const steps = [
     description:
       "Vardiya, n\u00f6bet ve izin planlamalar\u0131n\u0131z\u0131 kolayca olu\u015fturun ve y\u00f6netin.",
     icon: CalendarDays,
+    action: "Planlamaya Git",
+    href: "/calendar",
   },
 ];
 
@@ -652,7 +658,7 @@ function DemoChatPanel() {
           </span>
         </div>
 
-        <div className="h-[218px] space-y-2.5 overflow-hidden">
+        <div className="h-[248px] space-y-2.5 overflow-hidden">
           {visibleMessages.map((message, index) => (
             <div
               key={`${activeGroup.id}-${message.name}-${index}`}
@@ -679,11 +685,11 @@ function DemoChatPanel() {
         </div>
 
         <div className="mt-auto flex h-[36px] items-center gap-2.5 rounded-full border border-[#e7ebf3] bg-white px-3 shadow-sm">
-          <div className="h-full flex-1 bg-transparent text-[12px] font-medium leading-[36px] text-[#9aa2b6]">
+          <div className="h-full flex-1 bg-transparent text-[11px] font-medium leading-[36px] text-[#9aa2b6]">
             Birim mesajı yazın...
           </div>
 
-          <button className="flex h-7 w-7 items-center justify-center rounded-full bg-[#4772e8] text-white shadow-[0_10px_20px_rgba(71,114,232,0.28)] transition hover:scale-105 hover:bg-[#315fdf]">
+          <button className="flex h-6 w-6 items-center justify-center rounded-full bg-[#4772e8] text-white shadow-[0_10px_20px_rgba(71,114,232,0.28)] transition hover:scale-105 hover:bg-[#315fdf]">
             <Send className="h-3.5 w-3.5" />
           </button>
         </div>
@@ -988,33 +994,65 @@ export default function LandingPage() {
 
         <CommunicationShowcase />
 
-        <section id="how-it-works" className="py-10">
+        <section id="how-it-works" className="py-16">
           <div className="mx-auto w-full max-w-[1280px] px-5 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <SectionEyebrow>{"Nas\u0131l \u00c7al\u0131\u015f\u0131r?"}</SectionEyebrow>
-              <h2 className="mx-auto mt-5 max-w-[760px] text-[clamp(30px,4vw,52px)] font-black leading-tight text-[#16274d]">
-                {"3 ad\u0131mda sisteme ba\u015flay\u0131n"}
-              </h2>
-            </div>
+            <h2 className="mx-auto text-center text-[clamp(38px,5vw,64px)] font-black leading-tight tracking-[-0.045em] text-[#16274d]">
+              {"3 ad\u0131mda sisteme ba\u015flay\u0131n"}
+            </h2>
 
-            <div className="mt-14 grid gap-6 lg:grid-cols-3">
-              {steps.map((step) => (
-                <div
-                  key={step.step}
-                  className="relative rounded-[26px] border border-[#e8eefc] bg-white p-8 text-center shadow-[0_18px_45px_rgba(60,88,177,0.08)]"
-                >
-                  <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-[#4f6df7] text-sm font-bold text-white">
-                    {step.step}
+            <div className="mt-24 grid gap-8 lg:grid-cols-3 lg:gap-10">
+              {steps.map((step, index) => {
+                const Icon = step.icon;
+                const isFirstStep = index === 0;
+
+                return (
+                  <div key={step.step} className="relative">
+                    <div
+                      className={[
+                        "flex min-h-[386px] flex-col items-center justify-center rounded-[26px] border bg-white/96 px-8 py-10 text-center shadow-[0_24px_70px_rgba(45,72,145,0.10)] transition",
+                        isFirstStep
+                          ? "border-[#5372ff] shadow-[0_24px_76px_rgba(79,109,247,0.16)]"
+                          : "border-[#dfe6f3]",
+                      ].join(" ")}
+                    >
+                      <div className="mb-11 flex h-[92px] w-[92px] items-center justify-center rounded-full bg-[#eef2ff] text-[#4f6df7] shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
+                        <Icon className="h-11 w-11 stroke-[2.4]" />
+                      </div>
+
+                      <h3
+                        className={[
+                          "text-[25px] font-black tracking-[-0.035em]",
+                          isFirstStep ? "text-[#4f6df7]" : "text-[#16274d]",
+                        ].join(" ")}
+                      >
+                        {step.step}. {step.title}
+                      </h3>
+
+                      <p className="mt-8 max-w-[310px] text-[18px] font-medium leading-9 text-[#62708f]">
+                        {step.description}
+                      </p>
+
+                      <Link
+                        href={step.href}
+                        className={[
+                          "mt-10 inline-flex h-[58px] min-w-[168px] items-center justify-center rounded-[8px] px-8 text-[20px] font-black transition",
+                          isFirstStep
+                            ? "bg-[#4167f4] text-white shadow-[0_14px_28px_rgba(65,103,244,0.24)] hover:bg-[#3159e8]"
+                            : "border-2 border-[#4f6df7] bg-white text-[#4f6df7] hover:bg-[#f4f7ff]",
+                        ].join(" ")}
+                      >
+                        {step.action}
+                      </Link>
+                    </div>
+
+                    {index < steps.length - 1 && (
+                      <div className="absolute right-[-34px] top-1/2 z-10 hidden h-[64px] w-[64px] -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#4f6df7] shadow-[0_12px_34px_rgba(45,72,145,0.12)] lg:flex">
+                        <ArrowRight className="h-8 w-8 stroke-[3.2]" />
+                      </div>
+                    )}
                   </div>
-                  <div className="mb-5 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-[#eef3ff] text-[#4d6be5]">
-                    <step.icon className="h-8 w-8" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-[#18284d]">{step.title}</h3>
-                  <p className="mt-4 text-sm leading-7 text-[#6d7b9c]">
-                    {step.description}
-                  </p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
