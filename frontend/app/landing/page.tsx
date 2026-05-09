@@ -9,7 +9,6 @@ import {
   Clock3,
   Cloud,
   Headphones,
-  Home,
   Info,
   LockKeyhole,
   MessageSquareMore,
@@ -62,7 +61,6 @@ const features: Array<{
 ];
 
 const navigationLinks = [
-  { id: "home", label: "Ana Sayfa", href: "#hero", icon: <Home /> },
   { id: "features", label: "\u00d6zellikler", href: "#features", icon: <Sparkles /> },
   { id: "how", label: "Nas\u0131l \u00c7al\u0131\u015f\u0131r?", href: "#how-it-works", icon: <CalendarDays /> },
   { id: "about", label: "Hakk\u0131m\u0131zda", href: "#about", icon: <Info /> },
