@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState, type ElementType, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type ElementType, type ReactNode } from "react";
 import {
   ArrowRight,
   Ambulance,
@@ -746,6 +746,9 @@ function HowItWorksStepper() {
   return (
     <section ref={stepperRef} id="how-it-works" className="py-16">
       <div className="mx-auto w-full max-w-[1280px] px-5 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <SectionEyebrow>{"Nas\u0131l \u00c7al\u0131\u015f\u0131r?"}</SectionEyebrow>
+        </div>
         <h2 className="mx-auto text-center text-[clamp(38px,5vw,64px)] font-black leading-tight tracking-[-0.045em] text-[#16274d]">
           {"3 ad\u0131mda sisteme ba\u015flay\u0131n"}
         </h2>
@@ -824,6 +827,69 @@ function HowItWorksStepper() {
         }
       `}</style>
     </section>
+  );
+}
+
+function GlareHover({
+  children,
+  className,
+  glareColor = "#ffffff",
+  glareOpacity = 0.3,
+  glareAngle = -30,
+  glareSize = 300,
+  transitionDuration = 800,
+  playOnce = false,
+}: {
+  children: ReactNode;
+  className?: string;
+  glareColor?: string;
+  glareOpacity?: number;
+  glareAngle?: number;
+  glareSize?: number;
+  transitionDuration?: number;
+  playOnce?: boolean;
+}) {
+  const [glarePosition, setGlarePosition] = useState({ x: 50, y: 50 });
+  const [isHovered, setIsHovered] = useState(false);
+  const [hasPlayed, setHasPlayed] = useState(false);
+  const shouldShowGlare = isHovered && (!playOnce || !hasPlayed);
+
+  return (
+    <div
+      className={className}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        if (playOnce) {
+          setHasPlayed(true);
+        }
+      }}
+      onMouseMove={(event) => {
+        const rect = event.currentTarget.getBoundingClientRect();
+        setGlarePosition({
+          x: ((event.clientX - rect.left) / rect.width) * 100,
+          y: ((event.clientY - rect.top) / rect.height) * 100,
+        });
+      }}
+    >
+      {children}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute z-30 rounded-full blur-[2px] transition-[opacity,transform] ease-out"
+        style={
+          {
+            left: `${glarePosition.x}%`,
+            top: `${glarePosition.y}%`,
+            width: `${glareSize}px`,
+            height: `${glareSize}px`,
+            opacity: shouldShowGlare ? glareOpacity : 0,
+            transform: `translate(-50%, -50%) rotate(${glareAngle}deg)`,
+            transitionDuration: `${transitionDuration}ms`,
+            background: `linear-gradient(90deg, transparent 0%, ${glareColor} 48%, transparent 100%)`,
+          } as CSSProperties
+        }
+      />
+    </div>
   );
 }
 
@@ -1114,7 +1180,15 @@ export default function LandingPage() {
 
         <section className="pb-20 py-10">
           <div className="mx-auto w-full max-w-[1280px] px-5 sm:px-6 lg:px-8">
-            <div className="relative overflow-hidden rounded-[30px] text-white shadow-[0_28px_70px_rgba(63,102,241,0.28)]">
+            <GlareHover
+              glareColor="#ffffff"
+              glareOpacity={0.3}
+              glareAngle={-30}
+              glareSize={300}
+              transitionDuration={800}
+              playOnce={false}
+              className="relative overflow-hidden rounded-[30px] text-white shadow-[0_28px_70px_rgba(63,102,241,0.28)]"
+            >
               <Image
                 src="/images/landing-cta-background-v3.png"
                 alt={"MediShift CTA arka plan g\u00f6rseli"}
@@ -1152,7 +1226,7 @@ export default function LandingPage() {
                   </p>
                 </div>
               </div>
-            </div>
+            </GlareHover>
           </div>
         </section>
 
