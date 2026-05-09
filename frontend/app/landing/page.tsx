@@ -1000,51 +1000,35 @@ export default function LandingPage() {
               {"3 ad\u0131mda sisteme ba\u015flay\u0131n"}
             </h2>
 
-            <div className="mt-24 grid gap-8 lg:grid-cols-3 lg:gap-10">
+            <div className="relative mt-24 grid gap-12 lg:grid-cols-3 lg:gap-10">
+              <div className="absolute left-[16%] right-[16%] top-[46px] hidden border-t-2 border-dashed border-[#cdd8f6] lg:block" />
               {steps.map((step, index) => {
                 const Icon = step.icon;
                 const isFirstStep = index === 0;
 
                 return (
-                  <div key={step.step} className="relative">
+                  <div key={step.step} className="relative z-10 flex flex-col items-center text-center">
                     <div
                       className={[
-                        "flex min-h-[386px] flex-col items-center justify-center rounded-[26px] border bg-white/96 px-8 py-10 text-center shadow-[0_24px_70px_rgba(45,72,145,0.10)] transition",
-                        isFirstStep
-                          ? "border-[#5372ff] shadow-[0_24px_76px_rgba(79,109,247,0.16)]"
-                          : "border-[#dfe6f3]",
+                        "flex h-[92px] w-[92px] items-center justify-center rounded-full bg-[#eef2ff] text-[#4f6df7] shadow-[0_18px_48px_rgba(65,103,244,0.12),inset_0_1px_0_rgba(255,255,255,0.8)]",
+                        isFirstStep ? "ring-2 ring-[#5372ff]" : "ring-1 ring-[#dde7fb]",
                       ].join(" ")}
                     >
-                      <div className="mb-11 flex h-[92px] w-[92px] items-center justify-center rounded-full bg-[#eef2ff] text-[#4f6df7] shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
-                        <Icon className="h-11 w-11 stroke-[2.4]" />
-                      </div>
-
-                      <h3
-                        className={[
-                          "text-[25px] font-black tracking-[-0.035em]",
-                          isFirstStep ? "text-[#4f6df7]" : "text-[#16274d]",
-                        ].join(" ")}
-                      >
-                        {step.step}. {step.title}
-                      </h3>
-
-                      <p className="mt-8 max-w-[310px] text-[18px] font-medium leading-9 text-[#62708f]">
-                        {step.description}
-                      </p>
-
-                      <Link
-                        href={step.href}
-                        className={[
-                          "mt-10 inline-flex h-[58px] min-w-[168px] items-center justify-center rounded-[8px] px-8 text-[20px] font-black transition",
-                          isFirstStep
-                            ? "bg-[#4167f4] text-white shadow-[0_14px_28px_rgba(65,103,244,0.24)] hover:bg-[#3159e8]"
-                            : "border-2 border-[#4f6df7] bg-white text-[#4f6df7] hover:bg-[#f4f7ff]",
-                        ].join(" ")}
-                      >
-                        {step.action}
-                      </Link>
+                      <Icon className="h-11 w-11 stroke-[2.4]" />
                     </div>
 
+                    <h3
+                      className={[
+                        "mt-11 text-[25px] font-black tracking-[-0.035em]",
+                        isFirstStep ? "text-[#4f6df7]" : "text-[#16274d]",
+                      ].join(" ")}
+                    >
+                      {step.step}. {step.title}
+                    </h3>
+
+                    <p className="mt-8 max-w-[310px] text-[18px] font-medium leading-9 text-[#62708f]">
+                      {step.description}
+                    </p>
                   </div>
                 );
               })}
