@@ -712,11 +712,39 @@ function DemoChatPanel() {
 }
 
 function HowItWorksStepper() {
-  const [activeStepIndex, setActiveStepIndex] = useState(0);
-  const progressWidth = `${(activeStepIndex / Math.max(steps.length - 1, 1)) * 100}%`;
+  const stepperRef = useRef<HTMLElement | null>(null);
+  const [isStepperInView, setIsStepperInView] = useState(false);
+  const [activeStepIndex, setActiveStepIndex] = useState<number | null>(null);
+  const progressWidth =
+    isStepperInView && activeStepIndex !== null
+      ? `${(activeStepIndex / Math.max(steps.length - 1, 1)) * 100}%`
+      : "0%";
+
+  useEffect(() => {
+    const stepper = stepperRef.current;
+
+    if (!stepper) {
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const isVisible = entry.isIntersecting;
+        setIsStepperInView(isVisible);
+        setActiveStepIndex(isVisible ? 0 : null);
+      },
+      {
+        threshold: 0.35,
+      },
+    );
+
+    observer.observe(stepper);
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section id="how-it-works" className="py-16">
+    <section ref={stepperRef} id="how-it-works" className="py-16">
       <div className="mx-auto w-full max-w-[1280px] px-5 sm:px-6 lg:px-8">
         <h2 className="mx-auto text-center text-[clamp(38px,5vw,64px)] font-black leading-tight tracking-[-0.045em] text-[#16274d]">
           {"3 ad\u0131mda sisteme ba\u015flay\u0131n"}
@@ -733,14 +761,18 @@ function HowItWorksStepper() {
 
           {steps.map((step, index) => {
             const Icon = step.icon;
-            const isActive = activeStepIndex === index;
-            const isCompleted = index < activeStepIndex;
+            const isActive = isStepperInView && activeStepIndex === index;
+            const isCompleted = isStepperInView && activeStepIndex !== null && index < activeStepIndex;
 
             return (
               <button
                 key={step.step}
                 type="button"
-                onClick={() => setActiveStepIndex(index)}
+                onClick={() => {
+                  if (isStepperInView) {
+                    setActiveStepIndex(index);
+                  }
+                }}
                 className="group relative z-10 flex flex-col items-center text-center outline-none"
               >
                 <div
