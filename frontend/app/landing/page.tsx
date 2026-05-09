@@ -781,9 +781,11 @@ function HowItWorksStepper() {
               >
                 <div
                   className={[
-                    "relative flex h-[92px] w-[92px] items-center justify-center overflow-hidden rounded-full bg-[#eef2ff] text-[#4f6df7] shadow-[0_18px_48px_rgba(65,103,244,0.12),inset_0_1px_0_rgba(255,255,255,0.8)] transition-all duration-500",
+                    "relative flex h-[92px] w-[92px] items-center justify-center overflow-hidden rounded-full shadow-[0_18px_48px_rgba(65,103,244,0.12),inset_0_1px_0_rgba(255,255,255,0.8)] transition-all duration-500",
+                    isCompleted
+                      ? "bg-[#4f6df7] text-white ring-2 ring-[#4f6df7]"
+                      : "bg-[#eef2ff] text-[#4f6df7] ring-1 ring-[#dde7fb]",
                     isActive ? "scale-110 ring-2 ring-[#5372ff]" : "",
-                    isCompleted ? "bg-[#4f6df7] text-white ring-2 ring-[#4f6df7]" : "ring-1 ring-[#dde7fb]",
                   ].join(" ")}
                 >
                   {isActive && (
