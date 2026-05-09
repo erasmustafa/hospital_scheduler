@@ -711,6 +711,90 @@ function DemoChatPanel() {
   );
 }
 
+function HowItWorksStepper() {
+  const [activeStepIndex, setActiveStepIndex] = useState(0);
+  const progressWidth = `${(activeStepIndex / Math.max(steps.length - 1, 1)) * 100}%`;
+
+  return (
+    <section id="how-it-works" className="py-16">
+      <div className="mx-auto w-full max-w-[1280px] px-5 sm:px-6 lg:px-8">
+        <h2 className="mx-auto text-center text-[clamp(38px,5vw,64px)] font-black leading-tight tracking-[-0.045em] text-[#16274d]">
+          {"3 ad\u0131mda sisteme ba\u015flay\u0131n"}
+        </h2>
+
+        <div className="relative mt-24 grid gap-12 lg:grid-cols-3 lg:gap-10">
+          <div className="absolute left-[16%] right-[16%] top-[46px] hidden border-t-2 border-dashed border-[#cdd8f6] lg:block" />
+          <div className="absolute left-[16%] right-[16%] top-[46px] hidden lg:block">
+            <div
+              className="border-t-2 border-dashed border-[#4f6df7] transition-[width] duration-700 ease-out"
+              style={{ width: progressWidth }}
+            />
+          </div>
+
+          {steps.map((step, index) => {
+            const Icon = step.icon;
+            const isActive = activeStepIndex === index;
+            const isCompleted = index < activeStepIndex;
+
+            return (
+              <button
+                key={step.step}
+                type="button"
+                onClick={() => setActiveStepIndex(index)}
+                className="group relative z-10 flex flex-col items-center text-center outline-none"
+              >
+                <div
+                  className={[
+                    "relative flex h-[92px] w-[92px] items-center justify-center overflow-hidden rounded-full bg-[#eef2ff] text-[#4f6df7] shadow-[0_18px_48px_rgba(65,103,244,0.12),inset_0_1px_0_rgba(255,255,255,0.8)] transition-all duration-500",
+                    isActive ? "scale-110 ring-2 ring-[#5372ff]" : "",
+                    isCompleted ? "bg-[#4f6df7] text-white ring-2 ring-[#4f6df7]" : "ring-1 ring-[#dde7fb]",
+                  ].join(" ")}
+                >
+                  {isActive && (
+                    <span className="absolute inset-0 animate-[stepperPulse_1.7s_ease-in-out_infinite] rounded-full bg-[#4f6df7]/15" />
+                  )}
+                  {isCompleted ? (
+                    <Check className="relative h-11 w-11 stroke-[3]" />
+                  ) : (
+                    <Icon className="relative h-11 w-11 stroke-[2.4]" />
+                  )}
+                </div>
+
+                <h3
+                  className={[
+                    "mt-11 text-[25px] font-black tracking-[-0.035em] transition-colors duration-500",
+                    isActive ? "text-[#4f6df7]" : "text-[#16274d]",
+                  ].join(" ")}
+                >
+                  {step.step}. {step.title}
+                </h3>
+
+                <p className="mt-8 max-w-[310px] text-[18px] font-medium leading-9 text-[#62708f] transition-colors duration-500 group-hover:text-[#4d5b7c]">
+                  {step.description}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <style jsx global>{`
+        @keyframes stepperPulse {
+          0%,
+          100% {
+            opacity: 0.38;
+            transform: scale(0.86);
+          }
+          50% {
+            opacity: 0.9;
+            transform: scale(1.18);
+          }
+        }
+      `}</style>
+    </section>
+  );
+}
+
 export default function LandingPage() {
   return (
     <main className="overflow-x-hidden bg-[#f6f8fe] text-[#14213d]">
@@ -994,47 +1078,7 @@ export default function LandingPage() {
 
         <CommunicationShowcase />
 
-        <section id="how-it-works" className="py-16">
-          <div className="mx-auto w-full max-w-[1280px] px-5 sm:px-6 lg:px-8">
-            <h2 className="mx-auto text-center text-[clamp(38px,5vw,64px)] font-black leading-tight tracking-[-0.045em] text-[#16274d]">
-              {"3 ad\u0131mda sisteme ba\u015flay\u0131n"}
-            </h2>
-
-            <div className="relative mt-24 grid gap-12 lg:grid-cols-3 lg:gap-10">
-              <div className="absolute left-[16%] right-[16%] top-[46px] hidden border-t-2 border-dashed border-[#cdd8f6] lg:block" />
-              {steps.map((step, index) => {
-                const Icon = step.icon;
-                const isFirstStep = index === 0;
-
-                return (
-                  <div key={step.step} className="relative z-10 flex flex-col items-center text-center">
-                    <div
-                      className={[
-                        "flex h-[92px] w-[92px] items-center justify-center rounded-full bg-[#eef2ff] text-[#4f6df7] shadow-[0_18px_48px_rgba(65,103,244,0.12),inset_0_1px_0_rgba(255,255,255,0.8)]",
-                        isFirstStep ? "ring-2 ring-[#5372ff]" : "ring-1 ring-[#dde7fb]",
-                      ].join(" ")}
-                    >
-                      <Icon className="h-11 w-11 stroke-[2.4]" />
-                    </div>
-
-                    <h3
-                      className={[
-                        "mt-11 text-[25px] font-black tracking-[-0.035em]",
-                        isFirstStep ? "text-[#4f6df7]" : "text-[#16274d]",
-                      ].join(" ")}
-                    >
-                      {step.step}. {step.title}
-                    </h3>
-
-                    <p className="mt-8 max-w-[310px] text-[18px] font-medium leading-9 text-[#62708f]">
-                      {step.description}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
+        <HowItWorksStepper />
 
         <section className="pb-20 py-10">
           <div className="mx-auto w-full max-w-[1280px] px-5 sm:px-6 lg:px-8">
