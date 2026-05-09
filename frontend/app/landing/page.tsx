@@ -394,12 +394,13 @@ function FeatureCard({
   icon: LucideIcon;
 }) {
   return (
-    <div className="rounded-[24px] border border-[#e8eefc] bg-white p-6 text-center shadow-[0_18px_45px_rgba(60,88,177,0.08)]">
-      <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eef3ff] text-[#4d6be5]">
-        <Icon className="h-6 w-6" />
+    <div className="group relative overflow-hidden rounded-[24px] border border-[#e8eefc] bg-white p-6 text-center shadow-[0_18px_45px_rgba(60,88,177,0.08)] transition-all duration-300 ease-out hover:-translate-y-2 hover:border-[#9db2ff] hover:shadow-[0_28px_70px_rgba(63,102,241,0.18)]">
+      <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-[#6f8cff]/0 to-transparent transition-all duration-300 group-hover:via-[#6f8cff]/80" />
+      <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eef3ff] text-[#4d6be5] transition-all duration-300 group-hover:scale-110 group-hover:bg-[#4f6df7] group-hover:text-white group-hover:shadow-[0_16px_32px_rgba(79,109,247,0.28)]">
+        <Icon className="h-6 w-6 transition-transform duration-300 group-hover:scale-105" />
       </div>
-      <h3 className="mb-3 text-xl font-bold text-[#18284d]">{title}</h3>
-      <p className="text-sm leading-7 text-[#6d7b9c]">{description}</p>
+      <h3 className="mb-3 text-xl font-bold text-[#18284d] transition-colors duration-300 group-hover:text-[#355bea]">{title}</h3>
+      <p className="text-sm leading-7 text-[#6d7b9c] transition-colors duration-300 group-hover:text-[#53658b]">{description}</p>
     </div>
   );
 }
@@ -644,7 +645,7 @@ function DemoChatPanel() {
 
           <span
             className={[
-              "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-black transition-colors",
+              "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold transition-colors",
               isInView ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400",
             ].join(" ")}
           >
@@ -797,7 +798,7 @@ function HowItWorksStepper() {
 
                 <h3
                   className={[
-                    "mt-11 text-[25px] font-black tracking-[-0.035em] transition-colors duration-500",
+                    "mt-11 text-[25px] font-bold tracking-[-0.035em] transition-colors duration-500",
                     isActive ? "text-[#4f6df7]" : "text-[#16274d]",
                   ].join(" ")}
                 >
