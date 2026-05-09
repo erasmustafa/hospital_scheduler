@@ -668,13 +668,13 @@ function DemoChatPanel() {
           ))}
         </div>
 
-        <div className="mt-4 flex h-[46px] items-center gap-3 rounded-full border border-[#e7ebf3] bg-white px-4 shadow-sm">
-          <div className="h-full flex-1 bg-transparent text-[14px] font-small leading-[46px] text-[#9aa2b6]">
+        <div className="mt-auto flex h-[36px] items-center gap-2.5 rounded-full border border-[#e7ebf3] bg-white px-3 shadow-sm">
+          <div className="h-full flex-1 bg-transparent text-[12px] font-medium leading-[36px] text-[#9aa2b6]">
             Birim mesajı yazın...
           </div>
 
-          <button className="flex h-8 w-8 items-center justify-center rounded-full bg-[#4772e8] text-white shadow-[0_12px_24px_rgba(71,114,232,0.32)] transition hover:scale-105 hover:bg-[#315fdf]">
-            <Send className="h-4 w-4" />
+          <button className="flex h-7 w-7 items-center justify-center rounded-full bg-[#4772e8] text-white shadow-[0_10px_20px_rgba(71,114,232,0.28)] transition hover:scale-105 hover:bg-[#315fdf]">
+            <Send className="h-3.5 w-3.5" />
           </button>
         </div>
 
