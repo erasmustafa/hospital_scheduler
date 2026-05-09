@@ -167,7 +167,7 @@ const demoChatGroups: DemoChatGroup[] = [
       },
       {
         name: "Tayfun \u00c7etin",
-        role: "Sorumlu Hem\u015fire",
+        role: "Sor. Hem\u015fire",
         text: "Yo\u011fun bak\u0131m transferini onaylad\u0131m. Sedasyon ekibi beklemede.",
         time: "10:19",
         avatar: "T\u00c7",
@@ -622,7 +622,7 @@ function DemoChatPanel() {
           </span>
         </div>
 
-        <div className="flex-1 space-y-2.5 overflow-hidden">
+        <div className="h-[218px] space-y-2.5 overflow-hidden">
           {visibleMessages.map((message, index) => (
             <div
               key={`${activeGroup.id}-${message.name}-${index}`}
