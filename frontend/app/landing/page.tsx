@@ -1045,11 +1045,6 @@ export default function LandingPage() {
                       </Link>
                     </div>
 
-                    {index < steps.length - 1 && (
-                      <div className="absolute right-[-34px] top-1/2 z-10 hidden h-[64px] w-[64px] -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#4f6df7] shadow-[0_12px_34px_rgba(45,72,145,0.12)] lg:flex">
-                        <ArrowRight className="h-8 w-8 stroke-[3.2]" />
-                      </div>
-                    )}
                   </div>
                 );
               })}
