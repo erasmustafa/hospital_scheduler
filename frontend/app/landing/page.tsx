@@ -1,6 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import type { ElementType, ReactNode } from "react";
+import { useEffect, useMemo, useState, type ElementType, type ReactNode } from "react";
 import {
   ArrowRight,
   BarChart3,
@@ -18,6 +20,7 @@ import {
   Send,
   ShieldCheck,
   Sparkles,
+  Stethoscope,
   UserPlus,
   Users,
   Wrench,
@@ -86,6 +89,20 @@ type ChatMessage = {
   avatar: string;
 };
 
+type DemoChatMessage = ChatMessage & {
+  role: string;
+};
+
+type DemoChatGroup = {
+  id: string;
+  title: string;
+  description: string;
+  unread: number;
+  online: number;
+  accent: string;
+  messages: DemoChatMessage[];
+};
+
 const announcements: Announcement[] = [
   {
     icon: Megaphone,
@@ -129,6 +146,133 @@ const messages: ChatMessage[] = [
     text: "Bilgi için teşekkürler.",
     time: "10:27",
     avatar: "AK",
+  },
+];
+
+const demoChatGroups: DemoChatGroup[] = [
+  {
+    id: "anestezi",
+    title: "Anestezi",
+    description: "Ameliyathane koordinasyonu",
+    unread: 3,
+    online: 8,
+    accent: "#4772e8",
+    messages: [
+      {
+        name: "Elif \u00d6mercik",
+        role: "Anestezi Uzm.",
+        text: "Saat 11:00 vakas\u0131 i\u00e7in ekip haz\u0131r, preop notu eklendi.",
+        time: "10:18",
+        avatar: "E\u00d6",
+      },
+      {
+        name: "Tayfun \u00c7etin",
+        role: "Sorumlu Hem\u015fire",
+        text: "Yo\u011fun bak\u0131m transferini onaylad\u0131m. Sedasyon ekibi beklemede.",
+        time: "10:19",
+        avatar: "T\u00c7",
+      },
+      {
+        name: "Meryem Bing\u00f6l",
+        role: "Planlama",
+        text: "N\u00f6bet listesinde \u00e7ak\u0131\u015fma yok. \u0130kinci ekip 12:30'da devral\u0131yor.",
+        time: "10:21",
+        avatar: "MB",
+      },
+      {
+        name: "H\u00fcseyin \u00d6zmen",
+        role: "Doktor",
+        text: "Tamam, ekip bilgisini duyuruya da sabitliyorum.",
+        time: "10:22",
+        avatar: "H\u00d6",
+      },
+    ],
+  },
+  {
+    id: "acil-servis",
+    title: "Acil Servis",
+    description: "Triyaj ve n\u00f6bet ak\u0131\u015f\u0131",
+    unread: 5,
+    online: 14,
+    accent: "#ef4444",
+    messages: [
+      {
+        name: "Demet \u00c7elik",
+        role: "Acil Servis",
+        text: "K\u0131rm\u0131z\u0131 alan i\u00e7in ek personel talebi olu\u015fturdum.",
+        time: "10:24",
+        avatar: "D\u00c7",
+      },
+      {
+        name: "Emir Oral",
+        role: "N\u00f6bet\u00e7i",
+        text: "Ben 15 dakika i\u00e7inde destek verebilirim.",
+        time: "10:25",
+        avatar: "EO",
+      },
+      {
+        name: "Yusuf Do\u011fan",
+        role: "Birim Yetkilisi",
+        text: "Talebi onaylad\u0131m. G\u00fcncel liste acil servis kanal\u0131nda.",
+        time: "10:26",
+        avatar: "YD",
+      },
+    ],
+  },
+  {
+    id: "pediatri",
+    title: "Pediatri",
+    description: "G\u00fcnl\u00fck ekip mesajlar\u0131",
+    unread: 2,
+    online: 11,
+    accent: "#8b5cf6",
+    messages: [
+      {
+        name: "Zeynep Aksoy",
+        role: "Pediatri",
+        text: "Poliklinik yo\u011funlu\u011fu 14:00 sonras\u0131 artacak gibi g\u00f6r\u00fcn\u00fcyor.",
+        time: "10:28",
+        avatar: "ZA",
+      },
+      {
+        name: "Ay\u015fe Demir",
+        role: "Hem\u015fire",
+        text: "A\u015f\u0131 odas\u0131 i\u00e7in ikinci personeli plana ekledim.",
+        time: "10:29",
+        avatar: "AD",
+      },
+      {
+        name: "Mehmet Kaya",
+        role: "Uzman Dr.",
+        text: "G\u00fczel. Vardiya sonu raporunu da pediatri kanal\u0131na atal\u0131m.",
+        time: "10:31",
+        avatar: "MK",
+      },
+    ],
+  },
+  {
+    id: "laboratuvar",
+    title: "Laboratuvar",
+    description: "Sonu\u00e7 ve numune takibi",
+    unread: 1,
+    online: 6,
+    accent: "#14b8a6",
+    messages: [
+      {
+        name: "Murat \u015eahin",
+        role: "Laboratuvar",
+        text: "Acil numuneler i\u015flendi. Kritik de\u011ferler sisteme d\u00fc\u015ft\u00fc.",
+        time: "10:33",
+        avatar: "M\u015e",
+      },
+      {
+        name: "G\u00fcl\u015fen Ora\u00e7k\u0131",
+        role: "Teknisyen",
+        text: "Raporlar\u0131 ilgili birimlere ilettim.",
+        time: "10:34",
+        avatar: "GO",
+      },
+    ],
   },
 ];
 
@@ -248,26 +392,26 @@ function FeatureCard({
 
 function CommunicationShowcase() {
   return (
-    <section className="pb-0 pt-0">
+    <section className="mt-12 pb-0 pt-0">
       <div className="mx-auto w-full max-w-[1280px] px-5 sm:px-6 lg:px-8">
-        <div className="relative flex min-h-[520px] items-center overflow-hidden rounded-[28px] bg-[#eef2ff] px-7 py-9 shadow-[0_32px_100px_rgba(31,67,160,0.18)] sm:px-10 lg:px-16 lg:py-14">
+        <div className="relative flex min-h-[442px] items-center overflow-hidden rounded-[28px] bg-[#eef2ff] px-7 py-7 shadow-[0_32px_100px_rgba(31,67,160,0.18)] sm:px-10 lg:px-16 lg:py-12">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_72%_42%,rgba(67,103,240,0.14),transparent_32%),radial-gradient(circle_at_8%_18%,rgba(255,255,255,0.85),transparent_30%)]" />
 
-          <div className="relative z-10 grid w-full items-center gap-10 lg:grid-cols-[0.95fr_1.55fr] lg:gap-16">
-            <div className="max-w-[500px]">
-              <div className="mb-7 inline-flex rounded-full border border-white/80 bg-white/25 px-4 py-2 text-sm font-semibold text-[#4772e8] shadow-sm backdrop-blur">
-                Etkin İletişim
-              </div>
+          <div className="relative z-10 grid w-full items-center gap-8 lg:grid-cols-[0.95fr_1.55fr] lg:gap-12">
+            <div className="max-w-[350px]">
+              <SectionEyebrow>
+                {"Etkin İletişim"}
+              </SectionEyebrow>
 
-              <h2 className="mb-6 text-[clamp(30px,4vw,42px)] font-black leading-[1.18] tracking-[-0.045em] text-[#14204a]">
+              <h2 className="mb-4 text-[clamp(28px,3.5vw,36px)] font-black leading-[1.16] tracking-[-0.045em] text-[#14204a]">
                 Kurum içi iletişimi tek platformda güçlendirin
               </h2>
 
-              <p className="mb-8 max-w-[470px] text-base font-medium leading-8 text-[#66708c] lg:text-[18px]">
+              <p className="mb-6 max-w-[470px] text-base font-medium leading-7 text-[#66708c] lg:text-[16px]">
                 Duyurular, hatırlatmalar ve hızlı mesajlaşma ile ekipler her zaman aynı bilgiye, aynı anda ulaşır.
               </p>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {[
                   "Anlık duyuru ve bilgilendirme",
                   "Hızlı ve güvenli mesajlaşma",
@@ -277,18 +421,19 @@ function CommunicationShowcase() {
                     <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#4772e8] text-white shadow-[0_8px_18px_rgba(71,114,232,0.3)]">
                       <Check className="h-4 w-4 stroke-[3]" />
                     </div>
-                    <span className="text-base font-semibold text-[#303a58] lg:text-[18px]">{item}</span>
+                    <span className="text-base font-semibold text-[#303a58] lg:text-[16px]">{item}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             <div className="relative">
-              <div className="grid min-h-[480px] overflow-hidden rounded-[24px] border border-white/80 bg-white/90 shadow-[0_28px_80px_rgba(45,72,145,0.16)] backdrop-blur-xl md:grid-cols-[0.72fr_1.18fr]">
-                <div className="border-b border-[#edf1fb] p-6 md:border-b-0 md:border-r lg:p-8">
-                  <h3 className="mb-6 text-[22px] font-black tracking-[-0.035em] text-[#172044]">Duyurular</h3>
+              <div className="grid min-h-[408px] overflow-hidden rounded-[24px] border border-white/80 bg-white/90 shadow-[0_28px_80px_rgba(45,72,145,0.16)] backdrop-blur-xl md:grid-cols-[0.72fr_1.18fr]">
+                <DemoChatPanel />
+                <div className="hidden border-b border-[#edf1fb] p-5 md:border-b-0 md:border-r lg:p-6">
+                  <h3 className="mb-4 text-[20px] font-black tracking-[-0.035em] text-[#172044]">Duyurular</h3>
 
-                  <div className="space-y-3">
+                  <div className="space-y-2.5">
                     {announcements.map((item, index) => {
                       const Icon = item.icon;
 
@@ -296,18 +441,18 @@ function CommunicationShowcase() {
                         <div
                           key={item.title}
                           className={[
-                            "flex items-center gap-4 rounded-[12px] px-4 py-4 transition",
+                            "flex items-center gap-4 rounded-[12px] px-4 py-3 transition",
                             item.active ? "bg-[#eef1ff] shadow-sm" : "bg-transparent",
                             index !== announcements.length - 1 && !item.active ? "border-b border-[#eef1f7]" : "",
                           ].join(" ")}
                         >
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-[#4772e8] text-[#4772e8]">
-                            <Icon className="h-5 w-5" />
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-[#4772e8] text-[#4772e8]">
+                            <Icon className="h-[18px] w-[18px]" />
                           </div>
 
                           <div>
                             <p className="text-[15px] font-bold text-[#303853]">{item.title}</p>
-                            <p className="mt-2 text-[13px] font-semibold text-[#8c94a8]">{item.time}</p>
+                            <p className="mt-1.5 text-[12px] font-semibold text-[#8c94a8]">{item.time}</p>
                           </div>
                         </div>
                       );
@@ -315,10 +460,10 @@ function CommunicationShowcase() {
                   </div>
                 </div>
 
-                <div className="relative flex flex-col p-6">
-                  <div className="mb-5 flex items-center gap-4 border-b border-[#eef1f7] pb-4">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#eef2ff] text-[#4772e8]">
-                      <Users className="h-6 w-6" />
+                <div className="relative hidden flex-col p-5">
+                  <div className="mb-4 flex items-center gap-4 border-b border-[#eef1f7] pb-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#eef2ff] text-[#4772e8]">
+                      <Users className="h-5 w-5" />
                     </div>
 
                     <div>
@@ -327,14 +472,14 @@ function CommunicationShowcase() {
                     </div>
                   </div>
 
-                  <div className="flex-1 space-y-3">
+                  <div className="flex-1 space-y-2.5">
                     {messages.map((message) => (
                       <div key={message.name} className="flex items-center gap-4">
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#eaf0ff] text-[13px] font-black text-[#4772e8] ring-2 ring-white">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#eaf0ff] text-[12px] font-black text-[#4772e8] ring-2 ring-white">
                           {message.avatar}
                         </div>
 
-                        <div className="flex min-h-[58px] flex-1 items-center justify-between rounded-[12px] bg-[#f4f6fb] px-5 py-3">
+                        <div className="flex min-h-[49px] flex-1 items-center justify-between rounded-[12px] bg-[#f4f6fb] px-4 py-2.5">
                           <div>
                             <p className="text-[15px] font-black text-[#202846]">{message.name}</p>
                             <p className="mt-1 text-[14px] font-semibold text-[#39415d]">{message.text}</p>
@@ -346,23 +491,23 @@ function CommunicationShowcase() {
                     ))}
                   </div>
 
-                  <div className="mt-5 flex h-[58px] items-center gap-4 rounded-full border border-[#e7ebf3] bg-white px-6 shadow-sm">
-                    <div className="h-full flex-1 bg-transparent text-[16px] font-medium leading-[58px] text-[#9aa2b6]">
+                  <div className="mt-4 flex h-[49px] items-center gap-4 rounded-full border border-[#e7ebf3] bg-white px-5 shadow-sm">
+                    <div className="h-full flex-1 bg-transparent text-[15px] font-medium leading-[49px] text-[#9aa2b6]">
                       Mesaj yazın...
                     </div>
 
-                    <button className="flex h-11 w-11 items-center justify-center rounded-full bg-[#4772e8] text-white shadow-[0_12px_24px_rgba(71,114,232,0.32)] transition hover:scale-105 hover:bg-[#315fdf]">
-                      <Send className="h-5 w-5" />
+                    <button className="flex h-9 w-9 items-center justify-center rounded-full bg-[#4772e8] text-white shadow-[0_12px_24px_rgba(71,114,232,0.32)] transition hover:scale-105 hover:bg-[#315fdf]">
+                      <Send className="h-[18px] w-[18px]" />
                     </button>
                   </div>
                 </div>
               </div>
 
-              <div className="absolute -right-20 top-8 hidden h-[126px] w-[150px] rounded-[22px] border border-white/80 bg-[#dfe6ff] shadow-[0_20px_60px_rgba(71,114,232,0.2)] lg:block">
+              <div className="absolute -right-20 top-8 hidden h-[107px] w-[128px] rounded-[22px] border border-white/80 bg-[#dfe6ff] shadow-[0_20px_60px_rgba(71,114,232,0.2)] lg:block">
                 <div className="absolute inset-0 rounded-[22px] bg-gradient-to-br from-white/30 to-[#b8c8ff]/45" />
 
                 <div className="relative flex h-full items-center justify-center">
-                  <div className="relative flex h-[62px] w-[78px] items-center justify-center rounded-full bg-white shadow-[0_12px_30px_rgba(40,70,160,0.15)]">
+                  <div className="relative flex h-[53px] w-[66px] items-center justify-center rounded-full bg-white shadow-[0_12px_30px_rgba(40,70,160,0.15)]">
                     <div className="flex gap-2">
                       <span className="h-2.5 w-2.5 rounded-full bg-[#4772e8]" />
                       <span className="h-2.5 w-2.5 rounded-full bg-[#4772e8]" />
@@ -380,6 +525,153 @@ function CommunicationShowcase() {
         </div>
       </div>
     </section>
+  );
+}
+
+function DemoChatPanel() {
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setTick((current) => current + 1);
+    }, 1800);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const activeGroupIndex = Math.floor(tick / 5) % demoChatGroups.length;
+  const activeGroup = demoChatGroups[activeGroupIndex];
+  const visibleMessageCount = Math.min(3, (tick % activeGroup.messages.length) + 1);
+  const visibleMessages = useMemo(
+    () => activeGroup.messages.slice(0, visibleMessageCount),
+    [activeGroup, visibleMessageCount],
+  );
+
+  return (
+    <>
+      <aside className="flex min-h-[408px] flex-col border-b border-[#edf1fb] bg-white/70 p-4 md:border-b-0 md:border-r lg:p-5">
+        <div className="mb-4 flex items-center justify-between">
+          <div>
+            <h3 className="text-[18px] font-black tracking-[-0.035em] text-[#172044]">Birim Kanalları</h3>
+            <p className="mt-1 text-[12px] font-semibold text-[#8b93a7]">Canlı ekip akışı</p>
+          </div>
+
+          <span className="rounded-full bg-[#edf4ff] px-2.5 py-1 text-[11px] font-black text-[#4772e8]">
+            {demoChatGroups.length}
+          </span>
+        </div>
+
+        <div className="space-y-2">
+          {demoChatGroups.map((group, index) => {
+            const isActive = index === activeGroupIndex;
+
+            return (
+              <div
+                key={group.id}
+                className={[
+                  "flex items-center gap-3 rounded-[14px] border px-3 py-2.5 transition-all duration-300",
+                  isActive
+                    ? "border-[#cddaff] bg-[#eef3ff] shadow-[0_12px_32px_rgba(71,114,232,0.13)]"
+                    : "border-transparent bg-transparent hover:bg-[#f7f9ff]",
+                ].join(" ")}
+              >
+                <div
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white shadow-sm"
+                  style={{ backgroundColor: group.accent }}
+                >
+                  <Stethoscope className="h-[17px] w-[17px]" />
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="truncate text-[13px] font-black text-[#202846]">{group.title}</p>
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                  </div>
+                  <p className="mt-0.5 truncate text-[11px] font-semibold text-[#8b93a7]">{group.description}</p>
+                </div>
+
+                <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-white px-2 text-[11px] font-black text-[#4772e8] shadow-sm">
+                  {group.unread}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+      </aside>
+
+      <div className="relative flex min-h-[408px] flex-col bg-[linear-gradient(180deg,#ffffff_0%,#f7f9ff_100%)] p-4 lg:p-5">
+        <div className="mb-4 flex items-center justify-between border-b border-[#eef1f7] pb-3">
+          <div className="flex items-center gap-3">
+            <div
+              className="flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-sm"
+              style={{ backgroundColor: activeGroup.accent }}
+            >
+              <Users className="h-5 w-5" />
+            </div>
+
+            <div>
+              <h3 className="text-[19px] font-black tracking-[-0.035em] text-[#1b2344]">{activeGroup.title}</h3>
+              <p className="text-[12px] font-semibold text-[#8b93a7]">{activeGroup.online} çevrimiçi personel</p>
+            </div>
+          </div>
+
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-black text-emerald-600">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
+            Canlı
+          </span>
+        </div>
+
+        <div className="flex-1 space-y-2.5 overflow-hidden">
+          {visibleMessages.map((message, index) => (
+            <div
+              key={`${activeGroup.id}-${message.name}-${index}`}
+              className="flex animate-[messageIn_360ms_ease-out] items-start gap-3"
+            >
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#eaf0ff] text-[10px] font-black text-[#4772e8] ring-2 ring-white">
+                {message.avatar}
+              </div>
+
+              <div className="min-w-0 flex-1 rounded-[14px] border border-[#e6ecf8] bg-white px-4 py-2.5 shadow-[0_10px_28px_rgba(45,72,145,0.08)]">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="truncate text-[13px] font-black text-[#202846]">
+                    {message.name}
+                    <span className="ml-1 font-semibold text-[#8b93a7]">/ {message.role}</span>
+                  </p>
+
+                  <span className="shrink-0 text-[11px] font-bold text-[#9aa2b6]">{message.time}</span>
+                </div>
+
+                <p className="mt-1 text-[13px] font-semibold leading-5 text-[#39415d]">{message.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 flex h-[46px] items-center gap-3 rounded-full border border-[#e7ebf3] bg-white px-4 shadow-sm">
+          <div className="h-full flex-1 bg-transparent text-[14px] font-medium leading-[46px] text-[#9aa2b6]">
+            Birim mesajı yazın...
+          </div>
+
+          <button className="flex h-8 w-8 items-center justify-center rounded-full bg-[#4772e8] text-white shadow-[0_12px_24px_rgba(71,114,232,0.32)] transition hover:scale-105 hover:bg-[#315fdf]">
+            <Send className="h-4 w-4" />
+          </button>
+        </div>
+
+        <style jsx global>{`
+          @keyframes messageIn {
+            from {
+              opacity: 0;
+              transform: translateY(8px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}</style>
+      </div>
+    </>
   );
 }
 
