@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState, type ElementType, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ElementType, type ReactNode } from "react";
 import {
   ArrowRight,
   BarChart3,
@@ -403,7 +403,7 @@ function CommunicationShowcase() {
                 {"Etkin İletişim"}
               </SectionEyebrow>
 
-              <h2 className="mb-4 text-[clamp(28px,3.5vw,36px)] font-black leading-[1.16] tracking-[-0.045em] text-[#14204a]">
+              <h2 className="mb-4 mt-10 text-[clamp(28px,3.5vw,36px)] font-black leading-[1.16] tracking-[-0.045em] text-[#14204a]">
                 Kurum içi iletişimi tek platformda güçlendirin
               </h2>
 
@@ -503,23 +503,6 @@ function CommunicationShowcase() {
                 </div>
               </div>
 
-              <div className="absolute -right-20 top-8 hidden h-[107px] w-[128px] rounded-[22px] border border-white/80 bg-[#dfe6ff] shadow-[0_20px_60px_rgba(71,114,232,0.2)] lg:block">
-                <div className="absolute inset-0 rounded-[22px] bg-gradient-to-br from-white/30 to-[#b8c8ff]/45" />
-
-                <div className="relative flex h-full items-center justify-center">
-                  <div className="relative flex h-[53px] w-[66px] items-center justify-center rounded-full bg-white shadow-[0_12px_30px_rgba(40,70,160,0.15)]">
-                    <div className="flex gap-2">
-                      <span className="h-2.5 w-2.5 rounded-full bg-[#4772e8]" />
-                      <span className="h-2.5 w-2.5 rounded-full bg-[#4772e8]" />
-                      <span className="h-2.5 w-2.5 rounded-full bg-[#4772e8]" />
-                    </div>
-                  </div>
-
-                  <MessageCircle className="absolute bottom-3 right-5 h-8 w-8 text-white/80" />
-                </div>
-
-                <div className="absolute bottom-[-14px] right-5 h-8 w-8 rotate-45 rounded-br-md border-b border-r border-white/70 bg-[#dfe6ff]" />
-              </div>
             </div>
           </div>
         </div>
@@ -529,15 +512,42 @@ function CommunicationShowcase() {
 }
 
 function DemoChatPanel() {
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const [isInView, setIsInView] = useState(false);
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
+    const panel = panelRef.current;
+
+    if (!panel) {
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting);
+      },
+      {
+        threshold: 0.35,
+      },
+    );
+
+    observer.observe(panel);
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isInView) {
+      return undefined;
+    }
+
     const timer = window.setInterval(() => {
       setTick((current) => current + 1);
     }, 1800);
 
     return () => window.clearInterval(timer);
-  }, []);
+  }, [isInView]);
 
   const activeGroupIndex = Math.floor(tick / 5) % demoChatGroups.length;
   const activeGroup = demoChatGroups[activeGroupIndex];
@@ -552,7 +562,7 @@ function DemoChatPanel() {
       <aside className="flex min-h-[408px] flex-col border-b border-[#edf1fb] bg-white/70 p-4 md:border-b-0 md:border-r lg:p-5">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h3 className="text-[18px] font-black tracking-[-0.035em] text-[#172044]">Birim Kanalları</h3>
+            <h3 className="text-[18px] font-bold tracking-[-0.035em] text-[#172044]">Birim Kanalları</h3>
             <p className="mt-1 text-[12px] font-semibold text-[#8b93a7]">Canlı ekip akışı</p>
           </div>
 
@@ -584,7 +594,7 @@ function DemoChatPanel() {
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <p className="truncate text-[13px] font-black text-[#202846]">{group.title}</p>
+                    <p className="truncate text-[13px] font-bold text-[#202846]">{group.title}</p>
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                   </div>
                   <p className="mt-0.5 truncate text-[11px] font-semibold text-[#8b93a7]">{group.description}</p>
@@ -600,7 +610,7 @@ function DemoChatPanel() {
 
       </aside>
 
-      <div className="relative flex min-h-[408px] flex-col bg-[linear-gradient(180deg,#ffffff_0%,#f7f9ff_100%)] p-4 lg:p-5">
+      <div ref={panelRef} className="relative flex min-h-[408px] flex-col bg-[linear-gradient(180deg,#ffffff_0%,#f7f9ff_100%)] p-4 lg:p-5">
         <div className="mb-4 flex items-center justify-between border-b border-[#eef1f7] pb-3">
           <div className="flex items-center gap-3">
             <div
@@ -611,14 +621,24 @@ function DemoChatPanel() {
             </div>
 
             <div>
-              <h3 className="text-[19px] font-black tracking-[-0.035em] text-[#1b2344]">{activeGroup.title}</h3>
-              <p className="text-[12px] font-semibold text-[#8b93a7]">{activeGroup.online} çevrimiçi personel</p>
+              <h3 className="text-[16px] font-bold tracking-[-0.035em] text-[#1b2344]">{activeGroup.title}</h3>
+              <p className="text-[11px] font-semibold text-[#8b93a7]">{activeGroup.online} çevrimiçi personel</p>
             </div>
           </div>
 
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-black text-emerald-600">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
-            Canlı
+          <span
+            className={[
+              "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-black transition-colors",
+              isInView ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400",
+            ].join(" ")}
+          >
+            <span
+              className={[
+                "h-1.5 w-1.5 rounded-full",
+                isInView ? "animate-pulse bg-emerald-500" : "bg-slate-300",
+              ].join(" ")}
+            />
+            {isInView ? "Canlı" : "Pasif"}
           </span>
         </div>
 
@@ -634,7 +654,7 @@ function DemoChatPanel() {
 
               <div className="min-w-0 flex-1 rounded-[14px] border border-[#e6ecf8] bg-white px-4 py-2.5 shadow-[0_10px_28px_rgba(45,72,145,0.08)]">
                 <div className="flex items-center justify-between gap-3">
-                  <p className="truncate text-[13px] font-black text-[#202846]">
+                  <p className="truncate text-[13px] font-bold text-[#202846]">
                     {message.name}
                     <span className="ml-1 font-semibold text-[#8b93a7]">/ {message.role}</span>
                   </p>
@@ -642,14 +662,14 @@ function DemoChatPanel() {
                   <span className="shrink-0 text-[11px] font-bold text-[#9aa2b6]">{message.time}</span>
                 </div>
 
-                <p className="mt-1 text-[13px] font-semibold leading-5 text-[#39415d]">{message.text}</p>
+                <p className="mt-1 text-[12px] font-semibold leading-4 text-[#39415d]">{message.text}</p>
               </div>
             </div>
           ))}
         </div>
 
         <div className="mt-4 flex h-[46px] items-center gap-3 rounded-full border border-[#e7ebf3] bg-white px-4 shadow-sm">
-          <div className="h-full flex-1 bg-transparent text-[14px] font-medium leading-[46px] text-[#9aa2b6]">
+          <div className="h-full flex-1 bg-transparent text-[14px] font-small leading-[46px] text-[#9aa2b6]">
             Birim mesajı yazın...
           </div>
 
