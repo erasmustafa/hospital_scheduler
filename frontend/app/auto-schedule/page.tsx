@@ -39,8 +39,24 @@ type PreviewMeta = {
   alternatives?: Alternative[];
 };
 
+type ShiftTypeRow = {
+  id: number;
+  name: string;
+  startTime: string;
+  endTime: string;
+  isNight: boolean;
+  color: string;
+};
+
 function isoDate(value: Date) {
   return value.toISOString().slice(0, 10);
+}
+
+function getShiftDuration(row: ShiftTypeRow) {
+  const [startHour] = row.startTime.split(":").map(Number);
+  const [endHour] = row.endTime.split(":").map(Number);
+  if (Number.isNaN(startHour) || Number.isNaN(endHour)) return 0;
+  return endHour >= startHour ? endHour - startHour : 24 - startHour + endHour;
 }
 
 export default function AutoSchedulePage() {
@@ -56,6 +72,7 @@ export default function AutoSchedulePage() {
   const [rows, setRows] = useState<PreviewAssignment[]>([]);
   const [warnings, setWarnings] = useState<string[]>([]);
   const [meta, setMeta] = useState<PreviewMeta | null>(null);
+  const [shiftTypes, setShiftTypes] = useState<ShiftTypeRow[]>([]);
 
   /* planning rule options */
   const [nightBalance, setNightBalance] = useState(true);
@@ -66,6 +83,7 @@ export default function AutoSchedulePage() {
   const [replaceExisting, setReplaceExisting] = useState(true);
 
   const [loadingDepartments, setLoadingDepartments] = useState(true);
+  const [loadingShiftTypes, setLoadingShiftTypes] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [committing, setCommitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -86,6 +104,31 @@ export default function AutoSchedulePage() {
     };
     void loadDepartments();
   }, []);
+
+  useEffect(() => {
+    const loadShiftTypes = async () => {
+      setLoadingShiftTypes(true);
+      try {
+        const data = await apiClient.get<{ shiftTypes: ShiftTypeRow[] }>("/shift-types/");
+        setShiftTypes(data.shiftTypes);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Vardiya tipleri yüklenemedi.");
+      } finally {
+        setLoadingShiftTypes(false);
+      }
+    };
+    void loadShiftTypes();
+  }, []);
+
+  const shiftTypeCounts = useMemo(
+    () => ({
+      total: shiftTypes.length,
+      day: shiftTypes.filter((row) => !row.isNight).length,
+      night: shiftTypes.filter((row) => row.isNight).length,
+      long: shiftTypes.filter((row) => getShiftDuration(row) >= 12).length,
+    }),
+    [shiftTypes]
+  );
 
   const handleGenerate = async () => {
     if (!departmentId) {
@@ -285,6 +328,73 @@ export default function AutoSchedulePage() {
             </div>
           </section>
 
+          {/* ── SHIFT TYPES ── */}
+          <section style={styles.shiftTypesCard}>
+            <div style={styles.shiftTypesHeader}>
+              <div>
+                <p style={styles.sectionEyebrow}>Vardiya Tipleri</p>
+                <h2 style={styles.shiftTypesTitle}>Otomatik liste şablonları</h2>
+                <p style={styles.shiftTypesDesc}>
+                  Liste motorunun kullanacağı vardiya saatlerini ve nöbet ayrımını buradan takip edin.
+                </p>
+              </div>
+              <span style={styles.recordBadge}>{shiftTypes.length} kayıt</span>
+            </div>
+
+            <div style={styles.shiftStatsGrid}>
+              <div style={styles.shiftStatPill}>
+                <span style={styles.shiftStatValue}>{shiftTypeCounts.total}</span>
+                <span style={styles.shiftStatLabel}>Toplam</span>
+              </div>
+              <div style={styles.shiftStatPill}>
+                <span style={styles.shiftStatValue}>{shiftTypeCounts.day}</span>
+                <span style={styles.shiftStatLabel}>Gündüz</span>
+              </div>
+              <div style={styles.shiftStatPill}>
+                <span style={styles.shiftStatValue}>{shiftTypeCounts.night}</span>
+                <span style={styles.shiftStatLabel}>Nöbet</span>
+              </div>
+              <div style={styles.shiftStatPill}>
+                <span style={styles.shiftStatValue}>{shiftTypeCounts.long}</span>
+                <span style={styles.shiftStatLabel}>Uzun</span>
+              </div>
+            </div>
+
+            {loadingShiftTypes ? (
+              <p style={styles.shiftTypesStatus}>Vardiya tipleri yükleniyor...</p>
+            ) : shiftTypes.length === 0 ? (
+              <p style={styles.shiftTypesStatus}>Kayıtlı vardiya tipi bulunamadı.</p>
+            ) : (
+              <div style={styles.shiftTypeList}>
+                {shiftTypes.map((row) => (
+                  <div key={row.id} style={styles.shiftTypeItem}>
+                    <span
+                      style={{
+                        ...styles.shiftColorBar,
+                        backgroundColor: row.color,
+                      }}
+                    />
+                    <div style={styles.shiftTypeInfo}>
+                      <strong style={styles.shiftTypeName}>{row.name}</strong>
+                      <span style={styles.shiftTypeTime}>
+                        {row.startTime} - {row.endTime}
+                      </span>
+                    </div>
+                    <span
+                      style={{
+                        ...styles.shiftTypeBadge,
+                        backgroundColor: row.isNight ? "#ede9fe" : "#dbeafe",
+                        color: row.isNight ? "#6d28d9" : "#2563eb",
+                      }}
+                    >
+                      {row.isNight ? "Nöbet" : "Gündüz"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
           {/* ── WARNINGS ── */}
           {warnings.length > 0 && (
             <section
@@ -466,6 +576,126 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 800,
     color: "#1e293b",
     margin: "0 0 20px 0",
+  },
+  shiftTypesCard: {
+    background: "linear-gradient(180deg, #ffffff 0%, #f8fbff 100%)",
+    borderRadius: 16,
+    padding: "20px",
+    border: "1px solid #dbeafe",
+    boxShadow: "0 12px 32px rgba(37,99,235,0.08)",
+    marginBottom: 20,
+  },
+  shiftTypesHeader: {
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 16,
+    marginBottom: 16,
+  },
+  sectionEyebrow: {
+    margin: "0 0 6px",
+    fontSize: 11,
+    fontWeight: 800,
+    letterSpacing: "0.08em",
+    textTransform: "uppercase" as const,
+    color: "#2563eb",
+  },
+  shiftTypesTitle: {
+    margin: "0 0 4px",
+    fontSize: 17,
+    fontWeight: 800,
+    color: "#172554",
+  },
+  shiftTypesDesc: {
+    margin: 0,
+    maxWidth: 520,
+    fontSize: 12,
+    lineHeight: 1.5,
+    color: "#64748b",
+  },
+  shiftStatsGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+    gap: 10,
+    marginBottom: 14,
+  },
+  shiftStatPill: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 58,
+    borderRadius: 14,
+    background: "#eff6ff",
+    border: "1px solid #dbeafe",
+  },
+  shiftStatValue: {
+    fontSize: 18,
+    fontWeight: 800,
+    lineHeight: 1,
+    color: "#1d4ed8",
+  },
+  shiftStatLabel: {
+    marginTop: 5,
+    fontSize: 11,
+    fontWeight: 700,
+    color: "#64748b",
+  },
+  shiftTypesStatus: {
+    margin: 0,
+    padding: "14px 12px",
+    borderRadius: 12,
+    background: "#f8fafc",
+    fontSize: 13,
+    color: "#64748b",
+  },
+  shiftTypeList: {
+    display: "grid",
+    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+    gap: 10,
+  },
+  shiftTypeItem: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    minHeight: 58,
+    padding: "10px 12px",
+    borderRadius: 14,
+    background: "#ffffff",
+    border: "1px solid #e2e8f0",
+    boxShadow: "0 1px 2px rgba(15,23,42,0.03)",
+  },
+  shiftColorBar: {
+    width: 5,
+    alignSelf: "stretch",
+    borderRadius: 999,
+    flexShrink: 0,
+  },
+  shiftTypeInfo: {
+    display: "flex",
+    minWidth: 0,
+    flex: 1,
+    flexDirection: "column",
+    gap: 3,
+  },
+  shiftTypeName: {
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap" as const,
+    fontSize: 13,
+    color: "#1e293b",
+  },
+  shiftTypeTime: {
+    fontSize: 11,
+    fontWeight: 700,
+    color: "#64748b",
+  },
+  shiftTypeBadge: {
+    flexShrink: 0,
+    borderRadius: 999,
+    padding: "4px 8px",
+    fontSize: 10,
+    fontWeight: 800,
   },
 
   /* ── form ── */
