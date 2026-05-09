@@ -397,7 +397,7 @@ function CommunicationShowcase() {
         <div className="relative flex min-h-[442px] items-center overflow-hidden rounded-[28px] bg-[#eef2ff] px-7 py-7 shadow-[0_32px_100px_rgba(31,67,160,0.18)] sm:px-10 lg:px-16 lg:py-12">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_72%_42%,rgba(67,103,240,0.14),transparent_32%),radial-gradient(circle_at_8%_18%,rgba(255,255,255,0.85),transparent_30%)]" />
 
-          <div className="relative z-10 grid w-full items-center gap-8 lg:grid-cols-[0.95fr_1.55fr] lg:gap-12">
+          <div className="relative z-10 grid w-full items-start gap-8 lg:grid-cols-[0.95fr_1.55fr] lg:gap-12">
             <div className="max-w-[350px]">
               <SectionEyebrow>
                 {"Etkin İletişim"}
