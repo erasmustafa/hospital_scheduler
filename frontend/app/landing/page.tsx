@@ -1,21 +1,26 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { ElementType, ReactNode } from "react";
 import {
   ArrowRight,
   BarChart3,
   Building2,
   CalendarDays,
+  Check,
   Clock3,
   Cloud,
   Headphones,
   Info,
   LockKeyhole,
+  Megaphone,
+  MessageCircle,
   MessageSquareMore,
+  Send,
   ShieldCheck,
   Sparkles,
   UserPlus,
   Users,
+  Wrench,
   type LucideIcon,
 } from "lucide-react";
 
@@ -65,6 +70,66 @@ const navigationLinks = [
   { id: "how", label: "Nas\u0131l \u00c7al\u0131\u015f\u0131r?", href: "#how-it-works", icon: <CalendarDays /> },
   { id: "about", label: "Hakk\u0131m\u0131zda", href: "#about", icon: <Info /> },
   { id: "contact", label: "\u0130leti\u015fim", href: "#faq", icon: <Headphones /> },
+];
+
+type Announcement = {
+  icon: ElementType;
+  title: string;
+  time: string;
+  active?: boolean;
+};
+
+type ChatMessage = {
+  name: string;
+  text: string;
+  time: string;
+  avatar: string;
+};
+
+const announcements: Announcement[] = [
+  {
+    icon: Megaphone,
+    title: "Yıllık izin planlamaları başladı.",
+    time: "Bugün, 09:15",
+    active: true,
+  },
+  {
+    icon: CalendarDays,
+    title: "Eğitim toplantısı yapılacaktır.",
+    time: "Dün, 14:30",
+  },
+  {
+    icon: Wrench,
+    title: "Sistem bakımı yapılacaktır.",
+    time: "2 gün önce",
+  },
+];
+
+const messages: ChatMessage[] = [
+  {
+    name: "Zeynep Erdem",
+    text: "Yeni vardiya planı yayınlandı.",
+    time: "10:24",
+    avatar: "ZE",
+  },
+  {
+    name: "Burak Yılmaz",
+    text: "Teşekkürler, gördüm.",
+    time: "10:25",
+    avatar: "BY",
+  },
+  {
+    name: "Merve Aksoy",
+    text: "Ben de inceledim, her şey net.",
+    time: "10:26",
+    avatar: "MA",
+  },
+  {
+    name: "Ahmet Kılıç",
+    text: "Bilgi için teşekkürler.",
+    time: "10:27",
+    avatar: "AK",
+  },
 ];
 
 const teamHours = [
@@ -178,6 +243,143 @@ function FeatureCard({
       <h3 className="mb-3 text-xl font-bold text-[#18284d]">{title}</h3>
       <p className="text-sm leading-7 text-[#6d7b9c]">{description}</p>
     </div>
+  );
+}
+
+function CommunicationShowcase() {
+  return (
+    <section className="pb-0 pt-0">
+      <div className="mx-auto w-full max-w-[1280px] px-5 sm:px-6 lg:px-8">
+        <div className="relative flex min-h-[520px] items-center overflow-hidden rounded-[28px] bg-[#eef2ff] px-7 py-9 shadow-[0_32px_100px_rgba(31,67,160,0.18)] sm:px-10 lg:px-16 lg:py-14">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_72%_42%,rgba(67,103,240,0.14),transparent_32%),radial-gradient(circle_at_8%_18%,rgba(255,255,255,0.85),transparent_30%)]" />
+
+          <div className="relative z-10 grid w-full items-center gap-10 lg:grid-cols-[0.95fr_1.55fr] lg:gap-16">
+            <div className="max-w-[500px]">
+              <div className="mb-7 inline-flex rounded-full border border-white/80 bg-white/25 px-4 py-2 text-sm font-semibold text-[#4772e8] shadow-sm backdrop-blur">
+                Etkin İletişim
+              </div>
+
+              <h2 className="mb-6 text-[clamp(30px,4vw,42px)] font-black leading-[1.18] tracking-[-0.045em] text-[#14204a]">
+                Kurum içi iletişimi tek platformda güçlendirin
+              </h2>
+
+              <p className="mb-8 max-w-[470px] text-base font-medium leading-8 text-[#66708c] lg:text-[18px]">
+                Duyurular, hatırlatmalar ve hızlı mesajlaşma ile ekipler her zaman aynı bilgiye, aynı anda ulaşır.
+              </p>
+
+              <div className="space-y-4">
+                {[
+                  "Anlık duyuru ve bilgilendirme",
+                  "Hızlı ve güvenli mesajlaşma",
+                  "Okundu bilgisi ile tam kontrol",
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-4">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#4772e8] text-white shadow-[0_8px_18px_rgba(71,114,232,0.3)]">
+                      <Check className="h-4 w-4 stroke-[3]" />
+                    </div>
+                    <span className="text-base font-semibold text-[#303a58] lg:text-[18px]">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="grid min-h-[480px] overflow-hidden rounded-[24px] border border-white/80 bg-white/90 shadow-[0_28px_80px_rgba(45,72,145,0.16)] backdrop-blur-xl md:grid-cols-[0.72fr_1.18fr]">
+                <div className="border-b border-[#edf1fb] p-6 md:border-b-0 md:border-r lg:p-8">
+                  <h3 className="mb-6 text-[22px] font-black tracking-[-0.035em] text-[#172044]">Duyurular</h3>
+
+                  <div className="space-y-3">
+                    {announcements.map((item, index) => {
+                      const Icon = item.icon;
+
+                      return (
+                        <div
+                          key={item.title}
+                          className={[
+                            "flex items-center gap-4 rounded-[12px] px-4 py-4 transition",
+                            item.active ? "bg-[#eef1ff] shadow-sm" : "bg-transparent",
+                            index !== announcements.length - 1 && !item.active ? "border-b border-[#eef1f7]" : "",
+                          ].join(" ")}
+                        >
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-[#4772e8] text-[#4772e8]">
+                            <Icon className="h-5 w-5" />
+                          </div>
+
+                          <div>
+                            <p className="text-[15px] font-bold text-[#303853]">{item.title}</p>
+                            <p className="mt-2 text-[13px] font-semibold text-[#8c94a8]">{item.time}</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="relative flex flex-col p-6">
+                  <div className="mb-5 flex items-center gap-4 border-b border-[#eef1f7] pb-4">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#eef2ff] text-[#4772e8]">
+                      <Users className="h-6 w-6" />
+                    </div>
+
+                    <div>
+                      <h3 className="text-[20px] font-black tracking-[-0.035em] text-[#1b2344]">Genel Sohbet</h3>
+                      <p className="text-sm font-semibold text-[#8b93a7]">12 üye</p>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 space-y-3">
+                    {messages.map((message) => (
+                      <div key={message.name} className="flex items-center gap-4">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#eaf0ff] text-[13px] font-black text-[#4772e8] ring-2 ring-white">
+                          {message.avatar}
+                        </div>
+
+                        <div className="flex min-h-[58px] flex-1 items-center justify-between rounded-[12px] bg-[#f4f6fb] px-5 py-3">
+                          <div>
+                            <p className="text-[15px] font-black text-[#202846]">{message.name}</p>
+                            <p className="mt-1 text-[14px] font-semibold text-[#39415d]">{message.text}</p>
+                          </div>
+
+                          <span className="ml-4 text-[14px] font-semibold text-[#9299aa]">{message.time}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-5 flex h-[58px] items-center gap-4 rounded-full border border-[#e7ebf3] bg-white px-6 shadow-sm">
+                    <div className="h-full flex-1 bg-transparent text-[16px] font-medium leading-[58px] text-[#9aa2b6]">
+                      Mesaj yazın...
+                    </div>
+
+                    <button className="flex h-11 w-11 items-center justify-center rounded-full bg-[#4772e8] text-white shadow-[0_12px_24px_rgba(71,114,232,0.32)] transition hover:scale-105 hover:bg-[#315fdf]">
+                      <Send className="h-5 w-5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="absolute -right-20 top-8 hidden h-[126px] w-[150px] rounded-[22px] border border-white/80 bg-[#dfe6ff] shadow-[0_20px_60px_rgba(71,114,232,0.2)] lg:block">
+                <div className="absolute inset-0 rounded-[22px] bg-gradient-to-br from-white/30 to-[#b8c8ff]/45" />
+
+                <div className="relative flex h-full items-center justify-center">
+                  <div className="relative flex h-[62px] w-[78px] items-center justify-center rounded-full bg-white shadow-[0_12px_30px_rgba(40,70,160,0.15)]">
+                    <div className="flex gap-2">
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#4772e8]" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#4772e8]" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#4772e8]" />
+                    </div>
+                  </div>
+
+                  <MessageCircle className="absolute bottom-3 right-5 h-8 w-8 text-white/80" />
+                </div>
+
+                <div className="absolute bottom-[-14px] right-5 h-8 w-8 rotate-45 rounded-br-md border-b border-r border-white/70 bg-[#dfe6ff]" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -462,20 +664,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="pb-0 pt-0">
-          <div className="mx-auto w-full max-w-[1280px] px-5 sm:px-6 lg:px-8">
-            <div className="relative">
-              <div className="pointer-events-none absolute inset-x-[0.4%] inset-y-[0.9%] -z-10 rounded-[28px] bg-[radial-gradient(circle_at_center,rgba(223,231,255,1)_0%,rgba(213,224,255,0.96)_36%,rgba(194,210,255,0.7)_60%,rgba(194,210,255,0.22)_82%,rgba(194,210,255,0)_100%)] blur-[28px]" />
-              <Image
-                src="/images/landing-communication-section.png"
-                alt={"MediShift ileti\u015fim b\u00f6l\u00fcm\u00fc"}
-                width={1600}
-                height={900}
-                className="relative z-10 block h-auto w-full"
-              />
-            </div>
-          </div>
-        </section>
+        <CommunicationShowcase />
 
         <section id="how-it-works" className="py-10">
           <div className="mx-auto w-full max-w-[1280px] px-5 sm:px-6 lg:px-8">
