@@ -70,9 +70,9 @@ type ModalDropdownProps = {
 };
 
 const statusLabelTr: Record<string, string> = {
-  planned: "PlanlandÄ±",
-  approved: "OnaylandÄ±",
-  cancelled: "Ä°ptal",
+  planned: "Planlandı",
+  approved: "Onaylandı",
+  cancelled: "İptal",
 };
 
 const statusColors: Record<string, { bg: string; text: string }> = {
@@ -237,7 +237,7 @@ export default function ShiftsPage() {
       setShiftTypeOptions(shiftTypeResponse.shiftTypes);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Vardiya listesi alÄ±namadÄ±.");
+      setError(err instanceof Error ? err.message : "Vardiya listesi alınamadı.");
     } finally {
       setLoading(false);
     }
@@ -277,7 +277,7 @@ export default function ShiftsPage() {
       await load();
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Toplu iÅŸlem tamamlanamadÄ±.");
+      setError(err instanceof Error ? err.message : "Toplu işlem tamamlanamadı.");
     } finally {
       setSavingBulk(null);
     }
@@ -288,14 +288,14 @@ export default function ShiftsPage() {
       await apiClient.delete(`/assignments/${id}/`);
       setRows((prev) => prev.filter((r) => r.id !== id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Silme iÅŸlemi baÅŸarÄ±sÄ±z.");
+      setError(err instanceof Error ? err.message : "Silme işlemi başarısız.");
     }
   };
 
   const selectedDeptName = useMemo(() => {
-    if (!departmentFilter) return "TÃ¼mÃ¼";
+    if (!departmentFilter) return "Tümü";
     const d = departments.find((dep) => String(dep.id) === departmentFilter);
-    return d ? d.name : "TÃ¼mÃ¼";
+    return d ? d.name : "Tümü";
   }, [departmentFilter, departments]);
 
   const filteredStaffOptions = useMemo(() => {
@@ -333,7 +333,7 @@ export default function ShiftsPage() {
       return null;
     }
 
-    return `${matchedRow.staffProfileName} iÃ§in ${matchedRow.assignmentDate} tarihinde zaten ${matchedRow.shiftTypeName} vardiyasÄ± var.`;
+    return `${matchedRow.staffProfileName} için ${matchedRow.assignmentDate} tarihinde zaten ${matchedRow.shiftTypeName} vardiyası var.`;
   }, [
     newAssignment.assignmentDate,
     newAssignment.staffProfileId,
@@ -443,11 +443,11 @@ export default function ShiftsPage() {
   const handleExcelExport = () => {
     void (async () => {
       if (!departmentFilter) {
-        setError("Referans Excel cikti icin once birim secmelisiniz.");
+        setError("Referans Excel çıktısı için önce birim seçmelisiniz.");
         return;
       }
       if (rows.length === 0) {
-        setError("Excel ciktisi icin once listelenecek vardiya kaydi olmalidir.");
+        setError("Excel çıktısı için önce listelenecek vardiya kaydı olmalıdır.");
         return;
       }
 
@@ -465,7 +465,7 @@ export default function ShiftsPage() {
         );
 
         if (!response.ok) {
-          let message = "Excel ciktisi olusturulamadi.";
+          let message = "Excel çıktısı oluşturulamadı.";
           try {
             const payload = (await response.json()) as { detail?: string };
             if (payload?.detail) {
@@ -493,7 +493,7 @@ export default function ShiftsPage() {
         URL.revokeObjectURL(url);
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Excel ciktisi olusturulamadi.");
+        setError(err instanceof Error ? err.message : "Excel çıktısı oluşturulamadı.");
       }
     })();
   };
@@ -518,37 +518,37 @@ export default function ShiftsPage() {
       }}
     />
     <main style={styles.main}>
-      {/* â”€â”€ STAT CARDS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── STAT CARDS ─────────────────────────────────── */}
       <section style={styles.statsRow}>
         <div style={styles.statCard}>
-          <p style={styles.statLabel}>Toplam KayÄ±t</p>
+          <p style={styles.statLabel}>Toplam Kayıt</p>
           <p style={styles.statValue}>{counts.total}</p>
-          <p style={styles.statDesc}>Filtreye uyan vardiya satÄ±rÄ±</p>
+          <p style={styles.statDesc}>Filtreye uyan vardiya satırı</p>
         </div>
         <div style={styles.statCard}>
-          <p style={styles.statLabel}>SeÃ§ili Birim</p>
+          <p style={styles.statLabel}>Seçili Birim</p>
           <p style={{ ...styles.statValue, fontSize: 22 }}>{selectedDeptName}</p>
-          <p style={styles.statDesc}>Birim kapsamÄ±</p>
+          <p style={styles.statDesc}>Birim kapsamı</p>
         </div>
         <div style={styles.statCard}>
           <p style={styles.statLabel}>Durum</p>
           <p style={{ ...styles.statValue, fontSize: 22 }}>
-            {statusFilter ? statusLabelTr[statusFilter] || statusFilter : "TÃ¼mÃ¼"}
+            {statusFilter ? statusLabelTr[statusFilter] || statusFilter : "Tümü"}
           </p>
           <p style={styles.statDesc}>Aktif filtre durumu</p>
         </div>
         <div style={styles.statCard}>
-          <p style={styles.statLabel}>Tarih AralÄ±ÄŸÄ±</p>
+          <p style={styles.statLabel}>Tarih Aralığı</p>
           <p style={{ ...styles.statValue, fontSize: 22 }}>
-            {startDate || endDate ? `${startDate || "..."} â€“ ${endDate || "..."}` : "Serbest"}
+            {startDate || endDate ? `${startDate || "..."} – ${endDate || "..."}` : "Serbest"}
           </p>
-          <p style={styles.statDesc}>BaÅŸlangÄ±Ã§ / BitiÅŸ filtresi</p>
+          <p style={styles.statDesc}>Başlangıç / Bitiş filtresi</p>
         </div>
       </section>
 
-      {/* â”€â”€ FILTER AREA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── FILTER AREA ────────────────────────────────── */}
       <section style={styles.card}>
-        <h2 style={styles.sectionTitle}>Filtreleme AlanÄ±</h2>
+        <h2 style={styles.sectionTitle}>Filtreleme Alanı</h2>
         <div style={styles.filterGrid}>
           <label style={styles.filterLabel}>
             <span style={styles.filterLabelText}>Birim</span>
@@ -557,7 +557,7 @@ export default function ShiftsPage() {
               value={departmentFilter}
               onChange={(e) => setDepartmentFilter(e.target.value)}
             >
-              <option value="">TÃ¼mÃ¼</option>
+              <option value="">Tümü</option>
               {departments.map((d) => (
                 <option key={d.id} value={String(d.id)}>
                   {d.name}
@@ -574,14 +574,14 @@ export default function ShiftsPage() {
                 setStatusFilter(e.target.value as typeof statusFilter)
               }
             >
-              <option value="">TÃ¼mÃ¼</option>
+              <option value="">Tümü</option>
               <option value="planned">Taslak</option>
-              <option value="approved">OnaylÄ±</option>
-              <option value="cancelled">Ä°ptal</option>
+              <option value="approved">Onaylı</option>
+              <option value="cancelled">İptal</option>
             </select>
           </label>
           <label style={styles.filterLabel}>
-            <span style={styles.filterLabelText}>BaÅŸlangÄ±Ã§ Tarihi</span>
+            <span style={styles.filterLabelText}>Başlangıç Tarihi</span>
             <input
               type="date"
               style={styles.filterInput}
@@ -590,7 +590,7 @@ export default function ShiftsPage() {
             />
           </label>
           <label style={styles.filterLabel}>
-            <span style={styles.filterLabelText}>BitiÅŸ Tarihi</span>
+            <span style={styles.filterLabelText}>Bitiş Tarihi</span>
             <input
               type="date"
               style={styles.filterInput}
@@ -610,11 +610,11 @@ export default function ShiftsPage() {
         </div>
       </section>
 
-      {/* â”€â”€ BULK ACTIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── BULK ACTIONS ───────────────────────────────── */}
       <section style={styles.card}>
         <div style={styles.bulkHeader}>
-          <h2 style={styles.sectionTitle}>Toplu Ä°ÅŸlemler</h2>
-          <span style={styles.filterNote}>GeÃ§erli filtreler korunur.</span>
+          <h2 style={styles.sectionTitle}>Toplu İşlemler</h2>
+          <span style={styles.filterNote}>Geçerli filtreler korunur.</span>
         </div>
         <div style={styles.bulkRow}>
           <button
@@ -623,7 +623,7 @@ export default function ShiftsPage() {
             disabled={savingBulk !== null}
             style={styles.bulkApprove}
           >
-            âœ“ TaslaklarÄ± Onayla
+            ✓ Taslakları Onayla
           </button>
           <button
             type="button"
@@ -631,10 +631,10 @@ export default function ShiftsPage() {
             disabled={savingBulk !== null}
             style={styles.bulkDelete}
           >
-            âœ— Temizle
+            ✗ Temizle
           </button>
           <button type="button" style={styles.bulkExcel} onClick={handleExcelExport}>
-            â†“ Excel Ã‡Ä±ktÄ±sÄ±
+            ↓ Excel Çıktısı
           </button>
           <button type="button" style={styles.bulkNew} onClick={openCreateModal}>
             + Yeni Vardiya
@@ -646,10 +646,10 @@ export default function ShiftsPage() {
         <p style={{ color: "#dc2626", fontSize: 13, margin: "8px 0" }}>{error}</p>
       )}
 
-      {/* â”€â”€ TABLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── TABLE ───────────────────────────────────────── */}
       <section style={styles.tableSection}>
         {loading && (
-          <p style={{ padding: 20, color: "#64748b" }}>YÃ¼kleniyor...</p>
+          <p style={{ padding: 20, color: "#64748b" }}>Yükleniyor...</p>
         )}
 
         {!loading && (
@@ -661,10 +661,10 @@ export default function ShiftsPage() {
                   <th style={styles.th}>Personel</th>
                   <th style={styles.th}>Birim</th>
                   <th style={styles.th}>Vardiya</th>
-                  <th style={styles.th}>BaÅŸlangÄ±Ã§</th>
-                  <th style={styles.th}>BitiÅŸ</th>
+                  <th style={styles.th}>Başlangıç</th>
+                  <th style={styles.th}>Bitiş</th>
                   <th style={styles.th}>Durum</th>
-                  <th style={{ ...styles.th, textAlign: "center" }}>Ä°ÅŸlem</th>
+                  <th style={{ ...styles.th, textAlign: "center" }}>İşlem</th>
                 </tr>
               </thead>
               <tbody>
@@ -679,7 +679,7 @@ export default function ShiftsPage() {
                         padding: "32px 20px",
                       }}
                     >
-                      SeÃ§ili filtrelere uygun vardiya kaydÄ± bulunamadÄ±.
+                      Seçili filtrelere uygun vardiya kaydı bulunamadı.
                     </td>
                   </tr>
                 ) : (
@@ -703,7 +703,7 @@ export default function ShiftsPage() {
                               {formatDateTr(row.assignmentDate)}
                             </p>
                             <p style={{ margin: "2px 0 0", fontSize: 11, color: "#94a3b8" }}>
-                              Plan gÃ¼nÃ¼
+                              Plan günü
                             </p>
                           </div>
                         </td>
@@ -738,7 +738,7 @@ export default function ShiftsPage() {
                                 : `${formatDateTr(row.assignmentDate)} / 08:00`}
                             </p>
                             <p style={{ margin: "2px 0 0", fontSize: 11, color: "#94a3b8" }}>
-                              BaÅŸlangÄ±Ã§ zamanÄ±
+                              Başlangıç zamanı
                             </p>
                           </div>
                         </td>
@@ -750,7 +750,7 @@ export default function ShiftsPage() {
                                 : `${formatDateTr(row.assignmentDate)} / 08:00`}
                             </p>
                             <p style={{ margin: "2px 0 0", fontSize: 11, color: "#94a3b8" }}>
-                              BitiÅŸ zamanÄ±
+                              Bitiş zamanı
                             </p>
                           </div>
                         </td>
@@ -779,14 +779,14 @@ export default function ShiftsPage() {
                             }}
                           >
                             <button type="button" style={styles.editBtn}>
-                              âœ DÃ¼zenle
+                              ✎ Düzenle
                             </button>
                             <button
                               type="button"
                               style={styles.deleteBtn}
                               onClick={() => void handleDelete(row.id)}
                             >
-                              ğŸ—‘ Sil
+                              🗑 Sil
                             </button>
                           </div>
                         </td>
@@ -1066,9 +1066,9 @@ export default function ShiftsPage() {
   );
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════════════════════════
    INLINE STYLES
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════════════════════════ */
 
 const styles: Record<string, React.CSSProperties> = {
   main: {
@@ -1083,7 +1083,7 @@ const styles: Record<string, React.CSSProperties> = {
     background: "#f1f5f9",
   },
 
-  /* â”€â”€ stats row â”€â”€ */
+  /* ── stats row ── */
   statsRow: {
     display: "grid",
     gridTemplateColumns: "repeat(4, 1fr)",
@@ -1120,7 +1120,7 @@ const styles: Record<string, React.CSSProperties> = {
     lineHeight: 1.4,
   },
 
-  /* â”€â”€ card â”€â”€ */
+  /* ── card ── */
   card: {
     background: "#ffffff",
     borderRadius: 16,
@@ -1136,7 +1136,7 @@ const styles: Record<string, React.CSSProperties> = {
     margin: "0 0 14px 0",
   },
 
-  /* â”€â”€ filter grid â”€â”€ */
+  /* ── filter grid ── */
   filterGrid: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr 1fr 1fr auto",
@@ -1180,7 +1180,7 @@ const styles: Record<string, React.CSSProperties> = {
     whiteSpace: "nowrap" as const,
   },
 
-  /* â”€â”€ bulk â”€â”€ */
+  /* ── bulk ── */
   bulkHeader: {
     display: "flex",
     alignItems: "center",
@@ -1250,7 +1250,7 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: "pointer",
   },
 
-  /* â”€â”€ table â”€â”€ */
+  /* ── table ── */
   tableSection: {
     background: "#ffffff",
     borderRadius: 16,
@@ -1358,7 +1358,7 @@ const styles: Record<string, React.CSSProperties> = {
     margin: 0,
     fontSize: 26,
     lineHeight: 1.1,
-    fontWeight: 850,
+    fontWeight: 700,
     letterSpacing: "-0.035em",
     color: "#101a3c",
   },
@@ -1391,7 +1391,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: "grid",
     gap: 10,
     fontSize: 13,
-    fontWeight: 800,
+    fontWeight: 700,
     color: "#101a3c",
   },
   modalInputShell: {
@@ -1518,7 +1518,7 @@ const styles: Record<string, React.CSSProperties> = {
   modalDropdownItemTitle: {
     display: "block",
     fontSize: 13,
-    fontWeight: 800,
+    fontWeight: 700,
     lineHeight: 1.2,
   },
   modalDropdownItemDesc: {
@@ -1546,7 +1546,7 @@ const styles: Record<string, React.CSSProperties> = {
     margin: 0,
     fontSize: 14,
     lineHeight: 1.25,
-    fontWeight: 850,
+    fontWeight: 700,
     color: "#101a3c",
   },
   modalSectionText: {
@@ -1588,7 +1588,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: "block",
     fontSize: 13,
     lineHeight: 1.25,
-    fontWeight: 850,
+    fontWeight: 700,
     color: "#101a3c",
   },
   nightShiftDesc: {
@@ -1659,7 +1659,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
   warningPanelLabel: {
     fontSize: 11,
-    fontWeight: 800,
+    fontWeight: 700,
     color: "#b91c1c",
     marginBottom: 4,
     textTransform: "uppercase" as const,
@@ -1700,7 +1700,7 @@ const styles: Record<string, React.CSSProperties> = {
     background: "#ffffff",
     color: "#2456e8",
     fontSize: 13,
-    fontWeight: 800,
+    fontWeight: 700,
     cursor: "pointer",
   },
   modalPrimaryButton: {
@@ -1715,7 +1715,7 @@ const styles: Record<string, React.CSSProperties> = {
     background: "linear-gradient(135deg, #3f63f4 0%, #234bdc 100%)",
     color: "#ffffff",
     fontSize: 13,
-    fontWeight: 850,
+    fontWeight: 700,
     cursor: "pointer",
     boxShadow: "0 14px 24px rgba(35,75,220,0.24)",
   },};
