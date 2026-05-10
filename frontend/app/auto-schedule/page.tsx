@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -10,7 +10,6 @@ import {
   FileText,
   Info,
   Keyboard,
-  Moon,
   MoreVertical,
   Play,
   Plus,
@@ -18,8 +17,6 @@ import {
   Search,
   SlidersHorizontal,
   Tag,
-  Users,
-  UserRound,
   X,
 } from "lucide-react";
 import { apiClient } from "@/lib/api";
@@ -101,9 +98,9 @@ function getShiftDuration(row: ShiftTypeRow) {
 
 function getShiftKind(row: ShiftTypeRow) {
   const normalized = row.name.toLocaleLowerCase("tr-TR");
-  if (normalized.includes("nöbet") || normalized.includes("nobet")) return "Nöbet";
+  if (normalized.includes("nÃ¶bet") || normalized.includes("nobet")) return "NÃ¶bet";
   if (normalized.includes("gece")) return "Gece";
-  return "Gündüz";
+  return "GÃ¼ndÃ¼z";
 }
 
 export default function AutoSchedulePage() {
@@ -136,7 +133,6 @@ export default function AutoSchedulePage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [isShiftModalOpen, setIsShiftModalOpen] = useState(false);
   const [newShiftDescription, setNewShiftDescription] = useState("");
-  const [isNightShift, setIsNightShift] = useState(false);
 
   useEffect(() => {
     const loadDepartments = async () => {
@@ -146,7 +142,7 @@ export default function AutoSchedulePage() {
         setDepartments(data);
         if (data.length > 0) setDepartmentId(data[0].id);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Birimler yüklenemedi.");
+        setError(err instanceof Error ? err.message : "Birimler yÃ¼klenemedi.");
       } finally {
         setLoadingDepartments(false);
       }
@@ -161,7 +157,7 @@ export default function AutoSchedulePage() {
         const data = await apiClient.get<{ shiftTypes: ShiftTypeRow[] }>("/shift-types/");
         setShiftTypes(data.shiftTypes);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Vardiya tipleri yüklenemedi.");
+        setError(err instanceof Error ? err.message : "Vardiya tipleri yÃ¼klenemedi.");
       } finally {
         setLoadingShiftTypes(false);
       }
@@ -176,7 +172,7 @@ export default function AutoSchedulePage() {
       total: shiftTypes.length,
       day: shiftTypes.filter((row) => !row.isNight).length,
       night: shiftTypes.filter((row) => row.name.toLocaleLowerCase("tr-TR").includes("gece")).length,
-      duty: shiftTypes.filter((row) => getShiftKind(row) === "Nöbet" || row.isNight).length,
+      duty: shiftTypes.filter((row) => getShiftKind(row) === "NÃ¶bet" || row.isNight).length,
     }),
     [shiftTypes]
   );
@@ -188,8 +184,8 @@ export default function AutoSchedulePage() {
             {
               id: "current-draft",
               period: formatPeriod(startDate, endDate),
-              department: selectedDepartment?.name ?? "Seçili birim",
-              createdAt: "Şimdi",
+              department: selectedDepartment?.name ?? "SeÃ§ili birim",
+              createdAt: "Åimdi",
               createdBy: "Admin",
               status: "draft",
             },
@@ -219,7 +215,7 @@ export default function AutoSchedulePage() {
 
   const handleGenerate = async () => {
     if (!departmentId) {
-      setError("Lütfen bir birim seçin.");
+      setError("LÃ¼tfen bir birim seÃ§in.");
       return;
     }
     setGenerating(true);
@@ -244,9 +240,9 @@ export default function AutoSchedulePage() {
       setRows(data.previewAssignments);
       setWarnings(data.warnings);
       setMeta(data.meta);
-      setSuccess("Taslak liste oluşturuldu.");
+      setSuccess("Taslak liste oluÅŸturuldu.");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Taslak oluşturulamadı.");
+      setError(err instanceof Error ? err.message : "Taslak oluÅŸturulamadÄ±.");
     } finally {
       setGenerating(false);
     }
@@ -254,7 +250,7 @@ export default function AutoSchedulePage() {
 
   const handleCommit = async () => {
     if (!departmentId) {
-      setError("Lütfen bir birim seçin.");
+      setError("LÃ¼tfen bir birim seÃ§in.");
       return;
     }
     setCommitting(true);
@@ -283,7 +279,7 @@ export default function AutoSchedulePage() {
       setMeta(data.meta);
       setSuccess(`${data.createdCount} vardiya kaydedildi.`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Kaydetme başarısız.");
+      setError(err instanceof Error ? err.message : "Kaydetme baÅŸarÄ±sÄ±z.");
     } finally {
       setCommitting(false);
     }
@@ -293,8 +289,8 @@ export default function AutoSchedulePage() {
     <main style={styles.main}>
       <header style={styles.pageHeader}>
         <div>
-          <h1 style={styles.pageTitle}>Otomatik Liste Oluştur</h1>
-          <p style={styles.pageSubtitle}>Seçilen birim için otomatik vardiya listesi oluşturun.</p>
+          <h1 style={styles.pageTitle}>Otomatik Liste OluÅŸtur</h1>
+          <p style={styles.pageSubtitle}>SeÃ§ilen birim iÃ§in otomatik vardiya listesi oluÅŸturun.</p>
         </div>
 
         <div style={styles.headerActions}>
@@ -313,7 +309,7 @@ export default function AutoSchedulePage() {
           <div style={styles.userAvatar}>A</div>
           <div>
             <p style={styles.userName}>Admin</p>
-            <p style={styles.userRole}>Süper Yönetici</p>
+            <p style={styles.userRole}>SÃ¼per YÃ¶netici</p>
           </div>
           <ChevronDown size={16} color="#64748b" />
         </div>
@@ -334,7 +330,7 @@ export default function AutoSchedulePage() {
       <div style={styles.contentGrid}>
         <div style={styles.leftColumn}>
           <section style={styles.panel}>
-            <h2 style={styles.panelTitle}>Liste Oluştur</h2>
+            <h2 style={styles.panelTitle}>Liste OluÅŸtur</h2>
 
             <label style={styles.fieldLabel}>
               <span>Birim</span>
@@ -345,7 +341,7 @@ export default function AutoSchedulePage() {
                   onChange={(event) => setDepartmentId(Number(event.target.value))}
                   disabled={loadingDepartments || departments.length === 0}
                 >
-                  <option value="">Birim seçin</option>
+                  <option value="">Birim seÃ§in</option>
                   {departments.map((department) => (
                     <option key={department.id} value={department.id}>
                       {department.name}
@@ -358,7 +354,7 @@ export default function AutoSchedulePage() {
 
             <div style={styles.dateGrid}>
               <label style={styles.fieldLabel}>
-                <span>Başlangıç Tarihi</span>
+                <span>BaÅŸlangÄ±Ã§ Tarihi</span>
                 <span style={styles.dateShell}>
                   <input
                     type="date"
@@ -371,7 +367,7 @@ export default function AutoSchedulePage() {
               </label>
 
               <label style={styles.fieldLabel}>
-                <span>Bitiş Tarihi</span>
+                <span>BitiÅŸ Tarihi</span>
                 <span style={styles.dateShell}>
                   <input
                     type="date"
@@ -386,19 +382,19 @@ export default function AutoSchedulePage() {
 
             <div style={styles.rulesPanel}>
               <div style={styles.rulesHeader}>
-                <h3 style={styles.rulesTitle}>Planlama Kuralları</h3>
+                <h3 style={styles.rulesTitle}>Planlama KurallarÄ±</h3>
                 <span style={styles.rulesLink}>
-                  Akıllı dağıtım seçenekleri
+                  AkÄ±llÄ± daÄŸÄ±tÄ±m seÃ§enekleri
                   <SlidersHorizontal size={13} />
                 </span>
               </div>
 
               <div style={styles.rulesList}>
-                <RuleToggle label="Gece nöbetlerini dengeli dağıt" checked={nightBalance} onChange={setNightBalance} />
-                <RuleToggle label="İzin/uygunluk kayıtlarını dikkate al" checked={respectAvailability} onChange={setRespectAvailability} />
-                <RuleToggle label="Haftalık saat sınırını uygula" checked={weeklyLimit} onChange={setWeeklyLimit} />
-                <RuleToggle label="Hafta sonu görevlerini dengeli dağıt" checked={weekendBalance} onChange={setWeekendBalance} />
-                <RuleToggle label="Sadece taslak oluştur (onay gerektirmez)" checked={draftOnly} onChange={setDraftOnly} />
+                <RuleToggle label="Gece nÃ¶betlerini dengeli daÄŸÄ±t" checked={nightBalance} onChange={setNightBalance} />
+                <RuleToggle label="Ä°zin/uygunluk kayÄ±tlarÄ±nÄ± dikkate al" checked={respectAvailability} onChange={setRespectAvailability} />
+                <RuleToggle label="HaftalÄ±k saat sÄ±nÄ±rÄ±nÄ± uygula" checked={weeklyLimit} onChange={setWeeklyLimit} />
+                <RuleToggle label="Hafta sonu gÃ¶revlerini dengeli daÄŸÄ±t" checked={weekendBalance} onChange={setWeekendBalance} />
+                <RuleToggle label="Sadece taslak oluÅŸtur (onay gerektirmez)" checked={draftOnly} onChange={setDraftOnly} />
               </div>
             </div>
 
@@ -409,7 +405,7 @@ export default function AutoSchedulePage() {
               <div>
                 <strong style={styles.infoTitle}>Bilgilendirme</strong>
                 <p style={styles.infoText}>
-                  Otomatik oluşturulan liste taslak olarak oluşturulur. Onay sürecinden geçtikten sonra kesinleşir.
+                  Otomatik oluÅŸturulan liste taslak olarak oluÅŸturulur. Onay sÃ¼recinden geÃ§tikten sonra kesinleÅŸir.
                 </p>
               </div>
             </div>
@@ -424,22 +420,22 @@ export default function AutoSchedulePage() {
               }}
             >
               <Play size={15} fill="none" />
-              {generating ? "Liste oluşturuluyor..." : "Otomatik Liste Oluştur"}
+              {generating ? "Liste oluÅŸturuluyor..." : "Otomatik Liste OluÅŸtur"}
             </button>
           </section>
 
           <section style={styles.panel}>
             <div style={styles.sectionHeader}>
-              <h2 style={styles.panelTitle}>Son Oluşturulan Listeler</h2>
-              <button type="button" style={styles.linkButton}>Tümünü Gör</button>
+              <h2 style={styles.panelTitle}>Son OluÅŸturulan Listeler</h2>
+              <button type="button" style={styles.linkButton}>TÃ¼mÃ¼nÃ¼ GÃ¶r</button>
             </div>
 
             <div style={styles.recentTable}>
               <div style={styles.recentHead}>
-                <span>Dönem</span>
+                <span>DÃ¶nem</span>
                 <span>Birim</span>
-                <span>Oluşturulma</span>
-                <span>Oluşturan</span>
+                <span>OluÅŸturulma</span>
+                <span>OluÅŸturan</span>
                 <span>Durum</span>
                 <span />
               </div>
@@ -458,7 +454,7 @@ export default function AutoSchedulePage() {
                         color: list.status === "approved" ? "#15803d" : "#3157d8",
                       }}
                     >
-                      {list.status === "approved" ? "Onaylandı" : "Taslak"}
+                      {list.status === "approved" ? "OnaylandÄ±" : "Taslak"}
                     </span>
                   </span>
                   <button
@@ -466,8 +462,8 @@ export default function AutoSchedulePage() {
                     onClick={list.id === "current-draft" ? () => void handleCommit() : undefined}
                     disabled={list.id === "current-draft" && committing}
                     style={styles.moreButton}
-                    aria-label={list.id === "current-draft" ? "Taslağı kaydet" : "Liste işlemleri"}
-                    title={list.id === "current-draft" ? "Taslağı kaydet" : "Liste işlemleri"}
+                    aria-label={list.id === "current-draft" ? "TaslaÄŸÄ± kaydet" : "Liste iÅŸlemleri"}
+                    title={list.id === "current-draft" ? "TaslaÄŸÄ± kaydet" : "Liste iÅŸlemleri"}
                   >
                     <MoreVertical size={16} />
                   </button>
@@ -478,9 +474,9 @@ export default function AutoSchedulePage() {
             {meta && (
               <div style={styles.metaStrip}>
                 <span>Fairness: {meta.fairnessScore}</span>
-                <span>Saat farkı: {meta.hourSpread}</span>
-                <span>Nöbet farkı: {meta.totalNightSpread}</span>
-                <span>{rows.length} taslak kayıt</span>
+                <span>Saat farkÄ±: {meta.hourSpread}</span>
+                <span>NÃ¶bet farkÄ±: {meta.totalNightSpread}</span>
+                <span>{rows.length} taslak kayÄ±t</span>
               </div>
             )}
           </section>
@@ -490,7 +486,7 @@ export default function AutoSchedulePage() {
           <div style={styles.shiftPanelHeader}>
             <div>
               <h2 style={styles.panelTitle}>Vardiya Tipleri</h2>
-              <p style={styles.panelDescription}>Bu birim için tanımlı vardiya tipleri ve saat aralıkları.</p>
+              <p style={styles.panelDescription}>Bu birim iÃ§in tanÄ±mlÄ± vardiya tipleri ve saat aralÄ±klarÄ±.</p>
             </div>
             <div style={styles.shiftHeaderActions}>
               <button
@@ -509,16 +505,16 @@ export default function AutoSchedulePage() {
 
           <div style={styles.statsGrid}>
             <StatCard value={shiftTypeCounts.total} label="Toplam" />
-            <StatCard value={shiftTypeCounts.day} label="Gündüz" />
+            <StatCard value={shiftTypeCounts.day} label="GÃ¼ndÃ¼z" />
             <StatCard value={shiftTypeCounts.night} label="Gece" />
-            <StatCard value={shiftTypeCounts.duty} label="Nöbet" />
+            <StatCard value={shiftTypeCounts.duty} label="NÃ¶bet" />
           </div>
 
           <div style={styles.shiftList}>
             {loadingShiftTypes ? (
-              <p style={styles.emptyText}>Vardiya tipleri yükleniyor...</p>
+              <p style={styles.emptyText}>Vardiya tipleri yÃ¼kleniyor...</p>
             ) : shiftTypes.length === 0 ? (
-              <p style={styles.emptyText}>Kayıtlı vardiya tipi bulunamadı.</p>
+              <p style={styles.emptyText}>KayÄ±tlÄ± vardiya tipi bulunamadÄ±.</p>
             ) : (
               shiftTypes.map((shiftType) => (
                 <div key={shiftType.id} style={styles.shiftRow}>
@@ -531,13 +527,13 @@ export default function AutoSchedulePage() {
                     style={{
                       ...styles.kindBadge,
                       background:
-                        getShiftKind(shiftType) === "Nöbet"
+                        getShiftKind(shiftType) === "NÃ¶bet"
                           ? "#fff0c7"
                           : getShiftKind(shiftType) === "Gece"
                             ? "#ede9fe"
                             : "#dbeafe",
                       color:
-                        getShiftKind(shiftType) === "Nöbet"
+                        getShiftKind(shiftType) === "NÃ¶bet"
                           ? "#c47d00"
                           : getShiftKind(shiftType) === "Gece"
                             ? "#6d28d9"
@@ -547,10 +543,10 @@ export default function AutoSchedulePage() {
                     {getShiftKind(shiftType)}
                   </span>
                   <div style={styles.durationBlock}>
-                    <span>Süre</span>
+                    <span>SÃ¼re</span>
                     <strong>{getShiftDuration(shiftType)} saat</strong>
                   </div>
-                  <button type="button" style={styles.plainIconButton} aria-label="Vardiya işlemleri">
+                  <button type="button" style={styles.plainIconButton} aria-label="Vardiya iÅŸlemleri">
                     <MoreVertical size={18} />
                   </button>
                 </div>
@@ -561,7 +557,7 @@ export default function AutoSchedulePage() {
           <div style={styles.shiftInfoBox}>
             <Info size={17} />
             <span>
-              Vardiya tiplerinde değişiklik yapmanız halinde, taslak listeleri yeniden oluşturmanız önerilir.
+              Vardiya tiplerinde deÄŸiÅŸiklik yapmanÄ±z halinde, taslak listeleri yeniden oluÅŸturmanÄ±z Ã¶nerilir.
             </span>
           </div>
         </section>
@@ -573,20 +569,18 @@ export default function AutoSchedulePage() {
             style={styles.shiftModal}
             role="dialog"
             aria-modal="true"
-            aria-labelledby="add-shift-modal-title"
+            aria-labelledby="add-shift-type-modal-title"
           >
             <div style={styles.modalHeader}>
               <div style={styles.modalTitleGroup}>
                 <span style={styles.modalIconBox}>
-                  <CalendarDays size={28} />
+                  <Tag size={28} />
                 </span>
                 <div>
-                  <h2 id="add-shift-modal-title" style={styles.modalTitle}>
-                    Vardiya Ekle
+                  <h2 id="add-shift-type-modal-title" style={styles.modalTitle}>
+                    Vardiya Tipi Ekle
                   </h2>
-                  <p style={styles.modalSubtitle}>
-                    Yeni vardiya bilgilerini girerek takviminize ekleyin.
-                  </p>
+                  <p style={styles.modalSubtitle}>Yeni bir vardiya tipi oluşturun.</p>
                 </div>
               </div>
               <button
@@ -601,54 +595,58 @@ export default function AutoSchedulePage() {
 
             <div style={styles.modalGrid}>
               <label style={styles.modalField}>
-                <span>Vardiya Adı</span>
+                <span>Vardiya Tipi Adı</span>
                 <span style={styles.modalInputShell}>
-                  <CalendarDays size={17} />
+                  <Tag size={17} />
                   <input
                     type="text"
-                    placeholder="Örn: Sabah Vardiyası"
+                    placeholder="Örn: Sabah, Gece, Nöbet"
                     style={styles.modalInput}
                   />
                 </span>
               </label>
 
-              <label style={styles.modalField}>
-                <span>Vardiya Tipi</span>
-                <span style={styles.modalInputShell}>
-                  <Tag size={17} />
-                  <select defaultValue="" style={styles.modalSelect}>
-                    <option value="" disabled>
-                      Vardiya tipi seçin
-                    </option>
-                    {shiftTypes.map((shiftType) => (
-                      <option key={shiftType.id} value={shiftType.id}>
-                        {shiftType.name}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown size={17} />
-                </span>
-              </label>
+              <div style={styles.modalField}>
+                <span>Renk</span>
+                <p style={styles.colorHint}>Takvim ve listelerde gösterilecek renk seçin.</p>
+                <div style={styles.colorPickerRow}>
+                  {["#2f6df6", "#2bc782", "#8a3ffc", "#fb923c", "#f43f5e", "#55c8d8", "#8491b3"].map(
+                    (color, index) => (
+                      <button
+                        key={color}
+                        type="button"
+                        style={{
+                          ...styles.colorDot,
+                          background: color,
+                          boxShadow:
+                            index === 0
+                              ? "0 0 0 3px #ffffff, 0 0 0 5px #8fb2ff"
+                              : "0 8px 18px rgba(15,23,42,0.12)",
+                        }}
+                        aria-label={`Renk ${index + 1}`}
+                      >
+                        {index === 0 ? <Check size={16} /> : null}
+                      </button>
+                    )
+                  )}
+                </div>
+              </div>
             </div>
 
             <div style={styles.modalSection}>
               <div style={styles.modalSectionHeader}>
-                <CalendarDays size={17} />
+                <Clock size={17} />
                 <div>
-                  <h3 style={styles.modalSectionTitle}>Tarih ve Süre</h3>
-                  <p style={styles.modalSectionText}>Vardiyanın başlayacağı tarih ve saat aralığını belirleyin.</p>
+                  <h3 style={styles.modalSectionTitle}>
+                    Saat Aralığı <span style={styles.modalOptionalText}>(Varsayılan)</span>
+                  </h3>
+                  <p style={styles.modalSectionText}>
+                    Bu vardiya tipinin önerilen başlangıç ve bitiş saatini belirleyin.
+                  </p>
                 </div>
               </div>
 
               <div style={styles.modalThreeGrid}>
-                <label style={styles.modalField}>
-                  <span>Tarih</span>
-                  <span style={styles.modalInputShell}>
-                    <CalendarDays size={17} />
-                    <input type="date" style={styles.modalInput} />
-                  </span>
-                </label>
-
                 <label style={styles.modalField}>
                   <span>Başlangıç Saati</span>
                   <span style={styles.modalInputShell}>
@@ -678,55 +676,36 @@ export default function AutoSchedulePage() {
                     <ChevronDown size={17} />
                   </span>
                 </label>
-              </div>
 
-              <label style={styles.nightShiftRow}>
-                <div style={styles.nightShiftText}>
-                  <Moon size={22} />
-                  <div>
-                    <strong style={styles.nightShiftTitle}>Gece vardiyası</strong>
-                    <span style={styles.nightShiftDesc}>Vardiya 22:00 - 06:00 saatleri arasında</span>
-                  </div>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={isNightShift}
-                  onChange={(event) => setIsNightShift(event.target.checked)}
-                  style={styles.hiddenCheckbox}
-                />
-                <span
-                  style={{
-                    ...styles.modalSwitch,
-                    background: isNightShift ? "#315fe8" : "#b9c3d8",
-                  }}
-                >
-                  <span
-                    style={{
-                      ...styles.modalSwitchKnob,
-                      transform: isNightShift ? "translateX(20px)" : "translateX(0)",
-                    }}
-                  />
-                </span>
-              </label>
+                <label style={styles.modalField}>
+                  <span>Süre</span>
+                  <span style={styles.modalInputShell}>
+                    <input type="text" value="8 saat" readOnly style={styles.modalInput} />
+                  </span>
+                </label>
+              </div>
             </div>
 
             <div style={styles.modalSection}>
               <div style={styles.modalSectionHeader}>
-                <Users size={17} />
+                <Tag size={17} />
                 <div>
-                  <h3 style={styles.modalSectionTitle}>Personel Ataması</h3>
-                  <p style={styles.modalSectionText}>Vardiyada görev alacak personeli seçin.</p>
+                  <h3 style={styles.modalSectionTitle}>Vardiya Tipi Kategorisi</h3>
+                  <p style={styles.modalSectionText}>
+                    Vardiya tipini kategorize ederek raporlama ve filtreleme süreçlerini kolaylaştırın.
+                  </p>
                 </div>
               </div>
               <span style={styles.modalInputShell}>
-                <UserRound size={17} />
+                <Tag size={17} />
                 <select defaultValue="" style={styles.modalSelect}>
                   <option value="" disabled>
-                    Personel seçin
+                    Kategori seçin (isteğe bağlı)
                   </option>
-                  <option>Demet Çelik Gelen</option>
-                  <option>Yusuf Doğan Gökmen</option>
-                  <option>Emir Oral</option>
+                  <option>Gündüz</option>
+                  <option>Gece</option>
+                  <option>Nöbet</option>
+                  <option>İdari</option>
                 </select>
                 <ChevronDown size={17} />
               </span>
@@ -737,9 +716,11 @@ export default function AutoSchedulePage() {
                 <FileText size={17} />
                 <div>
                   <h3 style={styles.modalSectionTitle}>
-                    Açıklama <span style={styles.modalOptionalText}>(Opsiyonel)</span>
+                    Açıklama <span style={styles.modalOptionalText}>(İsteğe bağlı)</span>
                   </h3>
-                  <p style={styles.modalSectionText}>Vardiya ile ilgili not veya açıklama ekleyebilirsiniz.</p>
+                  <p style={styles.modalSectionText}>
+                    Bu vardiya tipi ile ilgili not veya açıklama ekleyebilirsiniz.
+                  </p>
                 </div>
               </div>
               <label style={styles.textareaShell}>
@@ -765,18 +746,17 @@ export default function AutoSchedulePage() {
                 type="button"
                 style={styles.modalSaveButton}
                 onClick={() => {
-                  setSuccess("Vardiya bilgileri kaydedildi.");
+                  setSuccess("Vardiya tipi bilgileri kaydedildi.");
                   setIsShiftModalOpen(false);
                 }}
               >
                 <Check size={17} />
-                Vardiyayı Kaydet
+                Kaydet
               </button>
             </div>
           </section>
         </div>
-      )}
-    </main>
+      )}    </main>
   );
 }
 
@@ -808,7 +788,7 @@ function RuleToggle({
           borderColor: checked ? "#3f63f4" : "#b7c1d4",
         }}
       >
-        {checked ? "✓" : ""}
+        {checked ? "âœ“" : ""}
       </span>
     </label>
   );
@@ -1489,6 +1469,30 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 13,
     fontWeight: 800,
     color: "#101a3c",
+  },
+  colorHint: {
+    margin: "-4px 0 4px",
+    fontSize: 12,
+    lineHeight: 1.35,
+    fontWeight: 600,
+    color: "#61708f",
+  },
+  colorPickerRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: 24,
+    minHeight: 42,
+  },
+  colorDot: {
+    width: 32,
+    height: 32,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: "none",
+    borderRadius: "50%",
+    color: "#ffffff",
+    cursor: "pointer",
   },
   modalInputShell: {
     height: 46,
