@@ -4,16 +4,23 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Bell,
   CalendarDays,
+  Check,
   ChevronDown,
+  Clock,
+  FileText,
   Info,
   Keyboard,
+  Moon,
   MoreVertical,
   Play,
   Plus,
   RefreshCw,
   Search,
   SlidersHorizontal,
+  Tag,
+  Users,
   UserRound,
+  X,
 } from "lucide-react";
 import { apiClient } from "@/lib/api";
 
@@ -127,6 +134,9 @@ export default function AutoSchedulePage() {
   const [committing, setCommitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [isShiftModalOpen, setIsShiftModalOpen] = useState(false);
+  const [newShiftDescription, setNewShiftDescription] = useState("");
+  const [isNightShift, setIsNightShift] = useState(false);
 
   useEffect(() => {
     const loadDepartments = async () => {
@@ -483,7 +493,11 @@ export default function AutoSchedulePage() {
               <p style={styles.panelDescription}>Bu birim için tanımlı vardiya tipleri ve saat aralıkları.</p>
             </div>
             <div style={styles.shiftHeaderActions}>
-              <button type="button" style={styles.secondaryButton}>
+              <button
+                type="button"
+                style={styles.secondaryButton}
+                onClick={() => setIsShiftModalOpen(true)}
+              >
                 <Plus size={17} />
                 Yeni Vardiya Tipi
               </button>
@@ -552,6 +566,216 @@ export default function AutoSchedulePage() {
           </div>
         </section>
       </div>
+
+      {isShiftModalOpen && (
+        <div style={styles.modalBackdrop} role="presentation">
+          <section
+            style={styles.shiftModal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="add-shift-modal-title"
+          >
+            <div style={styles.modalHeader}>
+              <div style={styles.modalTitleGroup}>
+                <span style={styles.modalIconBox}>
+                  <CalendarDays size={28} />
+                </span>
+                <div>
+                  <h2 id="add-shift-modal-title" style={styles.modalTitle}>
+                    Vardiya Ekle
+                  </h2>
+                  <p style={styles.modalSubtitle}>
+                    Yeni vardiya bilgilerini girerek takviminize ekleyin.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                style={styles.modalCloseButton}
+                onClick={() => setIsShiftModalOpen(false)}
+                aria-label="Modalı kapat"
+              >
+                <X size={22} />
+              </button>
+            </div>
+
+            <div style={styles.modalGrid}>
+              <label style={styles.modalField}>
+                <span>Vardiya Adı</span>
+                <span style={styles.modalInputShell}>
+                  <CalendarDays size={17} />
+                  <input
+                    type="text"
+                    placeholder="Örn: Sabah Vardiyası"
+                    style={styles.modalInput}
+                  />
+                </span>
+              </label>
+
+              <label style={styles.modalField}>
+                <span>Vardiya Tipi</span>
+                <span style={styles.modalInputShell}>
+                  <Tag size={17} />
+                  <select defaultValue="" style={styles.modalSelect}>
+                    <option value="" disabled>
+                      Vardiya tipi seçin
+                    </option>
+                    {shiftTypes.map((shiftType) => (
+                      <option key={shiftType.id} value={shiftType.id}>
+                        {shiftType.name}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown size={17} />
+                </span>
+              </label>
+            </div>
+
+            <div style={styles.modalSection}>
+              <div style={styles.modalSectionHeader}>
+                <CalendarDays size={17} />
+                <div>
+                  <h3 style={styles.modalSectionTitle}>Tarih ve Süre</h3>
+                  <p style={styles.modalSectionText}>Vardiyanın başlayacağı tarih ve saat aralığını belirleyin.</p>
+                </div>
+              </div>
+
+              <div style={styles.modalThreeGrid}>
+                <label style={styles.modalField}>
+                  <span>Tarih</span>
+                  <span style={styles.modalInputShell}>
+                    <CalendarDays size={17} />
+                    <input type="date" style={styles.modalInput} />
+                  </span>
+                </label>
+
+                <label style={styles.modalField}>
+                  <span>Başlangıç Saati</span>
+                  <span style={styles.modalInputShell}>
+                    <Clock size={17} />
+                    <select defaultValue="08:00" style={styles.modalSelect}>
+                      <option>08:00</option>
+                      <option>12:00</option>
+                      <option>16:00</option>
+                      <option>20:00</option>
+                      <option>22:00</option>
+                    </select>
+                    <ChevronDown size={17} />
+                  </span>
+                </label>
+
+                <label style={styles.modalField}>
+                  <span>Bitiş Saati</span>
+                  <span style={styles.modalInputShell}>
+                    <Clock size={17} />
+                    <select defaultValue="16:00" style={styles.modalSelect}>
+                      <option>16:00</option>
+                      <option>20:00</option>
+                      <option>00:00</option>
+                      <option>06:00</option>
+                      <option>08:00</option>
+                    </select>
+                    <ChevronDown size={17} />
+                  </span>
+                </label>
+              </div>
+
+              <label style={styles.nightShiftRow}>
+                <div style={styles.nightShiftText}>
+                  <Moon size={22} />
+                  <div>
+                    <strong style={styles.nightShiftTitle}>Gece vardiyası</strong>
+                    <span style={styles.nightShiftDesc}>Vardiya 22:00 - 06:00 saatleri arasında</span>
+                  </div>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={isNightShift}
+                  onChange={(event) => setIsNightShift(event.target.checked)}
+                  style={styles.hiddenCheckbox}
+                />
+                <span
+                  style={{
+                    ...styles.modalSwitch,
+                    background: isNightShift ? "#315fe8" : "#b9c3d8",
+                  }}
+                >
+                  <span
+                    style={{
+                      ...styles.modalSwitchKnob,
+                      transform: isNightShift ? "translateX(20px)" : "translateX(0)",
+                    }}
+                  />
+                </span>
+              </label>
+            </div>
+
+            <div style={styles.modalSection}>
+              <div style={styles.modalSectionHeader}>
+                <Users size={17} />
+                <div>
+                  <h3 style={styles.modalSectionTitle}>Personel Ataması</h3>
+                  <p style={styles.modalSectionText}>Vardiyada görev alacak personeli seçin.</p>
+                </div>
+              </div>
+              <span style={styles.modalInputShell}>
+                <UserRound size={17} />
+                <select defaultValue="" style={styles.modalSelect}>
+                  <option value="" disabled>
+                    Personel seçin
+                  </option>
+                  <option>Demet Çelik Gelen</option>
+                  <option>Yusuf Doğan Gökmen</option>
+                  <option>Emir Oral</option>
+                </select>
+                <ChevronDown size={17} />
+              </span>
+            </div>
+
+            <div style={styles.modalSection}>
+              <div style={styles.modalSectionHeader}>
+                <FileText size={17} />
+                <div>
+                  <h3 style={styles.modalSectionTitle}>
+                    Açıklama <span style={styles.modalOptionalText}>(Opsiyonel)</span>
+                  </h3>
+                  <p style={styles.modalSectionText}>Vardiya ile ilgili not veya açıklama ekleyebilirsiniz.</p>
+                </div>
+              </div>
+              <label style={styles.textareaShell}>
+                <textarea
+                  value={newShiftDescription}
+                  onChange={(event) => setNewShiftDescription(event.target.value.slice(0, 200))}
+                  placeholder="Açıklama girin..."
+                  style={styles.modalTextarea}
+                />
+                <span style={styles.textareaCounter}>{newShiftDescription.length}/200</span>
+              </label>
+            </div>
+
+            <div style={styles.modalFooter}>
+              <button
+                type="button"
+                style={styles.modalCancelButton}
+                onClick={() => setIsShiftModalOpen(false)}
+              >
+                İptal
+              </button>
+              <button
+                type="button"
+                style={styles.modalSaveButton}
+                onClick={() => {
+                  setSuccess("Vardiya bilgileri kaydedildi.");
+                  setIsShiftModalOpen(false);
+                }}
+              >
+                <Check size={17} />
+                Vardiyayı Kaydet
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
     </main>
   );
 }
@@ -1181,5 +1405,276 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#3d5280",
     fontSize: 13,
     fontWeight: 600,
+  },
+  modalBackdrop: {
+    position: "fixed",
+    inset: 0,
+    zIndex: 100,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "34px",
+    background: "rgba(38, 55, 104, 0.48)",
+    backdropFilter: "blur(9px)",
+  },
+  shiftModal: {
+    width: "min(1040px, calc(100vw - 68px))",
+    maxHeight: "calc(100vh - 68px)",
+    display: "flex",
+    flexDirection: "column",
+    overflowY: "auto",
+    borderRadius: 12,
+    border: "1px solid rgba(218, 226, 244, 0.95)",
+    background: "rgba(255,255,255,0.98)",
+    boxShadow: "0 34px 90px rgba(17, 31, 72, 0.28)",
+  },
+  modalHeader: {
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 22,
+    padding: "32px 34px 22px",
+  },
+  modalTitleGroup: {
+    display: "flex",
+    alignItems: "center",
+    gap: 18,
+  },
+  modalIconBox: {
+    width: 58,
+    height: 58,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 10,
+    background: "#eef3ff",
+    color: "#315fe8",
+    flexShrink: 0,
+  },
+  modalTitle: {
+    margin: 0,
+    fontSize: 26,
+    lineHeight: 1.1,
+    fontWeight: 850,
+    letterSpacing: "-0.035em",
+    color: "#101a3c",
+  },
+  modalSubtitle: {
+    margin: "9px 0 0",
+    fontSize: 13,
+    fontWeight: 600,
+    color: "#61708f",
+  },
+  modalCloseButton: {
+    width: 46,
+    height: 46,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: "1px solid #dbe4f4",
+    borderRadius: 8,
+    background: "#ffffff",
+    color: "#0f1f46",
+    cursor: "pointer",
+  },
+  modalGrid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: 24,
+    padding: "0 34px 22px",
+  },
+  modalField: {
+    display: "grid",
+    gap: 10,
+    fontSize: 13,
+    fontWeight: 800,
+    color: "#101a3c",
+  },
+  modalInputShell: {
+    height: 46,
+    display: "flex",
+    alignItems: "center",
+    gap: 12,
+    padding: "0 16px",
+    border: "1px solid #d4deef",
+    borderRadius: 8,
+    background: "#ffffff",
+    color: "#315fe8",
+  },
+  modalInput: {
+    flex: 1,
+    minWidth: 0,
+    height: "100%",
+    border: "none",
+    outline: "none",
+    background: "transparent",
+    color: "#10204a",
+    fontSize: 14,
+    fontWeight: 600,
+    fontFamily: "inherit",
+  },
+  modalSelect: {
+    flex: 1,
+    minWidth: 0,
+    height: "100%",
+    border: "none",
+    outline: "none",
+    appearance: "none",
+    background: "transparent",
+    color: "#61708f",
+    fontSize: 14,
+    fontWeight: 650,
+    fontFamily: "inherit",
+  },
+  modalSection: {
+    margin: "0 22px 12px",
+    padding: "22px 18px 18px",
+    border: "1px solid #dfe7f4",
+    borderRadius: 10,
+    background: "linear-gradient(180deg, #ffffff 0%, #fbfdff 100%)",
+  },
+  modalSectionHeader: {
+    display: "flex",
+    alignItems: "flex-start",
+    gap: 12,
+    marginBottom: 18,
+    color: "#315fe8",
+  },
+  modalSectionTitle: {
+    margin: 0,
+    fontSize: 14,
+    lineHeight: 1.25,
+    fontWeight: 850,
+    color: "#101a3c",
+  },
+  modalSectionText: {
+    margin: "8px 0 0",
+    fontSize: 12,
+    lineHeight: 1.4,
+    fontWeight: 600,
+    color: "#61708f",
+  },
+  modalThreeGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+    gap: 20,
+  },
+  nightShiftRow: {
+    minHeight: 66,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 20,
+    marginTop: 18,
+    padding: "0 16px",
+    border: "1px solid #e1e8f4",
+    borderRadius: 8,
+    background: "#ffffff",
+    cursor: "pointer",
+  },
+  nightShiftText: {
+    display: "flex",
+    alignItems: "center",
+    gap: 16,
+    color: "#315fe8",
+  },
+  nightShiftTitle: {
+    display: "block",
+    fontSize: 13,
+    lineHeight: 1.25,
+    fontWeight: 850,
+    color: "#101a3c",
+  },
+  nightShiftDesc: {
+    display: "block",
+    marginTop: 5,
+    fontSize: 11,
+    fontWeight: 650,
+    color: "#61708f",
+  },
+  modalSwitch: {
+    width: 42,
+    height: 24,
+    display: "inline-flex",
+    alignItems: "center",
+    padding: 2,
+    borderRadius: 999,
+    transition: "background 0.2s ease",
+  },
+  modalSwitchKnob: {
+    width: 20,
+    height: 20,
+    borderRadius: "50%",
+    background: "#ffffff",
+    boxShadow: "0 2px 8px rgba(15,23,42,0.22)",
+    transition: "transform 0.2s ease",
+  },
+  textareaShell: {
+    position: "relative",
+    display: "block",
+  },
+  modalOptionalText: {
+    fontWeight: 700,
+    color: "#6b7893",
+  },
+  modalTextarea: {
+    width: "100%",
+    height: 82,
+    resize: "none",
+    boxSizing: "border-box",
+    border: "1px solid #d4deef",
+    borderRadius: 8,
+    outline: "none",
+    padding: "15px 14px 24px",
+    color: "#10204a",
+    fontSize: 14,
+    fontWeight: 600,
+    fontFamily: "inherit",
+    background: "#ffffff",
+  },
+  textareaCounter: {
+    position: "absolute",
+    right: 13,
+    bottom: 10,
+    fontSize: 12,
+    fontWeight: 700,
+    color: "#7c89a4",
+  },
+  modalFooter: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    gap: 12,
+    marginTop: "auto",
+    padding: "24px 34px 28px",
+    borderTop: "1px solid #edf2f8",
+    background: "rgba(255,255,255,0.96)",
+  },
+  modalCancelButton: {
+    height: 42,
+    minWidth: 142,
+    border: "1px solid #d4deef",
+    borderRadius: 8,
+    background: "#ffffff",
+    color: "#2456e8",
+    fontSize: 13,
+    fontWeight: 800,
+    cursor: "pointer",
+  },
+  modalSaveButton: {
+    height: 42,
+    minWidth: 194,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 9,
+    border: "none",
+    borderRadius: 8,
+    background: "linear-gradient(135deg, #3f63f4 0%, #234bdc 100%)",
+    color: "#ffffff",
+    fontSize: 13,
+    fontWeight: 850,
+    cursor: "pointer",
+    boxShadow: "0 14px 24px rgba(35,75,220,0.24)",
   },
 };
