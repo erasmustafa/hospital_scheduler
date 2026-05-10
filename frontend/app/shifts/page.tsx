@@ -120,6 +120,7 @@ function ModalDropdown({
     >
       <button
         type="button"
+        className="shift-modal-button shift-modal-dropdown-trigger"
         style={{
           ...styles.modalDropdownButton,
           ...(hasError ? styles.modalInputShellError : {}),
@@ -156,6 +157,7 @@ function ModalDropdown({
               <button
                 key={option.value}
                 type="button"
+                className="shift-modal-dropdown-option"
                 style={{
                   ...styles.modalDropdownItem,
                   ...(selected ? styles.modalDropdownItemActive : {}),
@@ -514,6 +516,91 @@ export default function ShiftsPage() {
               transform: translateY(0) scale(1);
             }
           }
+
+          .shift-modal-button {
+            transform: translateY(0) scale(1);
+            transition:
+              transform 160ms ease,
+              filter 160ms ease,
+              box-shadow 160ms ease,
+              border-color 160ms ease,
+              background 160ms ease;
+          }
+
+          .shift-modal-button:hover:not(:disabled) {
+            transform: translateY(-1px);
+            filter: brightness(1.02);
+            box-shadow: 0 14px 28px rgba(37, 86, 232, 0.16) !important;
+          }
+
+          .shift-modal-button:active:not(:disabled) {
+            transform: translateY(0) scale(0.985);
+            filter: brightness(0.98);
+          }
+
+          .shift-modal-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.82;
+          }
+
+          .shift-modal-dropdown-trigger:hover {
+            border-color: #9db5ff !important;
+            background: #fbfdff !important;
+          }
+
+          .shift-modal-dropdown-trigger:hover span:last-child {
+            background: #e9efff !important;
+          }
+
+          .shift-modal-dropdown-option:hover {
+            background: linear-gradient(135deg, #f1f6ff 0%, #ffffff 100%) !important;
+            color: #2456e8 !important;
+            transform: translateX(2px);
+          }
+
+          .shift-modal-dropdown-option:active {
+            transform: translateX(1px) scale(0.99);
+          }
+
+          .shift-modal-toggle-row {
+            transition:
+              background 180ms ease,
+              border-color 180ms ease,
+              box-shadow 180ms ease,
+              transform 180ms ease;
+          }
+
+          .shift-modal-toggle-row:hover {
+            transform: translateY(-1px);
+            border-color: #aebfff !important;
+            background: #fbfdff !important;
+            box-shadow: 0 14px 28px rgba(49, 95, 232, 0.10);
+          }
+
+          .shift-modal-toggle-row:active {
+            transform: scale(0.995);
+          }
+
+          .shift-modal-toggle-track {
+            transition:
+              background 240ms cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 240ms ease,
+              transform 180ms ease;
+          }
+
+          .shift-modal-toggle-row:hover .shift-modal-toggle-track {
+            box-shadow: 0 0 0 5px rgba(49, 95, 232, 0.12);
+          }
+
+          .shift-modal-toggle-knob {
+            transition:
+              transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 220ms ease;
+          }
+
+          .shift-modal-toggle-row:hover .shift-modal-toggle-knob {
+            box-shadow: 0 5px 14px rgba(15, 23, 42, 0.26) !important;
+          }
         `,
       }}
     />
@@ -819,7 +906,13 @@ export default function ShiftsPage() {
                   <p style={styles.modalSubtitle}>Yeni vardiya bilgilerini girerek takviminize ekleyin.</p>
                 </div>
               </div>
-              <button type="button" style={styles.modalClose} onClick={closeCreateModal} aria-label="Modalı kapat">
+              <button
+                type="button"
+                className="shift-modal-button"
+                style={styles.modalClose}
+                onClick={closeCreateModal}
+                aria-label="Modalı kapat"
+              >
                 <X size={22} />
               </button>
             </div>
@@ -934,7 +1027,7 @@ export default function ShiftsPage() {
                 </label>
               </div>
 
-              <label style={styles.nightShiftRow}>
+              <label className="shift-modal-toggle-row" style={styles.nightShiftRow}>
                 <div style={styles.nightShiftText}>
                   <Moon size={22} />
                   <div>
@@ -959,12 +1052,14 @@ export default function ShiftsPage() {
                   style={styles.hiddenCheckbox}
                 />
                 <span
+                  className="shift-modal-toggle-track"
                   style={{
                     ...styles.modalSwitch,
                     background: newAssignment.isNightShift ? "#315fe8" : "#b9c3d8",
                   }}
                 >
                   <span
+                    className="shift-modal-toggle-knob"
                     style={{
                       ...styles.modalSwitchKnob,
                       transform: newAssignment.isNightShift
@@ -1037,11 +1132,17 @@ export default function ShiftsPage() {
             ) : null}
 
             <div style={styles.modalActions}>
-              <button type="button" style={styles.modalSecondaryButton} onClick={closeCreateModal}>
+              <button
+                type="button"
+                className="shift-modal-button"
+                style={styles.modalSecondaryButton}
+                onClick={closeCreateModal}
+              >
                 İptal
               </button>
               <button
                 type="button"
+                className="shift-modal-button"
                 style={{
                   ...styles.modalPrimaryButton,
                   background: createSuccess
