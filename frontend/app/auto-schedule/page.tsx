@@ -1,6 +1,20 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import {
+  Bell,
+  CalendarDays,
+  ChevronDown,
+  Info,
+  Keyboard,
+  MoreVertical,
+  Play,
+  Plus,
+  RefreshCw,
+  Search,
+  SlidersHorizontal,
+  UserRound,
+} from "lucide-react";
 import { apiClient } from "@/lib/api";
 
 type Department = {
@@ -48,8 +62,27 @@ type ShiftTypeRow = {
   color: string;
 };
 
+type RecentList = {
+  id: string;
+  period: string;
+  department: string;
+  createdAt: string;
+  createdBy: string;
+  status: "approved" | "draft";
+};
+
 function isoDate(value: Date) {
   return value.toISOString().slice(0, 10);
+}
+
+function formatDate(value: string) {
+  if (!value) return "";
+  const [year, month, day] = value.split("-");
+  return `${day}.${month}.${year}`;
+}
+
+function formatPeriod(startDate: string, endDate: string) {
+  return `${formatDate(startDate)} - ${formatDate(endDate)}`;
 }
 
 function getShiftDuration(row: ShiftTypeRow) {
@@ -57,6 +90,13 @@ function getShiftDuration(row: ShiftTypeRow) {
   const [endHour] = row.endTime.split(":").map(Number);
   if (Number.isNaN(startHour) || Number.isNaN(endHour)) return 0;
   return endHour >= startHour ? endHour - startHour : 24 - startHour + endHour;
+}
+
+function getShiftKind(row: ShiftTypeRow) {
+  const normalized = row.name.toLocaleLowerCase("tr-TR");
+  if (normalized.includes("nöbet") || normalized.includes("nobet")) return "Nöbet";
+  if (normalized.includes("gece")) return "Gece";
+  return "Gündüz";
 }
 
 export default function AutoSchedulePage() {
@@ -74,13 +114,12 @@ export default function AutoSchedulePage() {
   const [meta, setMeta] = useState<PreviewMeta | null>(null);
   const [shiftTypes, setShiftTypes] = useState<ShiftTypeRow[]>([]);
 
-  /* planning rule options */
   const [nightBalance, setNightBalance] = useState(true);
   const [weeklyLimit, setWeeklyLimit] = useState(true);
   const [respectAvailability, setRespectAvailability] = useState(true);
   const [weekendBalance, setWeekendBalance] = useState(true);
   const [draftOnly, setDraftOnly] = useState(false);
-  const [replaceExisting, setReplaceExisting] = useState(true);
+  const [replaceExisting] = useState(true);
 
   const [loadingDepartments, setLoadingDepartments] = useState(true);
   const [loadingShiftTypes, setLoadingShiftTypes] = useState(true);
@@ -120,15 +159,53 @@ export default function AutoSchedulePage() {
     void loadShiftTypes();
   }, []);
 
+  const selectedDepartment = departments.find((department) => department.id === departmentId);
+
   const shiftTypeCounts = useMemo(
     () => ({
       total: shiftTypes.length,
       day: shiftTypes.filter((row) => !row.isNight).length,
-      night: shiftTypes.filter((row) => row.isNight).length,
-      long: shiftTypes.filter((row) => getShiftDuration(row) >= 12).length,
+      night: shiftTypes.filter((row) => row.name.toLocaleLowerCase("tr-TR").includes("gece")).length,
+      duty: shiftTypes.filter((row) => getShiftKind(row) === "Nöbet" || row.isNight).length,
     }),
     [shiftTypes]
   );
+
+  const recentLists = useMemo<RecentList[]>(() => {
+    const current: RecentList[] =
+      rows.length > 0
+        ? [
+            {
+              id: "current-draft",
+              period: formatPeriod(startDate, endDate),
+              department: selectedDepartment?.name ?? "Seçili birim",
+              createdAt: "Şimdi",
+              createdBy: "Admin",
+              status: "draft",
+            },
+          ]
+        : [];
+
+    return [
+      ...current,
+      {
+        id: "approved-sample",
+        period: "01.05.2026 - 31.05.2026",
+        department: selectedDepartment?.name ?? "Ameliyathane",
+        createdAt: "02.05.2026 14:20",
+        createdBy: "Admin",
+        status: "approved",
+      },
+      {
+        id: "draft-sample",
+        period: "01.04.2026 - 30.04.2026",
+        department: selectedDepartment?.name ?? "Ameliyathane",
+        createdAt: "28.04.2026 10:15",
+        createdBy: "Admin",
+        status: "draft",
+      },
+    ];
+  }, [endDate, rows.length, selectedDepartment?.name, startDate]);
 
   const handleGenerate = async () => {
     if (!departmentId) {
@@ -157,6 +234,7 @@ export default function AutoSchedulePage() {
       setRows(data.previewAssignments);
       setWarnings(data.warnings);
       setMeta(data.meta);
+      setSuccess("Taslak liste oluşturuldu.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Taslak oluşturulamadı.");
     } finally {
@@ -203,708 +281,905 @@ export default function AutoSchedulePage() {
 
   return (
     <main style={styles.main}>
-      {error && (
-        <p style={{ color: "#dc2626", fontSize: 13, margin: "0 0 12px 0" }}>
-          {error}
-        </p>
-      )}
-      {success && (
-        <p style={{ color: "#059669", fontSize: 13, margin: "0 0 12px 0" }}>
-          {success}
-        </p>
-      )}
-
-      <div style={styles.twoCol}>
-        {/* ── LEFT: FORM ─────────────────────────────────── */}
+      <header style={styles.pageHeader}>
         <div>
-          <section style={styles.card}>
-            <h2 style={styles.cardTitle}>Liste Oluştur</h2>
+          <h1 style={styles.pageTitle}>Otomatik Liste Oluştur</h1>
+          <p style={styles.pageSubtitle}>Seçilen birim için otomatik vardiya listesi oluşturun.</p>
+        </div>
 
-            <label style={styles.formLabel}>
-              <span style={styles.formLabelText}>Birim:</span>
-              <select
-                style={styles.formInput}
-                value={departmentId ?? ""}
-                onChange={(e) => setDepartmentId(Number(e.target.value))}
-                disabled={loadingDepartments || departments.length === 0}
-              >
-                <option value="">----------</option>
-                {departments.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.name}
-                  </option>
-                ))}
-              </select>
+        <div style={styles.headerActions}>
+          <div style={styles.searchBox}>
+            <Search size={16} color="#71809b" />
+            <span style={styles.searchPlaceholder}>Ara...</span>
+            <span style={styles.searchShortcut}>
+              <Keyboard size={12} />
+              K
+            </span>
+          </div>
+          <button type="button" style={styles.iconButton} aria-label="Bildirimler">
+            <Bell size={17} />
+            <span style={styles.notificationBadge}>3</span>
+          </button>
+          <div style={styles.userAvatar}>A</div>
+          <div>
+            <p style={styles.userName}>Admin</p>
+            <p style={styles.userRole}>Süper Yönetici</p>
+          </div>
+          <ChevronDown size={16} color="#64748b" />
+        </div>
+      </header>
+
+      {(error || success || warnings.length > 0) && (
+        <div style={styles.messageStack}>
+          {error && <p style={styles.errorMessage}>{error}</p>}
+          {success && <p style={styles.successMessage}>{success}</p>}
+          {warnings.slice(0, 2).map((warning, index) => (
+            <p key={`${warning}-${index}`} style={styles.warningMessage}>
+              {warning}
+            </p>
+          ))}
+        </div>
+      )}
+
+      <div style={styles.contentGrid}>
+        <div style={styles.leftColumn}>
+          <section style={styles.panel}>
+            <h2 style={styles.panelTitle}>Liste Oluştur</h2>
+
+            <label style={styles.fieldLabel}>
+              <span>Birim</span>
+              <span style={styles.selectShell}>
+                <select
+                  style={styles.selectInput}
+                  value={departmentId ?? ""}
+                  onChange={(event) => setDepartmentId(Number(event.target.value))}
+                  disabled={loadingDepartments || departments.length === 0}
+                >
+                  <option value="">Birim seçin</option>
+                  {departments.map((department) => (
+                    <option key={department.id} value={department.id}>
+                      {department.name}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown size={17} color="#71809b" />
+              </span>
             </label>
 
-            <label style={styles.formLabel}>
-              <span style={styles.formLabelText}>Başlangıç Tarihi:</span>
-              <input
-                type="date"
-                style={styles.formInput}
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-            </label>
+            <div style={styles.dateGrid}>
+              <label style={styles.fieldLabel}>
+                <span>Başlangıç Tarihi</span>
+                <span style={styles.dateShell}>
+                  <input
+                    type="date"
+                    style={styles.dateInput}
+                    value={startDate}
+                    onChange={(event) => setStartDate(event.target.value)}
+                  />
+                  <CalendarDays size={16} color="#334155" />
+                </span>
+              </label>
 
-            <label style={styles.formLabel}>
-              <span style={styles.formLabelText}>Bitiş Tarihi:</span>
-              <input
-                type="date"
-                style={styles.formInput}
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
-            </label>
+              <label style={styles.fieldLabel}>
+                <span>Bitiş Tarihi</span>
+                <span style={styles.dateShell}>
+                  <input
+                    type="date"
+                    style={styles.dateInput}
+                    value={endDate}
+                    onChange={(event) => setEndDate(event.target.value)}
+                  />
+                  <CalendarDays size={16} color="#334155" />
+                </span>
+              </label>
+            </div>
 
-            {/* ── Planning Rules ── */}
-            <div style={styles.rulesSection}>
+            <div style={styles.rulesPanel}>
               <div style={styles.rulesHeader}>
                 <h3 style={styles.rulesTitle}>Planlama Kuralları</h3>
-                <span style={styles.rulesLink}>Akıllı dağıtım seçenekleri</span>
+                <span style={styles.rulesLink}>
+                  Akıllı dağıtım seçenekleri
+                  <SlidersHorizontal size={13} />
+                </span>
               </div>
-              <div style={styles.rulesGrid}>
-                <label style={styles.ruleItem}>
-                  <span>Gece nöbetlerini dengeli dağıt:</span>
-                  <input
-                    type="checkbox"
-                    checked={nightBalance}
-                    onChange={(e) => setNightBalance(e.target.checked)}
-                    style={styles.checkbox}
-                  />
-                </label>
-                <label style={styles.ruleItem}>
-                  <span>Haftalık saat sınırını uygula:</span>
-                  <input
-                    type="checkbox"
-                    checked={weeklyLimit}
-                    onChange={(e) => setWeeklyLimit(e.target.checked)}
-                    style={styles.checkbox}
-                  />
-                </label>
-                <label style={styles.ruleItem}>
-                  <span>İzin/uygunluk kayıtlarını dikkate al:</span>
-                  <input
-                    type="checkbox"
-                    checked={respectAvailability}
-                    onChange={(e) => setRespectAvailability(e.target.checked)}
-                    style={styles.checkbox}
-                  />
-                </label>
-                <label style={styles.ruleItem}>
-                  <span>Sadece taslak oluştur:</span>
-                  <input
-                    type="checkbox"
-                    checked={draftOnly}
-                    onChange={(e) => setDraftOnly(e.target.checked)}
-                    style={styles.checkbox}
-                  />
-                </label>
-                <label style={styles.ruleItem}>
-                  <span>Hafta sonu görevlerini dengeli dağıt:</span>
-                  <input
-                    type="checkbox"
-                    checked={weekendBalance}
-                    onChange={(e) => setWeekendBalance(e.target.checked)}
-                    style={styles.checkbox}
-                  />
-                </label>
+
+              <div style={styles.rulesList}>
+                <RuleToggle label="Gece nöbetlerini dengeli dağıt" checked={nightBalance} onChange={setNightBalance} />
+                <RuleToggle label="İzin/uygunluk kayıtlarını dikkate al" checked={respectAvailability} onChange={setRespectAvailability} />
+                <RuleToggle label="Haftalık saat sınırını uygula" checked={weeklyLimit} onChange={setWeeklyLimit} />
+                <RuleToggle label="Hafta sonu görevlerini dengeli dağıt" checked={weekendBalance} onChange={setWeekendBalance} />
+                <RuleToggle label="Sadece taslak oluştur (onay gerektirmez)" checked={draftOnly} onChange={setDraftOnly} />
               </div>
             </div>
 
-            {/* ── Action Buttons ── */}
-            <div style={styles.formActions}>
-              <button type="button" style={styles.backButton}>
-                Vardiya Listesine Dön
-              </button>
-              <button
-                type="button"
-                onClick={() => void handleGenerate()}
-                disabled={generating || loadingDepartments}
-                style={styles.generateButton}
-              >
-                {generating ? "Oluşturuluyor..." : "Taslak Liste Oluştur"}
-              </button>
-            </div>
-          </section>
-
-          {/* ── SHIFT TYPES ── */}
-          <section style={styles.shiftTypesCard}>
-            <div style={styles.shiftTypesHeader}>
+            <div style={styles.infoBox}>
+              <span style={styles.infoIcon}>
+                <Info size={14} />
+              </span>
               <div>
-                <p style={styles.sectionEyebrow}>Vardiya Tipleri</p>
-                <h2 style={styles.shiftTypesTitle}>Otomatik liste şablonları</h2>
-                <p style={styles.shiftTypesDesc}>
-                  Liste motorunun kullanacağı vardiya saatlerini ve nöbet ayrımını buradan takip edin.
+                <strong style={styles.infoTitle}>Bilgilendirme</strong>
+                <p style={styles.infoText}>
+                  Otomatik oluşturulan liste taslak olarak oluşturulur. Onay sürecinden geçtikten sonra kesinleşir.
                 </p>
               </div>
-              <span style={styles.recordBadge}>{shiftTypes.length} kayıt</span>
             </div>
 
-            <div style={styles.shiftStatsGrid}>
-              <div style={styles.shiftStatPill}>
-                <span style={styles.shiftStatValue}>{shiftTypeCounts.total}</span>
-                <span style={styles.shiftStatLabel}>Toplam</span>
-              </div>
-              <div style={styles.shiftStatPill}>
-                <span style={styles.shiftStatValue}>{shiftTypeCounts.day}</span>
-                <span style={styles.shiftStatLabel}>Gündüz</span>
-              </div>
-              <div style={styles.shiftStatPill}>
-                <span style={styles.shiftStatValue}>{shiftTypeCounts.night}</span>
-                <span style={styles.shiftStatLabel}>Nöbet</span>
-              </div>
-              <div style={styles.shiftStatPill}>
-                <span style={styles.shiftStatValue}>{shiftTypeCounts.long}</span>
-                <span style={styles.shiftStatLabel}>Uzun</span>
-              </div>
-            </div>
-
-            {loadingShiftTypes ? (
-              <p style={styles.shiftTypesStatus}>Vardiya tipleri yükleniyor...</p>
-            ) : shiftTypes.length === 0 ? (
-              <p style={styles.shiftTypesStatus}>Kayıtlı vardiya tipi bulunamadı.</p>
-            ) : (
-              <div style={styles.shiftTypeList}>
-                {shiftTypes.map((row) => (
-                  <div key={row.id} style={styles.shiftTypeItem}>
-                    <span
-                      style={{
-                        ...styles.shiftColorBar,
-                        backgroundColor: row.color,
-                      }}
-                    />
-                    <div style={styles.shiftTypeInfo}>
-                      <strong style={styles.shiftTypeName}>{row.name}</strong>
-                      <span style={styles.shiftTypeTime}>
-                        {row.startTime} - {row.endTime}
-                      </span>
-                    </div>
-                    <span
-                      style={{
-                        ...styles.shiftTypeBadge,
-                        backgroundColor: row.isNight ? "#ede9fe" : "#dbeafe",
-                        color: row.isNight ? "#6d28d9" : "#2563eb",
-                      }}
-                    >
-                      {row.isNight ? "Nöbet" : "Gündüz"}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-
-          {/* ── WARNINGS ── */}
-          {warnings.length > 0 && (
-            <section
+            <button
+              type="button"
+              onClick={() => void handleGenerate()}
+              disabled={generating || loadingDepartments}
               style={{
-                ...styles.card,
-                borderColor: "#FCD34D",
-                background: "#FFFBEB",
+                ...styles.primaryButton,
+                opacity: generating || loadingDepartments ? 0.7 : 1,
               }}
             >
-              <p
-                style={{
-                  fontSize: 13,
-                  fontWeight: 700,
-                  color: "#92400E",
-                  margin: "0 0 8px 0",
-                }}
-              >
-                Uyarılar
-              </p>
-              <ul
-                style={{
-                  margin: 0,
-                  paddingLeft: 20,
-                  listStyleType: "disc",
-                }}
-              >
-                {warnings.map((w, i) => (
-                  <li
-                    key={`${w}-${i}`}
-                    style={{ fontSize: 12, color: "#92400E", marginBottom: 4 }}
-                  >
-                    {w}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-        </div>
+              <Play size={15} fill="none" />
+              {generating ? "Liste oluşturuluyor..." : "Otomatik Liste Oluştur"}
+            </button>
+          </section>
 
-        {/* ── RIGHT: PREVIEW ─────────────────────────────── */}
-        <div>
-          <section style={styles.previewCard}>
-            <div style={styles.previewHeader}>
-              <h2 style={styles.previewTitle}>Taslak Önizleme</h2>
-              <span style={styles.previewBadge}>{rows.length} kayıt</span>
+          <section style={styles.panel}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.panelTitle}>Son Oluşturulan Listeler</h2>
+              <button type="button" style={styles.linkButton}>Tümünü Gör</button>
             </div>
-            <p style={styles.previewDesc}>
-              Oluşturulan taslaklar onay öncesi bu panelde görünür. Alan sabit
-              kalır, liste içeride scroll olur.
-            </p>
 
-            {rows.length === 0 ? (
-              <div style={styles.previewEmpty}>
-                <p style={styles.previewEmptyTitle}>
-                  Henüz taslak üretilmedi
-                </p>
-                <p style={styles.previewEmptyDesc}>
-                  Formu doldurup &quot;Taslak Liste Oluştur&quot; butonuna
-                  bastığınızda oluşturulan vardiyalar bu panelde listelenir.
-                  Çok sayıda kayıt oluşsa bile tablo bu kart içinde scroll
-                  olarak kalır ve ekran dışına taşmaz.
-                </p>
+            <div style={styles.recentTable}>
+              <div style={styles.recentHead}>
+                <span>Dönem</span>
+                <span>Birim</span>
+                <span>Oluşturulma</span>
+                <span>Oluşturan</span>
+                <span>Durum</span>
+                <span />
               </div>
-            ) : (
-              <div style={styles.previewTableWrap}>
-                {meta && (
-                  <div style={styles.metaRow}>
-                    <span>Fairness: {meta.fairnessScore}</span>
-                    <span>Saat farkı: {meta.hourSpread}</span>
-                    <span>Nöbet: {meta.totalNightSpread}</span>
-                    <span>Mesai farkı: {meta.mesaiSpread}</span>
-                  </div>
-                )}
-                <table style={styles.table}>
-                  <thead>
-                    <tr>
-                      <th style={styles.th}>Tarih</th>
-                      <th style={styles.th}>Personel</th>
-                      <th style={styles.th}>Birim</th>
-                      <th style={styles.th}>Vardiya</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {rows.map((row) => (
-                      <tr
-                        key={`${row.assignmentDate}-${row.shiftTypeId}-${row.staffProfileId}`}
-                        style={styles.tableRow}
-                      >
-                        <td style={styles.td}>{row.assignmentDate}</td>
-                        <td style={styles.td}>{row.staffProfileName}</td>
-                        <td style={styles.td}>{row.departmentName}</td>
-                        <td style={styles.td}>
-                          <span
-                            style={{
-                              display: "inline-flex",
-                              alignItems: "center",
-                              gap: 6,
-                            }}
-                          >
-                            <span
-                              style={{
-                                width: 8,
-                                height: 8,
-                                borderRadius: "50%",
-                                backgroundColor: row.shiftColor,
-                                display: "inline-block",
-                              }}
-                            />
-                            {row.shiftTypeName}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
 
-            {rows.length > 0 && (
-              <div
-                style={{
-                  padding: "14px 20px",
-                  borderTop: "1px solid #e2e8f0",
-                  display: "flex",
-                  gap: 10,
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => void handleCommit()}
-                  disabled={committing}
-                  style={styles.commitButton}
-                >
-                  {committing ? "Kaydediliyor..." : "Taslağı Kaydet"}
-                </button>
+              {recentLists.map((list) => (
+                <div key={list.id} style={styles.recentRow}>
+                  <span>{list.period}</span>
+                  <span>{list.department}</span>
+                  <span>{list.createdAt}</span>
+                  <span>{list.createdBy}</span>
+                  <span>
+                    <span
+                      style={{
+                        ...styles.statusBadge,
+                        background: list.status === "approved" ? "#dcfce7" : "#e0e7ff",
+                        color: list.status === "approved" ? "#15803d" : "#3157d8",
+                      }}
+                    >
+                      {list.status === "approved" ? "Onaylandı" : "Taslak"}
+                    </span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={list.id === "current-draft" ? () => void handleCommit() : undefined}
+                    disabled={list.id === "current-draft" && committing}
+                    style={styles.moreButton}
+                    aria-label={list.id === "current-draft" ? "Taslağı kaydet" : "Liste işlemleri"}
+                    title={list.id === "current-draft" ? "Taslağı kaydet" : "Liste işlemleri"}
+                  >
+                    <MoreVertical size={16} />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {meta && (
+              <div style={styles.metaStrip}>
+                <span>Fairness: {meta.fairnessScore}</span>
+                <span>Saat farkı: {meta.hourSpread}</span>
+                <span>Nöbet farkı: {meta.totalNightSpread}</span>
+                <span>{rows.length} taslak kayıt</span>
               </div>
             )}
           </section>
         </div>
+
+        <section style={styles.shiftPanel}>
+          <div style={styles.shiftPanelHeader}>
+            <div>
+              <h2 style={styles.panelTitle}>Vardiya Tipleri</h2>
+              <p style={styles.panelDescription}>Bu birim için tanımlı vardiya tipleri ve saat aralıkları.</p>
+            </div>
+            <div style={styles.shiftHeaderActions}>
+              <button type="button" style={styles.secondaryButton}>
+                <Plus size={17} />
+                Yeni Vardiya Tipi
+              </button>
+              <button type="button" style={styles.squareButton} aria-label="Yenile">
+                <RefreshCw size={17} />
+              </button>
+            </div>
+          </div>
+
+          <div style={styles.statsGrid}>
+            <StatCard value={shiftTypeCounts.total} label="Toplam" />
+            <StatCard value={shiftTypeCounts.day} label="Gündüz" />
+            <StatCard value={shiftTypeCounts.night} label="Gece" />
+            <StatCard value={shiftTypeCounts.duty} label="Nöbet" />
+          </div>
+
+          <div style={styles.shiftList}>
+            {loadingShiftTypes ? (
+              <p style={styles.emptyText}>Vardiya tipleri yükleniyor...</p>
+            ) : shiftTypes.length === 0 ? (
+              <p style={styles.emptyText}>Kayıtlı vardiya tipi bulunamadı.</p>
+            ) : (
+              shiftTypes.map((shiftType) => (
+                <div key={shiftType.id} style={styles.shiftRow}>
+                  <span style={{ ...styles.shiftAccent, background: shiftType.color }} />
+                  <div style={styles.shiftNameBlock}>
+                    <strong style={styles.shiftName}>{shiftType.name}</strong>
+                    <span style={styles.shiftTime}>{shiftType.startTime} - {shiftType.endTime}</span>
+                  </div>
+                  <span
+                    style={{
+                      ...styles.kindBadge,
+                      background:
+                        getShiftKind(shiftType) === "Nöbet"
+                          ? "#fff0c7"
+                          : getShiftKind(shiftType) === "Gece"
+                            ? "#ede9fe"
+                            : "#dbeafe",
+                      color:
+                        getShiftKind(shiftType) === "Nöbet"
+                          ? "#c47d00"
+                          : getShiftKind(shiftType) === "Gece"
+                            ? "#6d28d9"
+                            : "#2563eb",
+                    }}
+                  >
+                    {getShiftKind(shiftType)}
+                  </span>
+                  <div style={styles.durationBlock}>
+                    <span>Süre</span>
+                    <strong>{getShiftDuration(shiftType)} saat</strong>
+                  </div>
+                  <button type="button" style={styles.plainIconButton} aria-label="Vardiya işlemleri">
+                    <MoreVertical size={18} />
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+
+          <div style={styles.shiftInfoBox}>
+            <Info size={17} />
+            <span>
+              Vardiya tiplerinde değişiklik yapmanız halinde, taslak listeleri yeniden oluşturmanız önerilir.
+            </span>
+          </div>
+        </section>
       </div>
     </main>
   );
 }
 
-/* ═══════════════════════════════════════════════════════════
-   INLINE STYLES
-   ═══════════════════════════════════════════════════════════ */
+function RuleToggle({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <label style={styles.ruleRow}>
+      <span style={styles.ruleText}>
+        {label}
+        <Info size={12} color="#7b8ba8" />
+      </span>
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+        style={styles.hiddenCheckbox}
+      />
+      <span
+        style={{
+          ...styles.checkboxVisual,
+          background: checked ? "#3f63f4" : "#ffffff",
+          borderColor: checked ? "#3f63f4" : "#b7c1d4",
+        }}
+      >
+        {checked ? "✓" : ""}
+      </span>
+    </label>
+  );
+}
+
+function StatCard({ value, label }: { value: number; label: string }) {
+  return (
+    <div style={styles.statCard}>
+      <strong>{value}</strong>
+      <span>{label}</span>
+    </div>
+  );
+}
 
 const styles: Record<string, React.CSSProperties> = {
   main: {
-    padding: "28px 32px",
-    fontFamily: "'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    display: "flex",
-    flexDirection: "column",
-    height: "100%",
-    minHeight: 0,
-    overflow: "auto",
+    minHeight: "100%",
+    padding: "28px 30px",
     boxSizing: "border-box",
-    background: "#f1f5f9",
+    overflow: "auto",
+    background:
+      "radial-gradient(circle at 12% 8%, rgba(76, 111, 255, 0.06), transparent 28%), linear-gradient(180deg, #f8fbff 0%, #f3f7fd 100%)",
+    color: "#0f1f46",
+    fontFamily: "'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
   },
-  twoCol: {
-    display: "grid",
-    gridTemplateColumns: "1.3fr 1fr",
-    gap: 24,
-    alignItems: "start",
-  },
-
-  /* ── card ── */
-  card: {
-    background: "#ffffff",
-    borderRadius: 16,
-    padding: "24px 28px",
-    border: "1px solid #e2e8f0",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-    marginBottom: 20,
-  },
-  cardTitle: {
-    fontSize: 20,
-    fontWeight: 800,
-    color: "#1e293b",
-    margin: "0 0 20px 0",
-  },
-  shiftTypesCard: {
-    background: "linear-gradient(180deg, #ffffff 0%, #f8fbff 100%)",
-    borderRadius: 16,
-    padding: "20px",
-    border: "1px solid #dbeafe",
-    boxShadow: "0 12px 32px rgba(37,99,235,0.08)",
-    marginBottom: 20,
-  },
-  shiftTypesHeader: {
+  pageHeader: {
     display: "flex",
-    alignItems: "flex-start",
+    alignItems: "center",
     justifyContent: "space-between",
-    gap: 16,
-    marginBottom: 16,
+    gap: 24,
+    marginBottom: 28,
   },
-  sectionEyebrow: {
-    margin: "0 0 6px",
-    fontSize: 11,
-    fontWeight: 800,
-    letterSpacing: "0.08em",
-    textTransform: "uppercase" as const,
-    color: "#2563eb",
-  },
-  shiftTypesTitle: {
-    margin: "0 0 4px",
-    fontSize: 17,
-    fontWeight: 800,
-    color: "#172554",
-  },
-  shiftTypesDesc: {
+  pageTitle: {
     margin: 0,
-    maxWidth: 520,
-    fontSize: 12,
-    lineHeight: 1.5,
-    color: "#64748b",
+    fontSize: 22,
+    lineHeight: 1.15,
+    fontWeight: 800,
+    letterSpacing: "-0.03em",
+    color: "#101a3c",
   },
-  shiftStatsGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-    gap: 10,
-    marginBottom: 14,
+  pageSubtitle: {
+    margin: "8px 0 0",
+    fontSize: 14,
+    fontWeight: 500,
+    color: "#657491",
   },
-  shiftStatPill: {
+  headerActions: {
     display: "flex",
-    flexDirection: "column",
+    alignItems: "center",
+    gap: 14,
+  },
+  searchBox: {
+    width: 256,
+    height: 44,
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    padding: "0 13px",
+    borderRadius: 10,
+    border: "1px solid #cfdaee",
+    background: "rgba(255,255,255,0.82)",
+    boxShadow: "0 8px 24px rgba(30,64,175,0.04)",
+  },
+  searchPlaceholder: {
+    flex: 1,
+    fontSize: 13,
+    fontWeight: 600,
+    color: "#71809b",
+  },
+  searchShortcut: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 3,
+    padding: "3px 6px",
+    borderRadius: 6,
+    background: "#f0f4fb",
+    fontSize: 11,
+    fontWeight: 700,
+    color: "#71809b",
+  },
+  iconButton: {
+    position: "relative",
+    width: 40,
+    height: 40,
+    display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 58,
-    borderRadius: 14,
-    background: "#eff6ff",
-    border: "1px solid #dbeafe",
-  },
-  shiftStatValue: {
-    fontSize: 18,
-    fontWeight: 800,
-    lineHeight: 1,
-    color: "#1d4ed8",
-  },
-  shiftStatLabel: {
-    marginTop: 5,
-    fontSize: 11,
-    fontWeight: 700,
-    color: "#64748b",
-  },
-  shiftTypesStatus: {
-    margin: 0,
-    padding: "14px 12px",
+    border: "1px solid #dbe3f2",
     borderRadius: 12,
-    background: "#f8fafc",
+    background: "#ffffff",
+    color: "#40516f",
+    cursor: "pointer",
+  },
+  notificationBadge: {
+    position: "absolute",
+    top: -5,
+    right: -3,
+    minWidth: 16,
+    height: 16,
+    padding: "0 4px",
+    borderRadius: 999,
+    background: "#2456e8",
+    color: "#ffffff",
+    fontSize: 10,
+    fontWeight: 800,
+    lineHeight: "16px",
+    textAlign: "center",
+  },
+  userAvatar: {
+    width: 42,
+    height: 42,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "50%",
+    background: "#e9eefb",
+    color: "#0f1f46",
+    fontSize: 17,
+    fontWeight: 800,
+  },
+  userName: {
+    margin: 0,
     fontSize: 13,
-    color: "#64748b",
+    fontWeight: 800,
+    color: "#101a3c",
   },
-  shiftTypeList: {
+  userRole: {
+    margin: "3px 0 0",
+    fontSize: 11,
+    fontWeight: 600,
+    color: "#71809b",
+  },
+  messageStack: {
     display: "grid",
-    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-    gap: 10,
+    gap: 8,
+    marginBottom: 16,
   },
-  shiftTypeItem: {
+  errorMessage: {
+    margin: 0,
+    padding: "10px 14px",
+    borderRadius: 10,
+    background: "#fff1f2",
+    color: "#dc2626",
+    fontSize: 13,
+    fontWeight: 700,
+  },
+  successMessage: {
+    margin: 0,
+    padding: "10px 14px",
+    borderRadius: 10,
+    background: "#ecfdf5",
+    color: "#047857",
+    fontSize: 13,
+    fontWeight: 700,
+  },
+  warningMessage: {
+    margin: 0,
+    padding: "10px 14px",
+    borderRadius: 10,
+    background: "#fffbeb",
+    color: "#92400e",
+    fontSize: 13,
+    fontWeight: 700,
+  },
+  contentGrid: {
+    display: "grid",
+    gridTemplateColumns: "minmax(460px, 0.96fr) minmax(520px, 1fr)",
+    gap: 18,
+    alignItems: "start",
+  },
+  leftColumn: {
+    display: "grid",
+    gap: 18,
+  },
+  panel: {
+    borderRadius: 12,
+    border: "1px solid #dfe7f4",
+    background: "rgba(255,255,255,0.94)",
+    boxShadow: "0 18px 38px rgba(30,64,175,0.06)",
+    padding: "25px 28px",
+  },
+  panelTitle: {
+    margin: 0,
+    fontSize: 17,
+    lineHeight: 1.2,
+    fontWeight: 800,
+    color: "#111d44",
+  },
+  panelDescription: {
+    margin: "11px 0 0",
+    fontSize: 13,
+    fontWeight: 500,
+    color: "#657491",
+  },
+  fieldLabel: {
+    display: "grid",
+    gap: 9,
+    marginTop: 22,
+    fontSize: 12,
+    fontWeight: 800,
+    color: "#101a3c",
+  },
+  selectShell: {
+    height: 42,
     display: "flex",
     alignItems: "center",
     gap: 10,
-    minHeight: 58,
-    padding: "10px 12px",
-    borderRadius: 14,
+    padding: "0 12px",
+    border: "1px solid #d5dfef",
+    borderRadius: 8,
     background: "#ffffff",
-    border: "1px solid #e2e8f0",
-    boxShadow: "0 1px 2px rgba(15,23,42,0.03)",
   },
-  shiftColorBar: {
-    width: 5,
-    alignSelf: "stretch",
-    borderRadius: 999,
-    flexShrink: 0,
-  },
-  shiftTypeInfo: {
-    display: "flex",
-    minWidth: 0,
+  selectInput: {
     flex: 1,
-    flexDirection: "column",
-    gap: 3,
-  },
-  shiftTypeName: {
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap" as const,
-    fontSize: 13,
-    color: "#1e293b",
-  },
-  shiftTypeTime: {
-    fontSize: 11,
-    fontWeight: 700,
-    color: "#64748b",
-  },
-  shiftTypeBadge: {
-    flexShrink: 0,
-    borderRadius: 999,
-    padding: "4px 8px",
-    fontSize: 10,
-    fontWeight: 800,
-  },
-
-  /* ── form ── */
-  formLabel: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: 6,
-    marginBottom: 16,
-  },
-  formLabelText: {
-    fontSize: 14,
-    fontWeight: 700,
-    color: "#334155",
-  },
-  formInput: {
-    height: 42,
-    borderRadius: 10,
-    border: "1px solid #e2e8f0",
-    padding: "0 14px",
-    fontSize: 14,
-    color: "#334155",
-    background: "#ffffff",
-    fontFamily: "inherit",
+    minWidth: 0,
+    height: "100%",
+    border: "none",
     outline: "none",
-    width: "100%",
+    appearance: "none",
+    background: "transparent",
+    font: "inherit",
+    fontSize: 13,
+    fontWeight: 600,
+    color: "#16254b",
   },
-
-  /* ── rules ── */
-  rulesSection: {
-    background: "#f8fafc",
-    borderRadius: 12,
-    border: "1px solid #e2e8f0",
-    padding: "16px 20px",
-    marginTop: 8,
-    marginBottom: 20,
+  dateGrid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: 20,
+  },
+  dateShell: {
+    height: 42,
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    padding: "0 12px",
+    border: "1px solid #d5dfef",
+    borderRadius: 8,
+    background: "#ffffff",
+  },
+  dateInput: {
+    flex: 1,
+    minWidth: 0,
+    height: "100%",
+    border: "none",
+    outline: "none",
+    background: "transparent",
+    fontSize: 13,
+    fontWeight: 600,
+    color: "#16254b",
+    fontFamily: "inherit",
+  },
+  rulesPanel: {
+    marginTop: 22,
+    border: "1px solid #dfe7f4",
+    borderRadius: 10,
+    background: "linear-gradient(180deg, #ffffff 0%, #fbfdff 100%)",
+    padding: "15px 16px 8px",
   },
   rulesHeader: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 12,
+    gap: 12,
+    paddingBottom: 10,
   },
   rulesTitle: {
-    fontSize: 15,
-    fontWeight: 800,
-    color: "#1e293b",
     margin: 0,
+    fontSize: 13,
+    fontWeight: 800,
+    color: "#101a3c",
   },
   rulesLink: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
     fontSize: 12,
-    fontWeight: 600,
-    color: "#0d9488",
-    cursor: "pointer",
+    fontWeight: 700,
+    color: "#2456e8",
   },
-  rulesGrid: {
+  rulesList: {
     display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: 10,
   },
-  ruleItem: {
+  ruleRow: {
+    minHeight: 36,
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 8,
-    fontSize: 13,
-    fontWeight: 600,
-    color: "#334155",
+    gap: 12,
+    borderTop: "1px solid #e9eef7",
     cursor: "pointer",
   },
-  checkbox: {
+  ruleText: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    fontSize: 12,
+    fontWeight: 600,
+    color: "#1a2a51",
+  },
+  hiddenCheckbox: {
+    position: "absolute",
+    opacity: 0,
+    pointerEvents: "none",
+  },
+  checkboxVisual: {
+    width: 16,
+    height: 16,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: "1px solid #b7c1d4",
+    borderRadius: 3,
+    color: "#ffffff",
+    fontSize: 12,
+    fontWeight: 900,
+    lineHeight: 1,
+  },
+  infoBox: {
+    display: "flex",
+    gap: 12,
+    marginTop: 22,
+    padding: "15px 16px",
+    borderRadius: 10,
+    border: "1px solid #bed1ff",
+    background: "linear-gradient(90deg, #eaf2ff 0%, #f3f7ff 100%)",
+  },
+  infoIcon: {
     width: 18,
     height: 18,
-    accentColor: "#1e293b",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "50%",
+    background: "#315fe8",
+    color: "#ffffff",
+    flexShrink: 0,
+  },
+  infoTitle: {
+    display: "block",
+    fontSize: 12,
+    fontWeight: 800,
+    color: "#2456e8",
+    marginBottom: 5,
+  },
+  infoText: {
+    margin: 0,
+    fontSize: 11,
+    lineHeight: 1.55,
+    fontWeight: 600,
+    color: "#1c2b50",
+  },
+  primaryButton: {
+    marginTop: 18,
+    height: 42,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    padding: "0 20px",
+    border: "none",
+    borderRadius: 8,
+    background: "linear-gradient(135deg, #365eff 0%, #234bdc 100%)",
+    color: "#ffffff",
+    fontSize: 13,
+    fontWeight: 800,
+    boxShadow: "0 12px 22px rgba(35,75,220,0.22)",
     cursor: "pointer",
   },
-
-  /* ── form actions ── */
-  formActions: {
+  sectionHeader: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+    marginBottom: 24,
+  },
+  linkButton: {
+    border: "none",
+    background: "transparent",
+    color: "#2456e8",
+    fontSize: 12,
+    fontWeight: 800,
+    cursor: "pointer",
+  },
+  recentTable: {
+    display: "grid",
+    gap: 0,
+  },
+  recentHead: {
+    display: "grid",
+    gridTemplateColumns: "1.25fr 0.9fr 1.02fr 0.72fr 0.62fr 34px",
+    gap: 14,
+    padding: "0 0 12px",
+    borderBottom: "1px solid #e4ebf6",
+    color: "#63718d",
+    fontSize: 11,
+    fontWeight: 800,
+  },
+  recentRow: {
+    display: "grid",
+    gridTemplateColumns: "1.25fr 0.9fr 1.02fr 0.72fr 0.62fr 34px",
+    alignItems: "center",
+    gap: 14,
+    minHeight: 56,
+    borderBottom: "1px solid #edf2f8",
+    color: "#1f3158",
+    fontSize: 12,
+    fontWeight: 600,
+  },
+  statusBadge: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    minWidth: 58,
+    height: 22,
+    padding: "0 8px",
+    borderRadius: 999,
+    fontSize: 10,
+    fontWeight: 800,
+  },
+  moreButton: {
+    width: 30,
+    height: 30,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: "1px solid #d9e3f3",
+    borderRadius: 8,
+    background: "#ffffff",
+    color: "#315a96",
+    cursor: "pointer",
+  },
+  metaStrip: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 10,
+    marginTop: 14,
+    paddingTop: 12,
+    borderTop: "1px solid #edf2f8",
+    fontSize: 11,
+    fontWeight: 700,
+    color: "#64748b",
+  },
+  shiftPanel: {
+    minHeight: 680,
+    borderRadius: 12,
+    border: "1px solid #dfe7f4",
+    background: "rgba(255,255,255,0.94)",
+    boxShadow: "0 18px 38px rgba(30,64,175,0.06)",
+    padding: "26px 26px",
+  },
+  shiftPanelHeader: {
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 18,
+    marginBottom: 28,
+  },
+  shiftHeaderActions: {
     display: "flex",
     alignItems: "center",
     gap: 12,
   },
-  backButton: {
-    padding: "10px 20px",
-    fontSize: 13,
-    fontWeight: 700,
-    color: "#334155",
-    background: "transparent",
-    border: "none",
-    cursor: "pointer",
-  },
-  generateButton: {
-    padding: "12px 28px",
-    fontSize: 14,
-    fontWeight: 700,
-    color: "#ffffff",
-    background: "#DC2626",
-    border: "none",
-    borderRadius: 10,
-    cursor: "pointer",
-    transition: "all 0.2s ease",
-  },
-  commitButton: {
-    padding: "10px 24px",
-    fontSize: 13,
-    fontWeight: 700,
-    color: "#ffffff",
-    background: "#059669",
-    border: "none",
-    borderRadius: 10,
-    cursor: "pointer",
-  },
-
-  /* ── preview card ── */
-  previewCard: {
-    background: "#ffffff",
-    borderRadius: 16,
-    border: "1px solid #e2e8f0",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-    overflow: "hidden",
-    position: "sticky" as const,
-    top: 20,
-  },
-  previewHeader: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "20px 24px 8px",
-  },
-  previewTitle: {
-    fontSize: 18,
-    fontWeight: 800,
-    color: "#1e293b",
-    margin: 0,
-  },
-  previewBadge: {
+  secondaryButton: {
+    height: 42,
     display: "inline-flex",
     alignItems: "center",
-    padding: "3px 12px",
-    fontSize: 12,
-    fontWeight: 700,
-    color: "#059669",
-    background: "#ECFDF5",
-    borderRadius: 20,
-  },
-  previewDesc: {
-    fontSize: 12,
-    color: "#94a3b8",
-    margin: "0 0 0 0",
-    padding: "0 24px 16px",
-    lineHeight: 1.5,
-  },
-  previewEmpty: {
-    padding: "24px 24px 32px",
-  },
-  previewEmptyTitle: {
-    fontSize: 15,
-    fontWeight: 800,
-    color: "#1e293b",
-    margin: "0 0 8px 0",
-  },
-  previewEmptyDesc: {
+    justifyContent: "center",
+    gap: 10,
+    padding: "0 17px",
+    borderRadius: 8,
+    border: "1px solid #9db4ff",
+    background: "#ffffff",
+    color: "#2456e8",
     fontSize: 13,
-    color: "#94a3b8",
-    margin: 0,
-    lineHeight: 1.6,
+    fontWeight: 800,
+    cursor: "pointer",
   },
-  previewTableWrap: {
-    maxHeight: 460,
-    overflowY: "auto" as const,
+  squareButton: {
+    width: 42,
+    height: 42,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 8,
+    border: "1px solid #d9e3f3",
+    background: "#ffffff",
+    color: "#2456e8",
+    cursor: "pointer",
   },
-  metaRow: {
+  statsGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+    gap: 14,
+    marginBottom: 20,
+  },
+  statCard: {
+    height: 72,
     display: "flex",
-    gap: 16,
-    flexWrap: "wrap" as const,
-    padding: "10px 20px",
-    borderBottom: "1px solid #e2e8f0",
-    background: "#f8fafc",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 7,
+    borderRadius: 8,
+    border: "1px solid #dfe7f4",
+    background: "linear-gradient(180deg, #ffffff 0%, #f8fbff 100%)",
+    color: "#2655e8",
+    boxShadow: "0 10px 22px rgba(30,64,175,0.04)",
+  },
+  shiftList: {
+    display: "grid",
+    gap: 14,
+  },
+  emptyText: {
+    margin: 0,
+    padding: "24px",
+    borderRadius: 10,
+    background: "#f8fbff",
+    color: "#64748b",
+    fontSize: 13,
+    fontWeight: 700,
+  },
+  shiftRow: {
+    position: "relative",
+    minHeight: 78,
+    display: "grid",
+    gridTemplateColumns: "8px 1fr auto 92px 28px",
+    alignItems: "center",
+    gap: 18,
+    border: "1px solid #dfe7f4",
+    borderRadius: 9,
+    background: "#ffffff",
+    padding: "10px 16px 10px 0",
+    boxShadow: "0 9px 20px rgba(30,64,175,0.035)",
+  },
+  shiftAccent: {
+    width: 5,
+    height: "100%",
+    minHeight: 58,
+    borderRadius: "0 999px 999px 0",
+  },
+  shiftNameBlock: {
+    display: "grid",
+    gap: 9,
+  },
+  shiftName: {
+    fontSize: 14,
+    fontWeight: 800,
+    color: "#101a3c",
+  },
+  shiftTime: {
+    fontSize: 13,
+    fontWeight: 600,
+    color: "#39537a",
+  },
+  kindBadge: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    minWidth: 54,
+    height: 22,
+    padding: "0 9px",
+    borderRadius: 999,
+    fontSize: 10,
+    fontWeight: 800,
+  },
+  durationBlock: {
+    display: "grid",
+    gap: 7,
+    color: "#10204a",
     fontSize: 12,
     fontWeight: 600,
-    color: "#475569",
   },
-
-  /* ── table ── */
-  table: {
-    width: "100%",
-    borderCollapse: "collapse" as const,
+  plainIconButton: {
+    width: 26,
+    height: 26,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: "none",
+    background: "transparent",
+    color: "#55709b",
+    cursor: "pointer",
   },
-  th: {
-    padding: "10px 20px",
-    fontSize: 12,
-    fontWeight: 700,
-    color: "#64748b",
-    textAlign: "left" as const,
-    borderBottom: "1px solid #e2e8f0",
-    background: "#f8fafc",
-    whiteSpace: "nowrap" as const,
-    position: "sticky" as const,
-    top: 0,
-    zIndex: 10,
-  },
-  td: {
-    padding: "10px 20px",
+  shiftInfoBox: {
+    display: "flex",
+    alignItems: "center",
+    gap: 12,
+    marginTop: 20,
+    padding: "18px 20px",
+    borderRadius: 9,
+    border: "1px solid #bdd0ff",
+    background: "linear-gradient(90deg, #edf4ff 0%, #f5f9ff 100%)",
+    color: "#3d5280",
     fontSize: 13,
-    color: "#334155",
-    borderBottom: "1px solid #f1f5f9",
-    verticalAlign: "middle" as const,
-  },
-  tableRow: {
-    transition: "background 0.15s ease",
+    fontWeight: 600,
   },
 };
