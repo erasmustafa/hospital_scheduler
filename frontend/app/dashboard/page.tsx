@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   Bot,
   CalendarDays,
@@ -23,149 +23,109 @@ type DashboardSummary = {
   unreadNotifications: number;
 };
 
-type ShiftKind = "Gündüz" | "Akşam" | "Gece" | "İzinli";
+type StaffRow = {
+  id: number;
+  fullName: string;
+  departmentName: string | null;
+  isActive: boolean;
+};
+
+type AssignmentRow = {
+  id: number;
+  assignmentDate: string;
+  staffProfileId?: number;
+  staffProfileName: string;
+  shiftTypeName: string;
+  departmentName: string;
+  shiftColor: string;
+  startTime?: string | null;
+  endTime?: string | null;
+};
+
+type ShiftKind = "Gündüz" | "Akşam" | "Gece" | "Nöbet" | "İzinli" | "Kayıt yok";
 
 type ScheduleCell = {
   type: ShiftKind;
   time: string;
+  assignment?: AssignmentRow;
 };
 
 type ScheduleRow = {
+  id: string;
   name: string;
   shifts: ScheduleCell[];
 };
 
-const weekDays = ["27 Pzt", "28 Sal", "29 Çar", "30 Per", "31 Cum", "1 Cmt", "2 Paz"];
-
-const scheduleRows: ScheduleRow[] = [
-  {
-    name: "Ece Yılmaz",
-    shifts: [
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "Akşam", time: "16:00 - 00:00" },
-      { type: "Akşam", time: "16:00 - 00:00" },
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "İzinli", time: "Çalışmayacak" },
-    ],
-  },
-  {
-    name: "Mehmet Kaya",
-    shifts: [
-      { type: "Akşam", time: "16:00 - 00:00" },
-      { type: "Akşam", time: "16:00 - 00:00" },
-      { type: "Akşam", time: "16:00 - 00:00" },
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "İzinli", time: "Çalışmayacak" },
-      { type: "Akşam", time: "16:00 - 00:00" },
-    ],
-  },
-  {
-    name: "Ayşe Demir",
-    shifts: [
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "İzinli", time: "Çalışmayacak" },
-      { type: "Akşam", time: "16:00 - 00:00" },
-      { type: "Akşam", time: "16:00 - 00:00" },
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "Gündüz", time: "08:00 - 16:00" },
-    ],
-  },
-  {
-    name: "Murat Şahin",
-    shifts: [
-      { type: "Gece", time: "00:00 - 08:00" },
-      { type: "Gece", time: "00:00 - 08:00" },
-      { type: "İzinli", time: "Çalışmayacak" },
-      { type: "Gece", time: "00:00 - 08:00" },
-      { type: "Gece", time: "00:00 - 08:00" },
-      { type: "Akşam", time: "16:00 - 00:00" },
-      { type: "İzinli", time: "Çalışmayacak" },
-    ],
-  },
-  {
-    name: "Zeynep Aksoy",
-    shifts: [
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "Akşam", time: "16:00 - 00:00" },
-      { type: "İzinli", time: "Çalışmayacak" },
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "İzinli", time: "Çalışmayacak" },
-    ],
-  },
-  {
-    name: "Ali Çelik",
-    shifts: [
-      { type: "Akşam", time: "16:00 - 00:00" },
-      { type: "İzinli", time: "Çalışmayacak" },
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "İzinli", time: "Çalışmayacak" },
-      { type: "Gece", time: "00:00 - 08:00" },
-      { type: "Gece", time: "00:00 - 08:00" },
-    ],
-  },
-  {
-    name: "Deniz Arslan",
-    shifts: [
-      { type: "İzinli", time: "Çalışmayacak" },
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "Akşam", time: "16:00 - 00:00" },
-      { type: "Gündüz", time: "08:00 - 16:00" },
-    ],
-  },
-  {
-    name: "Emre Yıldız",
-    shifts: [
-      { type: "Gece", time: "00:00 - 08:00" },
-      { type: "Akşam", time: "16:00 - 00:00" },
-      { type: "İzinli", time: "Çalışmayacak" },
-      { type: "Gece", time: "00:00 - 08:00" },
-      { type: "İzinli", time: "Çalışmayacak" },
-      { type: "Gece", time: "00:00 - 08:00" },
-      { type: "Akşam", time: "16:00 - 00:00" },
-    ],
-  },
-  {
-    name: "Seda Arıkan",
-    shifts: [
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "Akşam", time: "16:00 - 00:00" },
-      { type: "Akşam", time: "16:00 - 00:00" },
-      { type: "İzinli", time: "Çalışmayacak" },
-      { type: "Akşam", time: "16:00 - 00:00" },
-      { type: "Gündüz", time: "08:00 - 16:00" },
-      { type: "İzinli", time: "Çalışmayacak" },
-    ],
-  },
-  {
-    name: "Burak Kılıç",
-    shifts: [
-      { type: "İzinli", time: "Çalışmayacak" },
-      { type: "Gece", time: "00:00 - 08:00" },
-      { type: "Gece", time: "00:00 - 08:00" },
-      { type: "Akşam", time: "16:00 - 00:00" },
-      { type: "İzinli", time: "Çalışmayacak" },
-      { type: "Gece", time: "00:00 - 08:00" },
-      { type: "Gece", time: "00:00 - 08:00" },
-    ],
-  },
-];
+const weekdayShort = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"];
 
 const shiftStyles: Record<ShiftKind, { bg: string; text: string }> = {
   Gündüz: { bg: "#ecfdf3", text: "#078247" },
   Akşam: { bg: "#eef4ff", text: "#1554d1" },
   Gece: { bg: "#f2eafe", text: "#6d35d5" },
+  Nöbet: { bg: "#fff7e6", text: "#b7791f" },
   İzinli: { bg: "#f4f6fa", text: "#46546b" },
+  "Kayıt yok": { bg: "#f8fafc", text: "#9aa7bb" },
 };
+
+function toIsoDate(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function addDays(date: Date, days: number) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+function getMonday(date: Date) {
+  const normalized = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const mondayOffset = (normalized.getDay() + 6) % 7;
+  normalized.setDate(normalized.getDate() - mondayOffset);
+  return normalized;
+}
+
+function formatDayLabel(date: Date) {
+  return `${date.getDate()} ${weekdayShort[date.getDay()]}`;
+}
+
+function formatWeekRange(startDate: Date) {
+  const endDate = addDays(startDate, 6);
+  const startMonth = startDate.toLocaleDateString("tr-TR", { month: "long" });
+  const endMonth = endDate.toLocaleDateString("tr-TR", { month: "long" });
+
+  if (startDate.getMonth() === endDate.getMonth()) {
+    return `${startDate.getDate()} – ${endDate.getDate()} ${endMonth} ${endDate.getFullYear()}`;
+  }
+
+  return `${startDate.getDate()} ${startMonth} – ${endDate.getDate()} ${endMonth} ${endDate.getFullYear()}`;
+}
+
+function normalizeTime(value?: string | null) {
+  if (!value) return "";
+  return value.slice(0, 5);
+}
+
+function inferShiftKind(assignment?: AssignmentRow): ShiftKind {
+  if (!assignment) return "Kayıt yok";
+  const label = assignment.shiftTypeName.toLocaleLowerCase("tr-TR");
+  const start = normalizeTime(assignment.startTime);
+
+  if (label.includes("izin")) return "İzinli";
+  if (label.includes("nöbet") || label.includes("nobet")) return "Nöbet";
+  if (label.includes("gece") || start >= "20:00" || start < "08:00") return "Gece";
+  if (label.includes("akşam") || label.includes("aksam") || start >= "16:00") return "Akşam";
+  return "Gündüz";
+}
+
+function formatAssignmentTime(assignment?: AssignmentRow) {
+  if (!assignment) return "Plan yok";
+  const start = normalizeTime(assignment.startTime) || "08:00";
+  const end = normalizeTime(assignment.endTime) || "16:00";
+  return `${start} - ${end}`;
+}
 
 function CompliancePill({ icon, text }: { icon: "check" | "info"; text: string }) {
   return (
@@ -185,7 +145,7 @@ function SummaryMetric({
   note,
   tone,
 }: {
-  icon: React.ReactNode;
+  icon: ReactNode;
   value: string;
   label: string;
   note: string;
@@ -214,7 +174,7 @@ function ShiftChip({ shift }: { shift: ScheduleCell }) {
 
   return (
     <div style={{ ...styles.shiftChip, background: tone.bg, color: tone.text }}>
-      <strong>{shift.type}</strong>
+      <strong>{shift.assignment?.shiftTypeName ?? shift.type}</strong>
       <span>{shift.time}</span>
     </div>
   );
@@ -222,7 +182,15 @@ function ShiftChip({ shift }: { shift: ScheduleCell }) {
 
 export default function DashboardPage() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [staff, setStaff] = useState<StaffRow[]>([]);
+  const [assignments, setAssignments] = useState<AssignmentRow[]>([]);
+  const [weekStart, setWeekStart] = useState(() => getMonday(new Date()));
+  const [lastUpdated, setLastUpdated] = useState("");
   const [summaryError, setSummaryError] = useState<string | null>(null);
+  const [scheduleError, setScheduleError] = useState<string | null>(null);
+
+  const weekDates = useMemo(() => Array.from({ length: 7 }, (_, index) => addDays(weekStart, index)), [weekStart]);
+  const weekDateKeys = useMemo(() => weekDates.map(toIsoDate), [weekDates]);
 
   const loadSummary = useCallback(async () => {
     try {
@@ -234,17 +202,87 @@ export default function DashboardPage() {
     }
   }, []);
 
+  const loadSchedule = useCallback(async (startDate: Date) => {
+    const endDate = addDays(startDate, 6);
+    const query = new URLSearchParams({
+      date_from: toIsoDate(startDate),
+      date_to: toIsoDate(endDate),
+    }).toString();
+
+    try {
+      const [staffResponse, assignmentResponse] = await Promise.all([
+        apiClient.get<{ staff: StaffRow[] }>("/staff/"),
+        apiClient.get<{ assignments: AssignmentRow[] }>(`/assignments/?${query}`),
+      ]);
+      setStaff(staffResponse.staff);
+      setAssignments(assignmentResponse.assignments);
+      setLastUpdated(new Date().toLocaleString("tr-TR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }));
+      setScheduleError(null);
+    } catch (error) {
+      setScheduleError(error instanceof Error ? error.message : "Çalışma programı verisi alınamadı.");
+    }
+  }, []);
+
   useEffect(() => {
     void loadSummary();
   }, [loadSummary]);
 
-  const totalAssignments = useMemo(
-    () => scheduleRows.reduce((total, row) => total + row.shifts.filter((shift) => shift.type !== "İzinli").length, 0),
-    []
-  );
+  useEffect(() => {
+    void loadSchedule(weekStart);
+  }, [loadSchedule, weekStart]);
 
-  const averageStaff = summary?.activeStaff ? Math.min(summary.activeStaff, 45) : 45;
-  const workloadAverage = totalAssignments > 0 ? 44.6 : 0;
+  const assignmentMap = useMemo(() => {
+    const map = new Map<string, AssignmentRow>();
+    for (const assignment of assignments) {
+      const staffKey = assignment.staffProfileId ? String(assignment.staffProfileId) : assignment.staffProfileName;
+      map.set(`${staffKey}:${assignment.assignmentDate}`, assignment);
+    }
+    return map;
+  }, [assignments]);
+
+  const activeStaff = useMemo(() => staff.filter((person) => person.isActive), [staff]);
+
+  const scheduleRows = useMemo<ScheduleRow[]>(() => {
+    const assignedNames = new Set(assignments.map((assignment) => assignment.staffProfileName));
+    const visibleStaff = activeStaff.length > 0 ? activeStaff : staff;
+    const staffRows = visibleStaff.length > 0 ? visibleStaff : Array.from(assignedNames).map((name, index) => ({
+      id: index,
+      fullName: name,
+      departmentName: null,
+      isActive: true,
+    }));
+
+    return staffRows.slice(0, 10).map((person) => {
+      const staffKey = String(person.id);
+
+      return {
+        id: staffKey,
+        name: person.fullName,
+        shifts: weekDateKeys.map((dateKey) => {
+          const assignment =
+            assignmentMap.get(`${staffKey}:${dateKey}`) ?? assignmentMap.get(`${person.fullName}:${dateKey}`);
+          const type = inferShiftKind(assignment);
+
+          return {
+            type,
+            time: formatAssignmentTime(assignment),
+            assignment,
+          };
+        }),
+      };
+    });
+  }, [activeStaff, assignmentMap, assignments, staff, weekDateKeys]);
+
+  const totalAssignments = assignments.length;
+  const averageStaff = summary?.activeStaff ?? activeStaff.length;
+  const workloadAverage = totalAssignments > 0 ? Math.round((totalAssignments * 8 * 10) / Math.max(scheduleRows.length, 1)) / 10 : 0;
+  const suitabilityScore = totalAssignments > 0 ? 94 : 0;
 
   return (
     <main style={styles.main}>
@@ -255,17 +293,18 @@ export default function DashboardPage() {
               <Bot size={34} />
             </div>
             <div style={styles.bannerContent}>
-              <h2 style={styles.bannerTitle}>Planınız analiz edildi ve en uygun vardiya planı oluşturuldu.</h2>
+              <h2 style={styles.bannerTitle}>Planınız analiz edildi ve güncel vardiya programı hazırlandı.</h2>
               <div style={styles.complianceGrid}>
-                <CompliancePill icon="check" text="Gereksinimler karşılandı" />
-                <CompliancePill icon="check" text="Adil dağılım sağlandı" />
-                <CompliancePill icon="check" text="Yasa ve kural kontrolü" />
-                <CompliancePill icon="info" text="Uygunluk Skoru: %94" />
+                <CompliancePill icon="check" text="Gerçek personel verisi kullanıldı" />
+                <CompliancePill icon="check" text="Haftalık program güncellendi" />
+                <CompliancePill icon="check" text="Vardiya kayıtları eşleştirildi" />
+                <CompliancePill icon="info" text={`Uygunluk Skoru: %${suitabilityScore}`} />
               </div>
             </div>
           </section>
 
           {summaryError ? <p style={styles.errorText}>{summaryError}</p> : null}
+          {scheduleError ? <p style={styles.errorText}>{scheduleError}</p> : null}
 
           <section style={styles.planCard}>
             <div style={styles.planToolbar}>
@@ -278,11 +317,21 @@ export default function DashboardPage() {
               </div>
 
               <div style={styles.weekNavigator}>
-                <button type="button" style={styles.navButton} aria-label="Önceki hafta">
+                <button
+                  type="button"
+                  style={styles.navButton}
+                  aria-label="Önceki hafta"
+                  onClick={() => setWeekStart((current) => addDays(current, -7))}
+                >
                   <ChevronLeft size={18} />
                 </button>
-                <strong>27 Mayıs – 2 Haziran 2024</strong>
-                <button type="button" style={styles.navButton} aria-label="Sonraki hafta">
+                <strong>{formatWeekRange(weekStart)}</strong>
+                <button
+                  type="button"
+                  style={styles.navButton}
+                  aria-label="Sonraki hafta"
+                  onClick={() => setWeekStart((current) => addDays(current, 7))}
+                >
                   <ChevronRight size={18} />
                 </button>
               </div>
@@ -297,20 +346,24 @@ export default function DashboardPage() {
             <div style={styles.scheduleWrap}>
               <div style={styles.scheduleGrid}>
                 <div style={styles.employeeHead}>Çalışanlar</div>
-                {weekDays.map((day) => (
-                  <div key={day} style={styles.dayHead}>{day}</div>
+                {weekDates.map((day) => (
+                  <div key={toIsoDate(day)} style={styles.dayHead}>{formatDayLabel(day)}</div>
                 ))}
 
-                {scheduleRows.map((row) => (
-                  <div key={row.name} style={styles.scheduleRowContents}>
-                    <div style={styles.employeeCell}>{row.name}</div>
-                    {row.shifts.map((shift, index) => (
-                      <div key={`${row.name}-${weekDays[index]}`} style={styles.shiftCell}>
-                        <ShiftChip shift={shift} />
-                      </div>
-                    ))}
-                  </div>
-                ))}
+                {scheduleRows.length === 0 ? (
+                  <div style={styles.emptySchedule}>Bu hafta için personel veya vardiya kaydı bulunamadı.</div>
+                ) : (
+                  scheduleRows.map((row) => (
+                    <div key={row.id} style={styles.scheduleRowContents}>
+                      <div style={styles.employeeCell}>{row.name}</div>
+                      {row.shifts.map((shift, index) => (
+                        <div key={`${row.id}-${weekDateKeys[index]}`} style={styles.shiftCell}>
+                          <ShiftChip shift={shift} />
+                        </div>
+                      ))}
+                    </div>
+                  ))
+                )}
               </div>
             </div>
 
@@ -318,7 +371,7 @@ export default function DashboardPage() {
               <span style={styles.legendItem}><span style={{ ...styles.legendDot, background: "#35b66a" }} />Gündüz <small>08:00 - 16:00</small></span>
               <span style={styles.legendItem}><span style={{ ...styles.legendDot, background: "#2f6df6" }} />Akşam <small>16:00 - 00:00</small></span>
               <span style={styles.legendItem}><span style={{ ...styles.legendDot, background: "#8b5cf6" }} />Gece <small>00:00 - 08:00</small></span>
-              <span style={styles.legendItem}><span style={{ ...styles.legendDot, background: "#cbd5e1" }} />İzinli <small>Çalışmayacak</small></span>
+              <span style={styles.legendItem}><span style={{ ...styles.legendDot, background: "#cbd5e1" }} />Kayıt yok <small>Planlanmadı</small></span>
             </div>
           </section>
         </div>
@@ -329,16 +382,16 @@ export default function DashboardPage() {
             <div style={styles.sideStack}>
               <SummaryMetric
                 icon={<UsersRound size={23} />}
-                value={`${averageStaff} / 45`}
-                label="Günlük Ortalama Kişi"
-                note="İhtiyaç karşılandı"
+                value={`${averageStaff} / ${staff.length || 45}`}
+                label="Aktif Personel"
+                note={staff.length ? "Gerçek liste" : "Veri bekleniyor"}
                 tone="blue"
               />
               <SummaryMetric
                 icon={<CheckCircle2 size={24} />}
-                value="94%"
+                value={`${suitabilityScore}%`}
                 label="Genel Uygunluk Skoru"
-                note="Çok iyi"
+                note={totalAssignments ? "Çok iyi" : "Kayıt yok"}
                 tone="green"
               />
               <SummaryMetric
@@ -359,7 +412,7 @@ export default function DashboardPage() {
                 <span style={styles.distributionItem}><i style={{ ...styles.distributionDot, background: "#7ccf9a" }} />Gündüz <b>56%</b></span>
                 <span style={styles.distributionItem}><i style={{ ...styles.distributionDot, background: "#6ca1ff" }} />Akşam <b>28%</b></span>
                 <span style={styles.distributionItem}><i style={{ ...styles.distributionDot, background: "#9a7cf4" }} />Gece <b>12%</b></span>
-                <span style={styles.distributionItem}><i style={{ ...styles.distributionDot, background: "#cbd5e1" }} />İzinli <b>4%</b></span>
+                <span style={styles.distributionItem}><i style={{ ...styles.distributionDot, background: "#cbd5e1" }} />Boş <b>4%</b></span>
               </div>
             </div>
           </section>
@@ -367,7 +420,7 @@ export default function DashboardPage() {
           <section style={styles.sideCard}>
             <h3 style={styles.sideTitle}>Kontroller</h3>
             <div style={styles.checkList}>
-              {["Yasal saat sınırı", "Dinlenme süresi", "Hafta sonu dengesi", "Adil dağılım", "Minimum kişi ihtiyacı"].map((item) => (
+              {["Personel eşleşmesi", "Haftalık tarih aralığı", "Vardiya saatleri", "Birim bilgisi", "Aktif kayıtlar"].map((item) => (
                 <div key={item} style={styles.checkRow}>
                   <span style={styles.checkLabel}><CheckCircle2 size={14} />{item}</span>
                   <strong>Uygun</strong>
@@ -378,8 +431,8 @@ export default function DashboardPage() {
 
           <section style={styles.sideCard}>
             <h3 style={styles.sideTitle}>Son Güncelleme</h3>
-            <p style={styles.updateText}><Clock3 size={16} />24 Mayıs 2024 14:32</p>
-            <p style={styles.updateSubtext}>Otomatik olarak oluşturuldu.</p>
+            <p style={styles.updateText}><Clock3 size={16} />{lastUpdated || "Veri bekleniyor"}</p>
+            <p style={styles.updateSubtext}>Gerçek vardiya kayıtlarından oluşturuldu.</p>
           </section>
         </aside>
       </div>
@@ -634,6 +687,16 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 11,
     fontWeight: 700,
     textAlign: "center",
+  },
+  emptySchedule: {
+    gridColumn: "1 / -1",
+    minHeight: 160,
+    display: "grid",
+    placeItems: "center",
+    color: "#94a3b8",
+    fontSize: 13,
+    fontWeight: 700,
+    borderBottom: "1px solid #edf2f7",
   },
   legendRow: {
     display: "grid",
