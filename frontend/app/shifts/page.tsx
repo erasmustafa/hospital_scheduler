@@ -85,11 +85,17 @@ export default function ShiftsPage() {
   const [savingBulk, setSavingBulk] = useState<"approve" | "delete" | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [createSuccess, setCreateSuccess] = useState(false);
+  const [createErrors, setCreateErrors] = useState<string[]>([]);
   const [newAssignment, setNewAssignment] = useState({
+    shiftName: "",
     departmentId: "",
     staffProfileId: "",
     shiftTypeId: "",
     assignmentDate: "",
+    startTime: "08:00",
+    endTime: "16:00",
+    isNightShift: false,
     status: "planned",
     notes: "",
   });
@@ -224,11 +230,17 @@ export default function ShiftsPage() {
   ]);
 
   const resetCreateForm = useCallback(() => {
+    setCreateSuccess(false);
+    setCreateErrors([]);
     setNewAssignment({
+      shiftName: "",
       departmentId: departmentFilter || (departments[0] ? String(departments[0].id) : ""),
       staffProfileId: "",
       shiftTypeId: "",
       assignmentDate: startDate || "",
+      startTime: "08:00",
+      endTime: "16:00",
+      isNightShift: false,
       status: "planned",
       notes: "",
     });
@@ -242,20 +254,31 @@ export default function ShiftsPage() {
   const closeCreateModal = () => {
     setShowCreateModal(false);
     setCreating(false);
+    setCreateSuccess(false);
+    setCreateErrors([]);
   };
 
   const handleCreateAssignment = async () => {
-    if (
-      !newAssignment.departmentId ||
-      !newAssignment.staffProfileId ||
-      !newAssignment.shiftTypeId ||
-      !newAssignment.assignmentDate
-    ) {
-      setError("Yeni vardiya iÃ§in birim, personel, vardiya tipi ve tarih seÃ§ilmelidir.");
+    const missingFields = [
+      !newAssignment.departmentId ? "Birim" : null,
+      !newAssignment.staffProfileId ? "Personel" : null,
+      !newAssignment.shiftTypeId ? "Vardiya tipi" : null,
+      !newAssignment.assignmentDate ? "Tarih" : null,
+      !newAssignment.startTime ? "Başlangıç saati" : null,
+      !newAssignment.endTime ? "Bitiş saati" : null,
+    ].filter(Boolean) as string[];
+
+    if (missingFields.length > 0) {
+      setCreateSuccess(false);
+      setCreateErrors(
+        missingFields.map((field) => `${field} bilgisi girilmelidir.`)
+      );
       return;
     }
 
     setCreating(true);
+    setCreateErrors([]);
+    setCreateSuccess(false);
     try {
       await apiClient.post("/assignments/", {
         departmentId: Number(newAssignment.departmentId),
@@ -266,10 +289,16 @@ export default function ShiftsPage() {
         notes: newAssignment.notes.trim() || undefined,
       });
       await load();
-      closeCreateModal();
       setError(null);
+      setCreateSuccess(true);
+      window.setTimeout(() => {
+        closeCreateModal();
+      }, 850);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Yeni vardiya oluÅŸturulamadÄ±.");
+      setCreateSuccess(false);
+      setCreateErrors([
+        err instanceof Error ? err.message : "Yeni vardiya oluşturulamadı.",
+      ]);
       setCreating(false);
     }
   };
@@ -649,6 +678,13 @@ export default function ShiftsPage() {
                     type="text"
                     placeholder="Örn: Sabah Vardiyası"
                     style={styles.modalInput}
+                    value={newAssignment.shiftName}
+                    onChange={(event) =>
+                      setNewAssignment((previous) => ({
+                        ...previous,
+                        shiftName: event.target.value,
+                      }))
+                    }
                   />
                 </span>
               </label>
@@ -711,7 +747,16 @@ export default function ShiftsPage() {
                   <span>Başlangıç Saati</span>
                   <span style={styles.modalInputShell}>
                     <Clock size={17} />
-                    <select defaultValue="08:00" style={styles.modalSelect}>
+                    <select
+                      value={newAssignment.startTime}
+                      style={styles.modalSelect}
+                      onChange={(event) =>
+                        setNewAssignment((previous) => ({
+                          ...previous,
+                          startTime: event.target.value,
+                        }))
+                      }
+                    >
                       <option>08:00</option>
                       <option>12:00</option>
                       <option>16:00</option>
@@ -726,7 +771,16 @@ export default function ShiftsPage() {
                   <span>Bitiş Saati</span>
                   <span style={styles.modalInputShell}>
                     <Clock size={17} />
-                    <select defaultValue="16:00" style={styles.modalSelect}>
+                    <select
+                      value={newAssignment.endTime}
+                      style={styles.modalSelect}
+                      onChange={(event) =>
+                        setNewAssignment((previous) => ({
+                          ...previous,
+                          endTime: event.target.value,
+                        }))
+                      }
+                    >
                       <option>16:00</option>
                       <option>20:00</option>
                       <option>00:00</option>
@@ -746,9 +800,34 @@ export default function ShiftsPage() {
                     <span style={styles.nightShiftDesc}>Vardiya 22:00 - 06:00 saatleri arasında</span>
                   </div>
                 </div>
-                <input type="checkbox" style={styles.hiddenCheckbox} />
-                <span style={styles.modalSwitch}>
-                  <span style={styles.modalSwitchKnob} />
+                <input
+                  type="checkbox"
+                  checked={newAssignment.isNightShift}
+                  onChange={(event) => {
+                    const checked = event.target.checked;
+                    setNewAssignment((previous) => ({
+                      ...previous,
+                      isNightShift: checked,
+                      startTime: checked ? "22:00" : previous.startTime,
+                      endTime: checked ? "06:00" : previous.endTime,
+                    }));
+                  }}
+                  style={styles.hiddenCheckbox}
+                />
+                <span
+                  style={{
+                    ...styles.modalSwitch,
+                    background: newAssignment.isNightShift ? "#315fe8" : "#b9c3d8",
+                  }}
+                >
+                  <span
+                    style={{
+                      ...styles.modalSwitchKnob,
+                      transform: newAssignment.isNightShift
+                        ? "translateX(20px)"
+                        : "translateX(0)",
+                    }}
+                  />
                 </span>
               </label>
             </div>
@@ -820,18 +899,37 @@ export default function ShiftsPage() {
               </div>
             ) : null}
 
+            {createErrors.length > 0 ? (
+              <div style={styles.createErrorPanel}>
+                <strong>Eksik veya hatalı bilgiler var.</strong>
+                <ul>
+                  {createErrors.map((message) => (
+                    <li key={message}>{message}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
             <div style={styles.modalActions}>
               <button type="button" style={styles.modalSecondaryButton} onClick={closeCreateModal}>
                 İptal
               </button>
               <button
                 type="button"
-                style={styles.modalPrimaryButton}
+                style={{
+                  ...styles.modalPrimaryButton,
+                  background: createSuccess
+                    ? "linear-gradient(135deg, #10b981 0%, #059669 100%)"
+                    : styles.modalPrimaryButton.background,
+                  boxShadow: createSuccess
+                    ? "0 14px 24px rgba(5,150,105,0.24)"
+                    : styles.modalPrimaryButton.boxShadow,
+                }}
                 onClick={() => void handleCreateAssignment()}
-                disabled={creating}
+                disabled={creating || createSuccess}
               >
                 <Check size={17} />
-                {creating ? "Kaydediliyor..." : "Vardiyayı Kaydet"}
+                {createSuccess ? "Vardiya Kaydedildi" : creating ? "Kaydediliyor..." : "Vardiyayı Kaydet"}
               </button>
             </div>
           </section>
@@ -1345,6 +1443,17 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 13,
     fontWeight: 750,
     color: "#991b1b",
+    lineHeight: 1.45,
+  },
+  createErrorPanel: {
+    margin: "0 22px 12px",
+    padding: "14px 16px",
+    borderRadius: 10,
+    border: "1px solid #fecaca",
+    background: "#fff1f2",
+    color: "#991b1b",
+    fontSize: 13,
+    fontWeight: 700,
     lineHeight: 1.45,
   },
   modalActions: {
