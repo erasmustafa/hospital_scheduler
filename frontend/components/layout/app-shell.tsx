@@ -278,11 +278,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="dashboard-loading-card">
             <div className="dashboard-loading-brand">
               <img src="/icons/medishift-brand.png" alt="MediShift" />
-              <span>MediShift</span>
+              <span>MediPlan</span>
             </div>
-            <div className="dashboard-loading-title">Yukleniyor...</div>
+            <div className="dashboard-loading-title">Yükleniyor...</div>
             <p className="dashboard-loading-copy">
-              Vardiya ozeti, ekip metrikleri ve takvim verileri güvenli biçimde yükleniyor
+              Vardiya özeti, ekip metrikleri ve takvim verileri güvenli biçimde yükleniyor
             </p>
             <div className="dashboard-loading-progress">
               <span />

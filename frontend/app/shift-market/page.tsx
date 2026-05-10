@@ -728,7 +728,7 @@ export default function ShiftMarketPage() {
               );
             }))
             }
-            <footer className="mt-2 flex shrink-0 items-center justify-between rounded-xl border border-slate-100 bg-white/85 px-4 py-3 text-xs font-semibold text-slate-500 shadow-sm">
+            <footer className="sticky bottom-0 z-10 mt-2 flex shrink-0 items-center justify-between rounded-xl border border-slate-100 bg-white/95 px-4 py-3 text-xs font-semibold text-slate-500 shadow-[0_-10px_24px_-18px_rgba(15,23,42,0.35)] backdrop-blur-md">
               <span>Liste sonu</span>
               <span className="rounded-full bg-blue-50 px-3 py-1 font-bold text-blue-600">
                 Toplam {filteredListings.length} ilan

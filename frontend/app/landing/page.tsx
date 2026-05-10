@@ -913,7 +913,7 @@ export default function LandingPage() {
                     className="navbar-logo-spin h-7 w-7"
                   />
                 </div>
-                <span className="text-[30px] font-extrabold tracking-tight">MediShift</span>
+                <span className="text-[30px] font-extrabold tracking-tight">MediPlan</span>
               </div>
 
               <DynamicNavigation links={navigationLinks} theme="dark" glowIntensity={5} />
@@ -946,7 +946,7 @@ export default function LandingPage() {
 
                 <p className="mt-7 max-w-[520px] text-[clamp(16px,2vw,22px)] leading-8 text-white/88">
                   {
-                    "MediShift, hastanelerde vardiya planlamay\u0131 kolayla\u015ft\u0131r\u0131r. Adil, \u015feffaf ve verimli bir sistemle hem y\u00f6neticilerin i\u015f y\u00fck\u00fcn\u00fc azalt\u0131r hem de \u00e7al\u0131\u015fan memnuniyetini art\u0131r\u0131r."
+                    "MediPlan, hastanelerde vardiya planlamay\u0131 kolayla\u015ft\u0131r\u0131r. Adil, \u015feffaf ve verimli bir sistemle hem y\u00f6neticilerin i\u015f y\u00fck\u00fcn\u00fc azalt\u0131r hem de \u00e7al\u0131\u015fan memnuniyetini art\u0131r\u0131r."
                   }
                 </p>
 
@@ -1003,13 +1003,13 @@ export default function LandingPage() {
           className="mx-auto w-full max-w-[1280px] px-5 py-20 sm:px-6 lg:px-8"
         >
           <div className="text-center">
-            <SectionEyebrow>{"Neden MediShift?"}</SectionEyebrow>
+            <SectionEyebrow>{"Neden MediPlan?"}</SectionEyebrow>
             <h2 className="mx-auto mt-5 max-w-[760px] text-[clamp(30px,4vw,52px)] font-black leading-tight text-[#16274d]">
               {"Y\u00f6neticiler i\u00e7in g\u00fc\u00e7l\u00fc, ekipler i\u00e7in adil bir sistem"}
             </h2>
             <p className="mx-auto mt-5 max-w-[760px] text-lg leading-8 text-[#67789f]">
               {
-                "MediShift, vardiya planlaman\u0131n t\u00fcm zorluklar\u0131n\u0131 \u00e7\u00f6zer. Zaman kazand\u0131r\u0131r, hatalar\u0131 azalt\u0131r ve herkese e\u015fit f\u0131rsatlar sunar."
+                "MediPlan, vardiya planlaman\u0131n t\u00fcm zorluklar\u0131n\u0131 \u00e7\u00f6zer. Zaman kazand\u0131r\u0131r, hatalar\u0131 azalt\u0131r ve herkese e\u015fit f\u0131rsatlar sunar."
               }
             </p>
           </div>
@@ -1210,7 +1210,7 @@ export default function LandingPage() {
                     </h2>
                     <p className="mt-3 max-w-[560px] text-lg leading-8 text-white/88 lg:max-w-[520px]">
                       {
-                        "MediShift ile vardiya planlamay\u0131 kolayla\u015ft\u0131r\u0131n, \u00e7al\u0131\u015fan memnuniyetini art\u0131r\u0131n ve y\u00f6netimde fark yarat\u0131n."
+                        "MediPlan ile vardiya planlamay\u0131 kolayla\u015ft\u0131r\u0131n, \u00e7al\u0131\u015fan memnuniyetini art\u0131r\u0131n ve y\u00f6netimde fark yarat\u0131n."
                       }
                     </p>
                   </div>
@@ -1270,7 +1270,7 @@ export default function LandingPage() {
                       className="h-6 w-6"
                     />
                   </div>
-                  <span className="text-[28px] font-extrabold tracking-tight">MediShift</span>
+                  <span className="text-[28px] font-extrabold tracking-tight">MediPlan</span>
                 </div>
                 <p className="mt-5 max-w-[300px] text-sm leading-7 text-[#6d7b9c]">
                   {"Hastaneler i\u00e7in ak\u0131ll\u0131 vardiya planlama ve y\u00f6netim sistemi."}
@@ -1349,7 +1349,7 @@ export default function LandingPage() {
             </div>
 
             <div className="flex flex-col items-center justify-between gap-4 px-2 pb-2 pt-6 text-sm text-[#8b98b8] md:flex-row">
-              <span>{"\u00a9 2026 MediShift. T\u00fcm haklar\u0131 sakl\u0131d\u0131r."}</span>
+              <span>{"\u00a9 2026 MediPlan. T\u00fcm haklar\u0131 sakl\u0131d\u0131r."}</span>
               <div className="flex flex-wrap items-center gap-6">
                 <a href="#">KVKK</a>
                 <a href="#">{"Gizlilik Politikas\u0131"}</a>
