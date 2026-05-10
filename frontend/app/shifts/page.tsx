@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   CalendarDays,
   Check,
@@ -46,6 +46,29 @@ type ShiftTypeOption = {
   color: string;
 };
 
+type CreateField =
+  | "departmentId"
+  | "staffProfileId"
+  | "shiftTypeId"
+  | "assignmentDate"
+  | "startTime"
+  | "endTime";
+
+type DropdownOption = {
+  value: string;
+  label: string;
+  description?: string;
+};
+
+type ModalDropdownProps = {
+  value: string;
+  placeholder: string;
+  options: DropdownOption[];
+  icon: ReactNode;
+  hasError?: boolean;
+  onChange: (value: string) => void;
+};
+
 const statusLabelTr: Record<string, string> = {
   planned: "PlanlandÄ±",
   approved: "OnaylandÄ±",
@@ -58,6 +81,10 @@ const statusColors: Record<string, { bg: string; text: string }> = {
   cancelled: { bg: "#FEF2F2", text: "#DC2626" },
 };
 
+const timeOptions: DropdownOption[] = ["00:00", "06:00", "08:00", "12:00", "16:00", "20:00", "22:00"].map(
+  (time) => ({ value: time, label: time })
+);
+
 function formatDateTr(iso: string) {
   try {
     const d = new Date(`${iso}T12:00:00`);
@@ -69,6 +96,91 @@ function formatDateTr(iso: string) {
   } catch {
     return iso;
   }
+}
+
+function ModalDropdown({
+  value,
+  placeholder,
+  options,
+  icon,
+  hasError = false,
+  onChange,
+}: ModalDropdownProps) {
+  const [open, setOpen] = useState(false);
+  const selectedOption = options.find((option) => option.value === value);
+
+  return (
+    <div
+      style={styles.modalDropdown}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setOpen(false);
+        }
+      }}
+    >
+      <button
+        type="button"
+        style={{
+          ...styles.modalDropdownButton,
+          ...(hasError ? styles.modalInputShellError : {}),
+        }}
+        onClick={() => setOpen((current) => !current)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+      >
+        <span style={styles.modalDropdownIcon}>{icon}</span>
+        <span
+          style={{
+            ...styles.modalDropdownValue,
+            color: selectedOption ? "#10204a" : "#61708f",
+          }}
+        >
+          {selectedOption ? selectedOption.label : placeholder}
+        </span>
+        <span
+          style={{
+            ...styles.modalDropdownChevron,
+            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+          }}
+        >
+          <ChevronDown size={17} />
+        </span>
+      </button>
+
+      {open ? (
+        <div style={styles.modalDropdownMenu} role="listbox">
+          {options.map((option) => {
+            const selected = option.value === value;
+
+            return (
+              <button
+                key={option.value}
+                type="button"
+                style={{
+                  ...styles.modalDropdownItem,
+                  ...(selected ? styles.modalDropdownItemActive : {}),
+                }}
+                onClick={() => {
+                  onChange(option.value);
+                  setOpen(false);
+                }}
+                role="option"
+                aria-selected={selected}
+              >
+                <span>
+                  <strong style={styles.modalDropdownItemTitle}>{option.label}</strong>
+                  {option.description ? (
+                    <small style={styles.modalDropdownItemDesc}>{option.description}</small>
+                  ) : null}
+                </span>
+                {selected ? <Check size={16} /> : null}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+    </div>
+  );
 }
 
 export default function ShiftsPage() {
@@ -86,7 +198,7 @@ export default function ShiftsPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [creating, setCreating] = useState(false);
   const [createSuccess, setCreateSuccess] = useState(false);
-  const [createErrors, setCreateErrors] = useState<string[]>([]);
+  const [createErrorFields, setCreateErrorFields] = useState<CreateField[]>([]);
   const [newAssignment, setNewAssignment] = useState({
     shiftName: "",
     departmentId: "",
@@ -229,9 +341,38 @@ export default function ShiftsPage() {
     staffOptions,
   ]);
 
+  const hasCreateFieldError = useCallback(
+    (field: CreateField) => createErrorFields.includes(field),
+    [createErrorFields]
+  );
+
+  const clearCreateFieldError = useCallback((field: CreateField) => {
+    setCreateErrorFields((previous) => previous.filter((item) => item !== field));
+  }, []);
+
+  const shiftTypeDropdownOptions = useMemo<DropdownOption[]>(
+    () =>
+      shiftTypeOptions.map((shiftType) => ({
+        value: String(shiftType.id),
+        label: shiftType.name,
+        description: `${shiftType.startTime} - ${shiftType.endTime}`,
+      })),
+    [shiftTypeOptions]
+  );
+
+  const staffDropdownOptions = useMemo<DropdownOption[]>(
+    () =>
+      filteredStaffOptions.map((staff) => ({
+        value: String(staff.id),
+        label: staff.fullName,
+        description: staff.departmentName || "Birim bilgisi yok",
+      })),
+    [filteredStaffOptions]
+  );
+
   const resetCreateForm = useCallback(() => {
     setCreateSuccess(false);
-    setCreateErrors([]);
+    setCreateErrorFields([]);
     setNewAssignment({
       shiftName: "",
       departmentId: departmentFilter || (departments[0] ? String(departments[0].id) : ""),
@@ -255,29 +396,27 @@ export default function ShiftsPage() {
     setShowCreateModal(false);
     setCreating(false);
     setCreateSuccess(false);
-    setCreateErrors([]);
+    setCreateErrorFields([]);
   };
 
   const handleCreateAssignment = async () => {
     const missingFields = [
-      !newAssignment.departmentId ? "Birim" : null,
-      !newAssignment.staffProfileId ? "Personel" : null,
-      !newAssignment.shiftTypeId ? "Vardiya tipi" : null,
-      !newAssignment.assignmentDate ? "Tarih" : null,
-      !newAssignment.startTime ? "Başlangıç saati" : null,
-      !newAssignment.endTime ? "Bitiş saati" : null,
-    ].filter(Boolean) as string[];
+      !newAssignment.departmentId ? "departmentId" : null,
+      !newAssignment.staffProfileId ? "staffProfileId" : null,
+      !newAssignment.shiftTypeId ? "shiftTypeId" : null,
+      !newAssignment.assignmentDate ? "assignmentDate" : null,
+      !newAssignment.startTime ? "startTime" : null,
+      !newAssignment.endTime ? "endTime" : null,
+    ].filter(Boolean) as CreateField[];
 
     if (missingFields.length > 0) {
       setCreateSuccess(false);
-      setCreateErrors(
-        missingFields.map((field) => `${field} bilgisi girilmelidir.`)
-      );
+      setCreateErrorFields(missingFields);
       return;
     }
 
     setCreating(true);
-    setCreateErrors([]);
+    setCreateErrorFields([]);
     setCreateSuccess(false);
     try {
       await apiClient.post("/assignments/", {
@@ -296,9 +435,7 @@ export default function ShiftsPage() {
       }, 850);
     } catch (err) {
       setCreateSuccess(false);
-      setCreateErrors([
-        err instanceof Error ? err.message : "Yeni vardiya oluşturulamadı.",
-      ]);
+      setError(err instanceof Error ? err.message : "Yeni vardiya oluşturulamadı.");
       setCreating(false);
     }
   };
@@ -362,6 +499,24 @@ export default function ShiftsPage() {
   };
 
   return (
+    <>
+    <style
+      dangerouslySetInnerHTML={{
+        __html: `
+          @keyframes shiftDropdownIn {
+            from {
+              opacity: 0;
+              transform: translateY(-6px) scale(0.98);
+            }
+
+            to {
+              opacity: 1;
+              transform: translateY(0) scale(1);
+            }
+          }
+        `,
+      }}
+    />
     <main style={styles.main}>
       {/* â”€â”€ STAT CARDS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section style={styles.statsRow}>
@@ -691,27 +846,20 @@ export default function ShiftsPage() {
 
               <label style={styles.modalField}>
                 <span>Vardiya Tipi</span>
-                <span style={styles.modalInputShell}>
-                  <Tag size={17} />
-                  <select
-                    style={styles.modalSelect}
-                    value={newAssignment.shiftTypeId}
-                    onChange={(event) =>
-                      setNewAssignment((previous) => ({
-                        ...previous,
-                        shiftTypeId: event.target.value,
-                      }))
-                    }
-                  >
-                    <option value="">Vardiya tipi seçin</option>
-                    {shiftTypeOptions.map((shiftType) => (
-                      <option key={shiftType.id} value={String(shiftType.id)}>
-                        {shiftType.name}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown size={17} />
-                </span>
+                <ModalDropdown
+                  value={newAssignment.shiftTypeId}
+                  placeholder="Vardiya tipi seçin"
+                  options={shiftTypeDropdownOptions}
+                  icon={<Tag size={17} />}
+                  hasError={hasCreateFieldError("shiftTypeId")}
+                  onChange={(value) => {
+                    clearCreateFieldError("shiftTypeId");
+                    setNewAssignment((previous) => ({
+                      ...previous,
+                      shiftTypeId: value,
+                    }));
+                  }}
+                />
               </label>
             </div>
 
@@ -727,68 +875,62 @@ export default function ShiftsPage() {
               <div style={styles.modalThreeGrid}>
                 <label style={styles.modalField}>
                   <span>Tarih</span>
-                  <span style={styles.modalInputShell}>
+                  <span
+                    style={{
+                      ...styles.modalInputShell,
+                      ...(hasCreateFieldError("assignmentDate") ? styles.modalInputShellError : {}),
+                    }}
+                  >
                     <CalendarDays size={17} />
                     <input
                       type="date"
                       style={styles.modalInput}
                       value={newAssignment.assignmentDate}
-                      onChange={(event) =>
+                      onChange={(event) => {
+                        clearCreateFieldError("assignmentDate");
                         setNewAssignment((previous) => ({
                           ...previous,
                           assignmentDate: event.target.value,
-                        }))
-                      }
+                        }));
+                      }}
                     />
                   </span>
                 </label>
 
                 <label style={styles.modalField}>
                   <span>Başlangıç Saati</span>
-                  <span style={styles.modalInputShell}>
-                    <Clock size={17} />
-                    <select
-                      value={newAssignment.startTime}
-                      style={styles.modalSelect}
-                      onChange={(event) =>
-                        setNewAssignment((previous) => ({
-                          ...previous,
-                          startTime: event.target.value,
-                        }))
-                      }
-                    >
-                      <option>08:00</option>
-                      <option>12:00</option>
-                      <option>16:00</option>
-                      <option>20:00</option>
-                      <option>22:00</option>
-                    </select>
-                    <ChevronDown size={17} />
-                  </span>
+                  <ModalDropdown
+                    value={newAssignment.startTime}
+                    placeholder="Başlangıç saati seçin"
+                    options={timeOptions}
+                    icon={<Clock size={17} />}
+                    hasError={hasCreateFieldError("startTime")}
+                    onChange={(value) => {
+                      clearCreateFieldError("startTime");
+                      setNewAssignment((previous) => ({
+                        ...previous,
+                        startTime: value,
+                      }));
+                    }}
+                  />
                 </label>
 
                 <label style={styles.modalField}>
                   <span>Bitiş Saati</span>
-                  <span style={styles.modalInputShell}>
-                    <Clock size={17} />
-                    <select
-                      value={newAssignment.endTime}
-                      style={styles.modalSelect}
-                      onChange={(event) =>
-                        setNewAssignment((previous) => ({
-                          ...previous,
-                          endTime: event.target.value,
-                        }))
-                      }
-                    >
-                      <option>16:00</option>
-                      <option>20:00</option>
-                      <option>00:00</option>
-                      <option>06:00</option>
-                      <option>08:00</option>
-                    </select>
-                    <ChevronDown size={17} />
-                  </span>
+                  <ModalDropdown
+                    value={newAssignment.endTime}
+                    placeholder="Bitiş saati seçin"
+                    options={timeOptions}
+                    icon={<Clock size={17} />}
+                    hasError={hasCreateFieldError("endTime")}
+                    onChange={(value) => {
+                      clearCreateFieldError("endTime");
+                      setNewAssignment((previous) => ({
+                        ...previous,
+                        endTime: value,
+                      }));
+                    }}
+                  />
                 </label>
               </div>
 
@@ -805,6 +947,8 @@ export default function ShiftsPage() {
                   checked={newAssignment.isNightShift}
                   onChange={(event) => {
                     const checked = event.target.checked;
+                    clearCreateFieldError("startTime");
+                    clearCreateFieldError("endTime");
                     setNewAssignment((previous) => ({
                       ...previous,
                       isNightShift: checked,
@@ -840,27 +984,20 @@ export default function ShiftsPage() {
                   <p style={styles.modalSectionText}>Vardiyada görev alacak personeli seçin.</p>
                 </div>
               </div>
-              <span style={styles.modalInputShell}>
-                <UserRound size={17} />
-                <select
-                  style={styles.modalSelect}
-                  value={newAssignment.staffProfileId}
-                  onChange={(event) =>
-                    setNewAssignment((previous) => ({
-                      ...previous,
-                      staffProfileId: event.target.value,
-                    }))
-                  }
-                >
-                  <option value="">Personel seçin</option>
-                  {filteredStaffOptions.map((staff) => (
-                    <option key={staff.id} value={String(staff.id)}>
-                      {staff.fullName}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown size={17} />
-              </span>
+              <ModalDropdown
+                value={newAssignment.staffProfileId}
+                placeholder="Personel seçin"
+                options={staffDropdownOptions}
+                icon={<UserRound size={17} />}
+                hasError={hasCreateFieldError("staffProfileId")}
+                onChange={(value) => {
+                  clearCreateFieldError("staffProfileId");
+                  setNewAssignment((previous) => ({
+                    ...previous,
+                    staffProfileId: value,
+                  }));
+                }}
+              />
               <input
                 type="hidden"
                 value={newAssignment.departmentId}
@@ -899,17 +1036,6 @@ export default function ShiftsPage() {
               </div>
             ) : null}
 
-            {createErrors.length > 0 ? (
-              <div style={styles.createErrorPanel}>
-                <strong>Eksik veya hatalı bilgiler var.</strong>
-                <ul>
-                  {createErrors.map((message) => (
-                    <li key={message}>{message}</li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
-
             <div style={styles.modalActions}>
               <button type="button" style={styles.modalSecondaryButton} onClick={closeCreateModal}>
                 İptal
@@ -934,7 +1060,9 @@ export default function ShiftsPage() {
             </div>
           </section>
         </div>
-      )}    </main>
+      )}
+    </main>
+    </>
   );
 }
 
@@ -1277,6 +1405,11 @@ const styles: Record<string, React.CSSProperties> = {
     background: "#ffffff",
     color: "#315fe8",
   },
+  modalInputShellError: {
+    border: "1px solid #fb7185",
+    background: "#fff1f2",
+    boxShadow: "0 0 0 3px rgba(251,113,133,0.12)",
+  },
   modalInput: {
     flex: 1,
     minWidth: 0,
@@ -1301,6 +1434,99 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 14,
     fontWeight: 650,
     fontFamily: "inherit",
+  },
+  modalDropdown: {
+    position: "relative",
+    width: "100%",
+  },
+  modalDropdownButton: {
+    width: "100%",
+    height: 46,
+    display: "flex",
+    alignItems: "center",
+    gap: 12,
+    padding: "0 10px 0 16px",
+    border: "1px solid #d4deef",
+    borderRadius: 8,
+    background: "#ffffff",
+    color: "#315fe8",
+    cursor: "pointer",
+    fontFamily: "inherit",
+    textAlign: "left" as const,
+    transition: "border-color 160ms ease, background 160ms ease, box-shadow 160ms ease",
+  },
+  modalDropdownIcon: {
+    display: "inline-flex",
+    color: "#315fe8",
+  },
+  modalDropdownValue: {
+    flex: 1,
+    minWidth: 0,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap" as const,
+    fontSize: 14,
+    fontWeight: 650,
+  },
+  modalDropdownChevron: {
+    width: 30,
+    height: 30,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 8,
+    background: "#f3f6ff",
+    color: "#315fe8",
+    transition: "transform 160ms ease, background 160ms ease",
+  },
+  modalDropdownMenu: {
+    position: "absolute" as const,
+    top: "calc(100% + 8px)",
+    left: 0,
+    right: 0,
+    zIndex: 140,
+    maxHeight: 228,
+    overflowY: "auto" as const,
+    padding: 6,
+    border: "1px solid rgba(181,195,221,0.86)",
+    borderRadius: 10,
+    background: "rgba(255,255,255,0.98)",
+    boxShadow: "0 22px 50px rgba(34,53,104,0.18)",
+    animation: "shiftDropdownIn 160ms ease-out",
+  },
+  modalDropdownItem: {
+    width: "100%",
+    minHeight: 42,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+    padding: "9px 10px",
+    border: "none",
+    borderRadius: 8,
+    background: "transparent",
+    color: "#1b2b52",
+    cursor: "pointer",
+    fontFamily: "inherit",
+    textAlign: "left" as const,
+    transition: "background 140ms ease, color 140ms ease",
+  },
+  modalDropdownItemActive: {
+    background: "linear-gradient(135deg, #eef4ff 0%, #f7faff 100%)",
+    color: "#2456e8",
+  },
+  modalDropdownItemTitle: {
+    display: "block",
+    fontSize: 13,
+    fontWeight: 800,
+    lineHeight: 1.2,
+  },
+  modalDropdownItemDesc: {
+    display: "block",
+    marginTop: 4,
+    fontSize: 11,
+    fontWeight: 650,
+    color: "#74829f",
   },
   modalSectionCard: {
     margin: "0 22px 12px",
