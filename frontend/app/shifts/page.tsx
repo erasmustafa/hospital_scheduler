@@ -740,8 +740,9 @@ export default function ShiftsPage() {
         )}
 
         {!loading && (
-          <div style={styles.tableWrap}>
-            <table style={styles.table}>
+          <>
+            <div style={styles.tableWrap}>
+              <table style={styles.table}>
               <thead>
                 <tr>
                   <th style={styles.th}>Tarih</th>
@@ -882,8 +883,13 @@ export default function ShiftsPage() {
                   })
                 )}
               </tbody>
-            </table>
-          </div>
+              </table>
+            </div>
+            <footer style={styles.tableFooter}>
+              <span>Liste sonu</span>
+              <span style={styles.tableFooterCount}>Toplam {rows.length} vardiya</span>
+            </footer>
+          </>
         )}
       </section>
 
@@ -1367,6 +1373,34 @@ const styles: Record<string, React.CSSProperties> = {
     flex: 1,
     minHeight: 0,
     overflow: "auto" as const,
+  },
+  tableFooter: {
+    position: "sticky" as const,
+    bottom: 0,
+    zIndex: 2,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+    padding: "11px 16px",
+    borderTop: "1px solid #e2e8f0",
+    background: "rgba(255,255,255,0.96)",
+    backdropFilter: "blur(10px)",
+    boxShadow: "0 -10px 24px -18px rgba(15,23,42,0.35)",
+    fontSize: 12,
+    fontWeight: 700,
+    color: "#64748b",
+  },
+  tableFooterCount: {
+    display: "inline-flex",
+    alignItems: "center",
+    minHeight: 26,
+    padding: "0 12px",
+    borderRadius: 999,
+    background: "#eff6ff",
+    color: "#2563eb",
+    fontSize: 12,
+    fontWeight: 800,
   },
   table: {
     width: "100%",
