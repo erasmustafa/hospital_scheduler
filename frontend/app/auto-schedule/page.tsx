@@ -1,21 +1,24 @@
 ﻿"use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   Bell,
   CalendarDays,
   Check,
   ChevronDown,
   Clock,
+  Copy,
   Info,
   Keyboard,
   MoreVertical,
+  Pencil,
   Play,
   Plus,
   RefreshCw,
   Search,
   SlidersHorizontal,
   Tag,
+  Trash2,
   X,
 } from "lucide-react";
 import { apiClient } from "@/lib/api";
@@ -228,6 +231,9 @@ function TooltipBadge({ text }: { text: string }) {
 
 export default function AutoSchedulePage() {
   const today = useMemo(() => new Date(), []);
+  const departmentSelectRef = useRef<HTMLSelectElement | null>(null);
+  const startDateInputRef = useRef<HTMLInputElement | null>(null);
+  const endDateInputRef = useRef<HTMLInputElement | null>(null);
   const [startDate, setStartDate] = useState(isoDate(today));
   const [endDate, setEndDate] = useState(
     isoDate(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 6))
@@ -255,6 +261,8 @@ export default function AutoSchedulePage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isShiftModalOpen, setIsShiftModalOpen] = useState(false);
+  const [editingShiftTypeId, setEditingShiftTypeId] = useState<number | null>(null);
+  const [openShiftMenuId, setOpenShiftMenuId] = useState<number | null>(null);
   const [newShiftName, setNewShiftName] = useState("");
   const [newShiftColor, setNewShiftColor] = useState(shiftTypeColorOptions[0]);
   const [newShiftStartTime, setNewShiftStartTime] = useState("08:00");
@@ -262,6 +270,8 @@ export default function AutoSchedulePage() {
   const [newShiftCategory, setNewShiftCategory] = useState("Gündüz");
 
   const openShiftTypeModal = () => {
+    setEditingShiftTypeId(null);
+    setOpenShiftMenuId(null);
     setNewShiftName("");
     setNewShiftColor(shiftTypeColorOptions[0]);
     setNewShiftStartTime("08:00");
@@ -272,23 +282,66 @@ export default function AutoSchedulePage() {
 
   const closeShiftTypeModal = () => {
     setIsShiftModalOpen(false);
+    setEditingShiftTypeId(null);
   };
 
   const saveShiftType = () => {
     const name = newShiftName.trim() || newShiftCategory;
+    const shiftTypePayload = {
+      name,
+      startTime: newShiftStartTime,
+      endTime: newShiftEndTime,
+      isNight: newShiftCategory === "Gece" || newShiftCategory === "Nöbet",
+      color: newShiftColor,
+    };
+
+    setShiftTypes((previous) => {
+      if (editingShiftTypeId) {
+        return previous.map((shiftType) =>
+          shiftType.id === editingShiftTypeId ? { ...shiftType, ...shiftTypePayload } : shiftType
+        );
+      }
+
+      return [
+        ...previous,
+        {
+          id: Date.now(),
+          ...shiftTypePayload,
+        },
+      ];
+    });
+    setSuccess(editingShiftTypeId ? "Vardiya tipi güncellendi." : "Vardiya tipi bilgileri kaydedildi.");
+    closeShiftTypeModal();
+  };
+
+  const editShiftType = (shiftType: ShiftTypeRow) => {
+    setEditingShiftTypeId(shiftType.id);
+    setOpenShiftMenuId(null);
+    setNewShiftName(shiftType.name);
+    setNewShiftColor(shiftType.color);
+    setNewShiftStartTime(shiftType.startTime);
+    setNewShiftEndTime(shiftType.endTime);
+    setNewShiftCategory(getShiftKind(shiftType));
+    setIsShiftModalOpen(true);
+  };
+
+  const duplicateShiftType = (shiftType: ShiftTypeRow) => {
     setShiftTypes((previous) => [
       ...previous,
       {
+        ...shiftType,
         id: Date.now(),
-        name,
-        startTime: newShiftStartTime,
-        endTime: newShiftEndTime,
-        isNight: newShiftCategory === "Gece" || newShiftCategory === "Nöbet",
-        color: newShiftColor,
+        name: `${shiftType.name} Kopya`,
       },
     ]);
-    setSuccess("Vardiya tipi bilgileri kaydedildi.");
-    closeShiftTypeModal();
+    setOpenShiftMenuId(null);
+    setSuccess("Vardiya tipi kopyalandı.");
+  };
+
+  const removeShiftType = (shiftTypeId: number) => {
+    setShiftTypes((previous) => previous.filter((shiftType) => shiftType.id !== shiftTypeId));
+    setOpenShiftMenuId(null);
+    setSuccess("Vardiya tipi kaldırıldı.");
   };
 
   useEffect(() => {
@@ -307,20 +360,54 @@ export default function AutoSchedulePage() {
     void loadDepartments();
   }, []);
 
-  useEffect(() => {
-    const loadShiftTypes = async () => {
-      setLoadingShiftTypes(true);
-      try {
-        const data = await apiClient.get<{ shiftTypes: ShiftTypeRow[] }>("/shift-types/");
-        setShiftTypes(data.shiftTypes);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Vardiya tipleri yüklenemedi.");
-      } finally {
-        setLoadingShiftTypes(false);
-      }
-    };
-    void loadShiftTypes();
+  const loadShiftTypes = useCallback(async () => {
+    setLoadingShiftTypes(true);
+    try {
+      const data = await apiClient.get<{ shiftTypes: ShiftTypeRow[] }>("/shift-types/");
+      setShiftTypes(data.shiftTypes);
+      setError(null);
+      return true;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Vardiya tipleri yüklenemedi.");
+      return false;
+    } finally {
+      setLoadingShiftTypes(false);
+    }
   }, []);
+
+  useEffect(() => {
+    void loadShiftTypes();
+  }, [loadShiftTypes]);
+
+  useEffect(() => {
+    if (!openShiftMenuId) return;
+
+    const closeOpenShiftMenu = () => {
+      setOpenShiftMenuId(null);
+    };
+
+    window.addEventListener("click", closeOpenShiftMenu);
+    return () => window.removeEventListener("click", closeOpenShiftMenu);
+  }, [openShiftMenuId]);
+
+  const refreshShiftTypes = useCallback(async () => {
+    setOpenShiftMenuId(null);
+    const refreshed = await loadShiftTypes();
+    if (refreshed) {
+      setSuccess("Vardiya tipleri yenilendi.");
+    }
+  }, [loadShiftTypes]);
+
+  const openNativePicker = (
+    element: (HTMLSelectElement | HTMLInputElement) & { showPicker?: () => void }
+  ) => {
+    element.focus();
+    if (typeof element.showPicker === "function") {
+      element.showPicker();
+    } else {
+      element.click();
+    }
+  };
 
   const selectedDepartment = departments.find((department) => department.id === departmentId);
 
@@ -459,6 +546,24 @@ export default function AutoSchedulePage() {
             }
           }
 
+          @keyframes autoMenuIn {
+            from {
+              opacity: 0;
+              transform: translateY(-6px) scale(0.96);
+            }
+
+            to {
+              opacity: 1;
+              transform: translateY(0) scale(1);
+            }
+          }
+
+          @keyframes autoSpin {
+            to {
+              transform: rotate(360deg);
+            }
+          }
+
           .auto-modal-control {
             transform: translateY(0) scale(1);
             transition:
@@ -477,6 +582,109 @@ export default function AutoSchedulePage() {
 
           .auto-modal-control:active:not(:disabled) {
             transform: translateY(0) scale(0.985);
+          }
+
+          .auto-panel-action {
+            transform: translateY(0) scale(1);
+            transition:
+              transform 160ms ease,
+              box-shadow 160ms ease,
+              border-color 160ms ease,
+              background 160ms ease,
+              filter 160ms ease;
+          }
+
+          .auto-panel-action:hover:not(:disabled) {
+            transform: translateY(-1px);
+            filter: brightness(1.02);
+            border-color: #8ea8ff !important;
+            box-shadow: 0 14px 30px rgba(37, 86, 232, 0.16) !important;
+          }
+
+          .auto-panel-action:active:not(:disabled) {
+            transform: translateY(0) scale(0.975);
+          }
+
+          .auto-panel-action:disabled {
+            cursor: not-allowed !important;
+            opacity: 0.68;
+          }
+
+          .auto-list-control {
+            transition:
+              transform 160ms ease,
+              box-shadow 160ms ease,
+              border-color 160ms ease,
+              background 160ms ease;
+          }
+
+          .auto-list-control:hover:not(:has(:disabled)) {
+            transform: translateY(-1px);
+            border-color: #9db5ff !important;
+            background: #fbfdff !important;
+            box-shadow: 0 12px 24px rgba(37, 86, 232, 0.12);
+          }
+
+          .auto-list-control:active:not(:has(:disabled)) {
+            transform: translateY(0) scale(0.992);
+          }
+
+          .auto-list-icon-button {
+            transition:
+              transform 150ms ease,
+              background 150ms ease,
+              color 150ms ease;
+          }
+
+          .auto-list-icon-button:hover:not(:disabled) {
+            transform: translateY(-1px);
+            background: #eef4ff !important;
+            color: #2456e8 !important;
+          }
+
+          .auto-list-icon-button:active:not(:disabled) {
+            transform: scale(0.92);
+          }
+
+          .auto-spin-icon {
+            animation: autoSpin 780ms linear infinite;
+          }
+
+          .auto-shift-more {
+            transition:
+              transform 150ms ease,
+              background 150ms ease,
+              color 150ms ease,
+              box-shadow 150ms ease;
+          }
+
+          .auto-shift-more:hover {
+            transform: translateY(-1px);
+            background: #eef4ff !important;
+            color: #2456e8 !important;
+            box-shadow: 0 10px 18px rgba(37, 86, 232, 0.14);
+          }
+
+          .auto-shift-more:active {
+            transform: translateY(0) scale(0.94);
+          }
+
+          .auto-shift-action {
+            transition:
+              transform 150ms ease,
+              background 150ms ease,
+              color 150ms ease;
+          }
+
+          .auto-shift-action:hover {
+            transform: translateX(2px);
+            background: #f1f6ff !important;
+            color: #2456e8 !important;
+          }
+
+          .auto-shift-action-danger:hover {
+            background: #fff1f2 !important;
+            color: #dc2626 !important;
           }
 
           .auto-modal-dropdown-trigger:hover {
@@ -571,8 +779,9 @@ export default function AutoSchedulePage() {
 
             <label style={styles.fieldLabel}>
               <span>Birim</span>
-              <span style={styles.selectShell}>
+              <span className="auto-list-control" style={styles.selectShell}>
                 <select
+                  ref={departmentSelectRef}
                   style={styles.selectInput}
                   value={departmentId ?? ""}
                   onChange={(event) => setDepartmentId(Number(event.target.value))}
@@ -585,34 +794,73 @@ export default function AutoSchedulePage() {
                     </option>
                   ))}
                 </select>
-                <ChevronDown size={17} color="#71809b" />
+                <button
+                  type="button"
+                  className="auto-list-icon-button"
+                  style={styles.inputIconButton}
+                  onClick={() => {
+                    if (departmentSelectRef.current) {
+                      openNativePicker(departmentSelectRef.current);
+                    }
+                  }}
+                  disabled={loadingDepartments || departments.length === 0}
+                  aria-label="Birim seçeneklerini aç"
+                >
+                  <ChevronDown size={17} />
+                </button>
               </span>
             </label>
 
             <div style={styles.dateGrid}>
               <label style={styles.fieldLabel}>
                 <span>Başlangıç Tarihi</span>
-                <span style={styles.dateShell}>
+                <span className="auto-list-control" style={styles.dateShell}>
                   <input
+                    ref={startDateInputRef}
                     type="date"
                     style={styles.dateInput}
                     value={startDate}
                     onChange={(event) => setStartDate(event.target.value)}
                   />
-                  <CalendarDays size={16} color="#334155" />
+                  <button
+                    type="button"
+                    className="auto-list-icon-button"
+                    style={styles.inputIconButton}
+                    onClick={() => {
+                      if (startDateInputRef.current) {
+                        openNativePicker(startDateInputRef.current);
+                      }
+                    }}
+                    aria-label="Başlangıç tarihi seç"
+                  >
+                    <CalendarDays size={16} />
+                  </button>
                 </span>
               </label>
 
               <label style={styles.fieldLabel}>
                 <span>Bitiş Tarihi</span>
-                <span style={styles.dateShell}>
+                <span className="auto-list-control" style={styles.dateShell}>
                   <input
+                    ref={endDateInputRef}
                     type="date"
                     style={styles.dateInput}
                     value={endDate}
                     onChange={(event) => setEndDate(event.target.value)}
                   />
-                  <CalendarDays size={16} color="#334155" />
+                  <button
+                    type="button"
+                    className="auto-list-icon-button"
+                    style={styles.inputIconButton}
+                    onClick={() => {
+                      if (endDateInputRef.current) {
+                        openNativePicker(endDateInputRef.current);
+                      }
+                    }}
+                    aria-label="Bitiş tarihi seç"
+                  >
+                    <CalendarDays size={16} />
+                  </button>
                 </span>
               </label>
             </div>
@@ -649,6 +897,7 @@ export default function AutoSchedulePage() {
 
             <button
               type="button"
+              className="auto-panel-action"
               onClick={() => void handleGenerate()}
               disabled={generating || loadingDepartments}
               style={{
@@ -728,14 +977,23 @@ export default function AutoSchedulePage() {
             <div style={styles.shiftHeaderActions}>
               <button
                 type="button"
+                className="auto-panel-action"
                 style={styles.secondaryButton}
                 onClick={openShiftTypeModal}
               >
                 <Plus size={17} />
                 Yeni Vardiya Tipi
               </button>
-              <button type="button" style={styles.squareButton} aria-label="Yenile">
-                <RefreshCw size={17} />
+              <button
+                type="button"
+                className="auto-panel-action"
+                style={styles.squareButton}
+                onClick={() => void refreshShiftTypes()}
+                disabled={loadingShiftTypes}
+                aria-label="Vardiya tiplerini yenile"
+                title="Vardiya tiplerini yenile"
+              >
+                <RefreshCw className={loadingShiftTypes ? "auto-spin-icon" : undefined} size={17} />
               </button>
             </div>
           </div>
@@ -783,9 +1041,57 @@ export default function AutoSchedulePage() {
                     <span>Süre</span>
                     <strong>{getShiftDuration(shiftType)} saat</strong>
                   </div>
-                  <button type="button" style={styles.plainIconButton} aria-label="Vardiya işlemleri">
-                    <MoreVertical size={18} />
-                  </button>
+                  <div style={styles.moreMenuWrap}>
+                    <button
+                      type="button"
+                      className="auto-shift-more"
+                      style={styles.plainIconButton}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setOpenShiftMenuId((current) => (current === shiftType.id ? null : shiftType.id));
+                      }}
+                      aria-label={`${shiftType.name} işlemleri`}
+                      aria-haspopup="menu"
+                      aria-expanded={openShiftMenuId === shiftType.id}
+                    >
+                      <MoreVertical size={18} />
+                    </button>
+
+                    {openShiftMenuId === shiftType.id ? (
+                      <div style={styles.shiftActionMenu} role="menu">
+                        <button
+                          type="button"
+                          className="auto-shift-action"
+                          style={styles.shiftActionItem}
+                          onClick={() => editShiftType(shiftType)}
+                          role="menuitem"
+                        >
+                          <Pencil size={15} />
+                          Düzenle
+                        </button>
+                        <button
+                          type="button"
+                          className="auto-shift-action"
+                          style={styles.shiftActionItem}
+                          onClick={() => duplicateShiftType(shiftType)}
+                          role="menuitem"
+                        >
+                          <Copy size={15} />
+                          Kopyala
+                        </button>
+                        <button
+                          type="button"
+                          className="auto-shift-action auto-shift-action-danger"
+                          style={{ ...styles.shiftActionItem, ...styles.shiftActionItemDanger }}
+                          onClick={() => removeShiftType(shiftType.id)}
+                          role="menuitem"
+                        >
+                          <Trash2 size={15} />
+                          Kaldır
+                        </button>
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
               ))
             )}
@@ -815,9 +1121,11 @@ export default function AutoSchedulePage() {
                 </span>
                 <div>
                   <h2 id="add-shift-type-modal-title" style={styles.modalTitle}>
-                    Vardiya Tipi Ekle
+                    {editingShiftTypeId ? "Vardiya Tipi Düzenle" : "Vardiya Tipi Ekle"}
                   </h2>
-                  <p style={styles.modalSubtitle}>Yeni bir vardiya tipi oluşturun.</p>
+                  <p style={styles.modalSubtitle}>
+                    {editingShiftTypeId ? "Vardiya tipi bilgilerini güncelleyin." : "Yeni bir vardiya tipi oluşturun."}
+                  </p>
                 </div>
               </div>
               <button
@@ -1225,6 +1533,19 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 600,
     color: "#16254b",
   },
+  inputIconButton: {
+    width: 28,
+    height: 28,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: "none",
+    borderRadius: 7,
+    background: "transparent",
+    color: "#71809b",
+    cursor: "pointer",
+    padding: 0,
+  },
   dateGrid: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
@@ -1444,7 +1765,10 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#64748b",
   },
   shiftPanel: {
-    minHeight: 680,
+    height: 616,
+    minHeight: 0,
+    display: "flex",
+    flexDirection: "column",
     borderRadius: 12,
     border: "1px solid #dfe7f4",
     background: "rgba(255,255,255,0.94)",
@@ -1512,6 +1836,10 @@ const styles: Record<string, React.CSSProperties> = {
   shiftList: {
     display: "grid",
     gap: 14,
+    flex: 1,
+    minHeight: 0,
+    overflowY: "auto",
+    paddingRight: 3,
   },
   emptyText: {
     margin: 0,
@@ -1583,6 +1911,46 @@ const styles: Record<string, React.CSSProperties> = {
     background: "transparent",
     color: "#55709b",
     cursor: "pointer",
+  },
+  moreMenuWrap: {
+    position: "relative",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  shiftActionMenu: {
+    position: "absolute",
+    top: 34,
+    right: 0,
+    zIndex: 20,
+    width: 148,
+    display: "grid",
+    gap: 4,
+    padding: 6,
+    borderRadius: 10,
+    border: "1px solid #dbe5f4",
+    background: "rgba(255,255,255,0.98)",
+    boxShadow: "0 18px 36px rgba(17, 31, 72, 0.16)",
+    animation: "autoMenuIn 160ms ease both",
+  },
+  shiftActionItem: {
+    width: "100%",
+    minHeight: 34,
+    display: "flex",
+    alignItems: "center",
+    gap: 9,
+    border: "none",
+    borderRadius: 7,
+    background: "transparent",
+    color: "#263b61",
+    fontSize: 12,
+    fontWeight: 700,
+    textAlign: "left",
+    cursor: "pointer",
+    padding: "0 10px",
+  },
+  shiftActionItemDanger: {
+    color: "#b91c1c",
   },
   shiftInfoBox: {
     display: "flex",
