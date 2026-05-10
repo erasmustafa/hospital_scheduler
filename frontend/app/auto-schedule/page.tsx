@@ -215,6 +215,17 @@ function ModalDropdown({ value, placeholder, options, icon, onChange }: ModalDro
   );
 }
 
+function TooltipBadge({ text }: { text: string }) {
+  return (
+    <span className="auto-tooltip-wrap" style={styles.tooltipWrap}>
+      <span style={styles.tooltipBadge} aria-label={text} tabIndex={0}>
+        i
+      </span>
+      <span className="auto-tooltip-content" style={styles.tooltipContent}>{text}</span>
+    </span>
+  );
+}
+
 export default function AutoSchedulePage() {
   const today = useMemo(() => new Date(), []);
   const [startDate, setStartDate] = useState(isoDate(today));
@@ -501,6 +512,13 @@ export default function AutoSchedulePage() {
 
           .auto-color-dot:active {
             transform: scale(0.96);
+          }
+
+          .auto-tooltip-wrap:hover .auto-tooltip-content,
+          .auto-tooltip-wrap:focus-within .auto-tooltip-content {
+            opacity: 1 !important;
+            transform: translate(-50%, -6px) scale(1) !important;
+            pointer-events: auto !important;
           }
         `,
       }}
@@ -829,8 +847,10 @@ export default function AutoSchedulePage() {
               </label>
 
               <div style={styles.modalField}>
-                <span>Renk</span>
-                <p style={styles.colorHint}>Takvim ve listelerde gösterilecek renk seçin.</p>
+                <span style={styles.labelWithTooltip}>
+                  Renk
+                  <TooltipBadge text="Takvim ve listelerde gösterilecek renk seçin." />
+                </span>
                 <div style={styles.colorPickerRow}>
                   {shiftTypeColorOptions.map(
                     (color, index) => (
@@ -863,10 +883,8 @@ export default function AutoSchedulePage() {
                 <div>
                   <h3 style={styles.modalSectionTitle}>
                     Saat Aralığı <span style={styles.modalOptionalText}>(Varsayılan)</span>
+                    <TooltipBadge text="Bu vardiya tipinin önerilen başlangıç ve bitiş saatini belirleyin." />
                   </h3>
-                  <p style={styles.modalSectionText}>
-                    Bu vardiya tipinin önerilen başlangıç ve bitiş saatini belirleyin.
-                  </p>
                 </div>
               </div>
 
@@ -911,10 +929,10 @@ export default function AutoSchedulePage() {
               <div style={styles.modalSectionHeader}>
                 <Tag size={17} />
                 <div>
-                  <h3 style={styles.modalSectionTitle}>Vardiya Tipi Kategorisi</h3>
-                  <p style={styles.modalSectionText}>
-                    Vardiya tipini kategorize ederek raporlama ve filtreleme süreçlerini kolaylaştırın.
-                  </p>
+                  <h3 style={styles.modalSectionTitle}>
+                    Vardiya Tipi Kategorisi
+                    <TooltipBadge text="Vardiya tipini kategorize ederek raporlama ve filtreleme süreçlerini kolaylaştırın." />
+                  </h3>
                 </div>
               </div>
               <ModalDropdown
@@ -1662,6 +1680,55 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 13,
     fontWeight: 800,
     color: "#101a3c",
+  },
+  labelWithTooltip: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 8,
+    width: "fit-content",
+  },
+  tooltipWrap: {
+    position: "relative",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    verticalAlign: "middle",
+  },
+  tooltipBadge: {
+    width: 17,
+    height: 17,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "50%",
+    border: "1px solid #b9c9f6",
+    background: "#eef4ff",
+    color: "#2456e8",
+    fontSize: 11,
+    lineHeight: 1,
+    fontWeight: 850,
+    cursor: "help",
+  },
+  tooltipContent: {
+    position: "absolute" as const,
+    left: "50%",
+    bottom: "calc(100% + 10px)",
+    zIndex: 180,
+    width: 238,
+    padding: "9px 10px",
+    borderRadius: 8,
+    border: "1px solid rgba(185,201,246,0.9)",
+    background: "rgba(15, 31, 70, 0.96)",
+    color: "#ffffff",
+    fontSize: 11,
+    fontWeight: 650,
+    lineHeight: 1.45,
+    textAlign: "center" as const,
+    boxShadow: "0 16px 34px rgba(15,31,70,0.22)",
+    opacity: 0,
+    pointerEvents: "none" as const,
+    transform: "translate(-50%, 0) scale(0.96)",
+    transition: "opacity 160ms ease, transform 160ms ease",
   },
   colorHint: {
     margin: "-4px 0 4px",
