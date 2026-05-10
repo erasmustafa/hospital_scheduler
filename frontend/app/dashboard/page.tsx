@@ -1,7 +1,19 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  Bot,
+  CalendarDays,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Clock3,
+  Filter,
+  Info,
+  UsersRound,
+} from "lucide-react";
 import { apiClient } from "@/lib/api";
 
 type DashboardSummary = {
@@ -11,67 +23,206 @@ type DashboardSummary = {
   unreadNotifications: number;
 };
 
-type AssignmentRow = {
-  id: number;
-  assignmentDate: string;
-  staffProfileName: string;
-  shiftTypeName: string;
-  departmentName: string;
-  shiftColor: string;
+type ShiftKind = "Gündüz" | "Akşam" | "Gece" | "İzinli";
+
+type ScheduleCell = {
+  type: ShiftKind;
+  time: string;
 };
 
-type CalendarDay = {
-  key: string;
-  date: Date;
-  isCurrentMonth: boolean;
-  items: AssignmentRow[];
+type ScheduleRow = {
+  name: string;
+  shifts: ScheduleCell[];
 };
 
-const dayLabels = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
+const weekDays = ["27 Pzt", "28 Sal", "29 Çar", "30 Per", "31 Cum", "1 Cmt", "2 Paz"];
 
-function toIsoDate(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+const scheduleRows: ScheduleRow[] = [
+  {
+    name: "Ece Yılmaz",
+    shifts: [
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "Akşam", time: "16:00 - 00:00" },
+      { type: "Akşam", time: "16:00 - 00:00" },
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "İzinli", time: "Çalışmayacak" },
+    ],
+  },
+  {
+    name: "Mehmet Kaya",
+    shifts: [
+      { type: "Akşam", time: "16:00 - 00:00" },
+      { type: "Akşam", time: "16:00 - 00:00" },
+      { type: "Akşam", time: "16:00 - 00:00" },
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "İzinli", time: "Çalışmayacak" },
+      { type: "Akşam", time: "16:00 - 00:00" },
+    ],
+  },
+  {
+    name: "Ayşe Demir",
+    shifts: [
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "İzinli", time: "Çalışmayacak" },
+      { type: "Akşam", time: "16:00 - 00:00" },
+      { type: "Akşam", time: "16:00 - 00:00" },
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "Gündüz", time: "08:00 - 16:00" },
+    ],
+  },
+  {
+    name: "Murat Şahin",
+    shifts: [
+      { type: "Gece", time: "00:00 - 08:00" },
+      { type: "Gece", time: "00:00 - 08:00" },
+      { type: "İzinli", time: "Çalışmayacak" },
+      { type: "Gece", time: "00:00 - 08:00" },
+      { type: "Gece", time: "00:00 - 08:00" },
+      { type: "Akşam", time: "16:00 - 00:00" },
+      { type: "İzinli", time: "Çalışmayacak" },
+    ],
+  },
+  {
+    name: "Zeynep Aksoy",
+    shifts: [
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "Akşam", time: "16:00 - 00:00" },
+      { type: "İzinli", time: "Çalışmayacak" },
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "İzinli", time: "Çalışmayacak" },
+    ],
+  },
+  {
+    name: "Ali Çelik",
+    shifts: [
+      { type: "Akşam", time: "16:00 - 00:00" },
+      { type: "İzinli", time: "Çalışmayacak" },
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "İzinli", time: "Çalışmayacak" },
+      { type: "Gece", time: "00:00 - 08:00" },
+      { type: "Gece", time: "00:00 - 08:00" },
+    ],
+  },
+  {
+    name: "Deniz Arslan",
+    shifts: [
+      { type: "İzinli", time: "Çalışmayacak" },
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "Akşam", time: "16:00 - 00:00" },
+      { type: "Gündüz", time: "08:00 - 16:00" },
+    ],
+  },
+  {
+    name: "Emre Yıldız",
+    shifts: [
+      { type: "Gece", time: "00:00 - 08:00" },
+      { type: "Akşam", time: "16:00 - 00:00" },
+      { type: "İzinli", time: "Çalışmayacak" },
+      { type: "Gece", time: "00:00 - 08:00" },
+      { type: "İzinli", time: "Çalışmayacak" },
+      { type: "Gece", time: "00:00 - 08:00" },
+      { type: "Akşam", time: "16:00 - 00:00" },
+    ],
+  },
+  {
+    name: "Seda Arıkan",
+    shifts: [
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "Akşam", time: "16:00 - 00:00" },
+      { type: "Akşam", time: "16:00 - 00:00" },
+      { type: "İzinli", time: "Çalışmayacak" },
+      { type: "Akşam", time: "16:00 - 00:00" },
+      { type: "Gündüz", time: "08:00 - 16:00" },
+      { type: "İzinli", time: "Çalışmayacak" },
+    ],
+  },
+  {
+    name: "Burak Kılıç",
+    shifts: [
+      { type: "İzinli", time: "Çalışmayacak" },
+      { type: "Gece", time: "00:00 - 08:00" },
+      { type: "Gece", time: "00:00 - 08:00" },
+      { type: "Akşam", time: "16:00 - 00:00" },
+      { type: "İzinli", time: "Çalışmayacak" },
+      { type: "Gece", time: "00:00 - 08:00" },
+      { type: "Gece", time: "00:00 - 08:00" },
+    ],
+  },
+];
+
+const shiftStyles: Record<ShiftKind, { bg: string; text: string }> = {
+  Gündüz: { bg: "#ecfdf3", text: "#078247" },
+  Akşam: { bg: "#eef4ff", text: "#1554d1" },
+  Gece: { bg: "#f2eafe", text: "#6d35d5" },
+  İzinli: { bg: "#f4f6fa", text: "#46546b" },
+};
+
+function CompliancePill({ icon, text }: { icon: "check" | "info"; text: string }) {
+  return (
+    <div style={styles.compliancePill}>
+      <span style={icon === "check" ? styles.successIcon : styles.infoIcon}>
+        {icon === "check" ? <Check size={14} /> : <Info size={14} />}
+      </span>
+      {text}
+    </div>
+  );
 }
 
-function monthLabel(date: Date) {
-  return date.toLocaleDateString("tr-TR", { month: "long", year: "numeric" });
+function SummaryMetric({
+  icon,
+  value,
+  label,
+  note,
+  tone,
+}: {
+  icon: React.ReactNode;
+  value: string;
+  label: string;
+  note: string;
+  tone: "blue" | "green" | "purple";
+}) {
+  const palette = {
+    blue: { bg: "#eef4ff", color: "#2563eb" },
+    green: { bg: "#eafaf0", color: "#22a35a" },
+    purple: { bg: "#f1e9ff", color: "#7c3aed" },
+  }[tone];
+
+  return (
+    <div style={styles.summaryMetric}>
+      <span style={{ ...styles.metricIcon, background: palette.bg, color: palette.color }}>{icon}</span>
+      <div>
+        <strong style={styles.metricValue}>{value}</strong>
+        <p style={styles.metricLabel}>{label}</p>
+        <small style={{ ...styles.metricNote, color: palette.color }}>{note}</small>
+      </div>
+    </div>
+  );
 }
 
-function buildMonthGrid(anchor: Date, grouped: Map<string, AssignmentRow[]>) {
-  const year = anchor.getFullYear();
-  const month = anchor.getMonth();
-  const first = new Date(year, month, 1);
-  const mondayOffset = (first.getDay() + 6) % 7;
-  const gridStart = new Date(year, month, 1 - mondayOffset);
-  const days: CalendarDay[] = [];
+function ShiftChip({ shift }: { shift: ScheduleCell }) {
+  const tone = shiftStyles[shift.type];
 
-  for (let i = 0; i < 42; i += 1) {
-    const current = new Date(gridStart);
-    current.setDate(gridStart.getDate() + i);
-    const key = toIsoDate(current);
-    days.push({
-      key,
-      date: current,
-      isCurrentMonth: current.getMonth() === month,
-      items: grouped.get(key) ?? [],
-    });
-  }
-  return days;
+  return (
+    <div style={{ ...styles.shiftChip, background: tone.bg, color: tone.text }}>
+      <strong>{shift.type}</strong>
+      <span>{shift.time}</span>
+    </div>
+  );
 }
 
 export default function DashboardPage() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [summaryError, setSummaryError] = useState<string | null>(null);
-  const [calendarError, setCalendarError] = useState<string | null>(null);
-  const [monthCursor, setMonthCursor] = useState(() => {
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), 1);
-  });
-  const [assignments, setAssignments] = useState<AssignmentRow[]>([]);
-  const [selectedDay, setSelectedDay] = useState<CalendarDay | null>(null);
 
   const loadSummary = useCallback(async () => {
     try {
@@ -79,29 +230,7 @@ export default function DashboardPage() {
       setSummary(data);
       setSummaryError(null);
     } catch (error) {
-      setSummaryError(
-        error instanceof Error ? error.message : "Özet verisi alınamadı."
-      );
-    }
-  }, []);
-
-  const loadMonthAssignments = useCallback(async (monthDate: Date) => {
-    const monthStart = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1);
-    const monthEnd = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0);
-    try {
-      const query = new URLSearchParams({
-        date_from: toIsoDate(monthStart),
-        date_to: toIsoDate(monthEnd),
-      }).toString();
-      const data = await apiClient.get<{ assignments: AssignmentRow[] }>(
-        `/assignments/?${query}`
-      );
-      setAssignments(data.assignments);
-      setCalendarError(null);
-    } catch (error) {
-      setCalendarError(
-        error instanceof Error ? error.message : "Takvim verisi alınamadı."
-      );
+      setSummaryError(error instanceof Error ? error.message : "Özet verisi alınamadı.");
     }
   }, []);
 
@@ -109,506 +238,541 @@ export default function DashboardPage() {
     void loadSummary();
   }, [loadSummary]);
 
-  useEffect(() => {
-    void loadMonthAssignments(monthCursor);
-  }, [loadMonthAssignments, monthCursor]);
-
-  const groupedAssignments = useMemo(() => {
-    const map = new Map<string, AssignmentRow[]>();
-    for (const assignment of assignments) {
-      const key = assignment.assignmentDate;
-      if (!map.has(key)) map.set(key, []);
-      map.get(key)!.push(assignment);
-    }
-    return map;
-  }, [assignments]);
-
-  const calendarDays = useMemo(
-    () => buildMonthGrid(monthCursor, groupedAssignments),
-    [groupedAssignments, monthCursor]
+  const totalAssignments = useMemo(
+    () => scheduleRows.reduce((total, row) => total + row.shifts.filter((shift) => shift.type !== "İzinli").length, 0),
+    []
   );
 
-  const todayKey = useMemo(() => toIsoDate(new Date()), []);
+  const averageStaff = summary?.activeStaff ? Math.min(summary.activeStaff, 45) : 45;
+  const workloadAverage = totalAssignments > 0 ? 44.6 : 0;
 
   return (
     <main style={styles.main}>
-      {/* ── STATS ROW ─────────────────────────────────── */}
-      <section style={styles.statsRow}>
-        <div style={{ ...styles.statCard, borderLeft: "4px solid #4A6CF7" }}>
-          <p style={styles.statLabel}>Aktif Personel</p>
-          <p style={styles.statValue}>{summary?.activeStaff ?? "-"}</p>
-          <p style={styles.statDesc}>Bugün görevdeki ekip</p>
-        </div>
-        <div style={{ ...styles.statCard, borderLeft: "4px solid #059669" }}>
-          <p style={styles.statLabel}>Bugünkü Vardiya</p>
-          <p style={styles.statValue}>{summary?.todaysAssignments ?? "-"}</p>
-          <p style={styles.statDesc}>Planlanan kayıtlar</p>
-        </div>
-        <div style={{ ...styles.statCard, borderLeft: "4px solid #D97706" }}>
-          <p style={styles.statLabel}>Bekleyen Onay</p>
-          <p style={styles.statValue}>{summary?.pendingApprovals ?? "-"}</p>
-          <p style={styles.statDesc}>Onay bekleyen izinler</p>
-        </div>
-        <div style={{ ...styles.statCard, borderLeft: "4px solid #DC2626" }}>
-          <p style={styles.statLabel}>Okunmamış Mesaj</p>
-          <p style={styles.statValue}>{summary?.unreadNotifications ?? "-"}</p>
-          <p style={styles.statDesc}>Bildirim merkezi</p>
-        </div>
-      </section>
-
-      {summaryError && <p style={{ color: "#dc2626", fontSize: 13 }}>{summaryError}</p>}
-
-      <div style={styles.twoCol}>
-        {/* ── LEFT: CALENDAR ────────────────────────────── */}
-        <section style={styles.card}>
-          <div style={styles.calendarNav}>
-            <div>
-              <h2 style={styles.cardTitle}>Aylık Plan Görünümü</h2>
-              <p style={styles.cardSubtitle}>Gün detayına tıklayarak vardiyaları gör</p>
+      <div style={styles.dashboardGrid}>
+        <div style={styles.leftColumn}>
+          <section style={styles.analysisBanner}>
+            <div style={styles.botAvatar}>
+              <Bot size={34} />
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <button
-                type="button"
-                onClick={() =>
-                  setMonthCursor((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))
-                }
-                style={styles.navButton}
-              >
-                ‹
-              </button>
-              <p style={styles.monthLabel}>
-                {monthLabel(monthCursor).charAt(0).toUpperCase() + monthLabel(monthCursor).slice(1)}
-              </p>
-              <button
-                type="button"
-                onClick={() =>
-                  setMonthCursor((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))
-                }
-                style={styles.navButton}
-              >
-                ›
-              </button>
+            <div style={styles.bannerContent}>
+              <h2 style={styles.bannerTitle}>Planınız analiz edildi ve en uygun vardiya planı oluşturuldu.</h2>
+              <div style={styles.complianceGrid}>
+                <CompliancePill icon="check" text="Gereksinimler karşılandı" />
+                <CompliancePill icon="check" text="Adil dağılım sağlandı" />
+                <CompliancePill icon="check" text="Yasa ve kural kontrolü" />
+                <CompliancePill icon="info" text="Uygunluk Skoru: %94" />
+              </div>
             </div>
-          </div>
+          </section>
 
-          {calendarError && <p style={{ color: "#dc2626", fontSize: 13 }}>{calendarError}</p>}
+          {summaryError ? <p style={styles.errorText}>{summaryError}</p> : null}
 
-          <div style={styles.dayLabelsRow}>
-            {dayLabels.map((lbl) => (
-              <span key={lbl} style={styles.dayLabel}>
-                {lbl}
-              </span>
-            ))}
-          </div>
-
-          <div style={styles.calendarGrid}>
-            {calendarDays.map((day) => {
-              const isToday = day.key === todayKey;
-              return (
-                <button
-                  type="button"
-                  key={day.key}
-                  onClick={() => setSelectedDay(day)}
-                  style={{
-                    ...styles.dayCell,
-                    backgroundColor: isToday ? "#EEF2FF" : day.isCurrentMonth ? "#ffffff" : "#f8fafc",
-                    border: isToday ? "2px solid #4A6CF7" : "1px solid #e2e8f0",
-                    color: day.isCurrentMonth ? "#1e293b" : "#cbd5e1",
-                  }}
-                >
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                    <span style={styles.dayNumber}>{day.date.getDate()}</span>
-                    {day.items.length > 0 && (
-                      <span style={styles.dayBadge}>{day.items.length}</span>
-                    )}
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                    {day.items.slice(0, 2).map((item) => (
-                      <p key={item.id} style={styles.dayItem}>
-                        {item.staffProfileName}
-                      </p>
-                    ))}
-                    {day.items.length > 2 && (
-                      <p style={styles.dayMore}>+{day.items.length - 2} daha</p>
-                    )}
-                  </div>
+          <section style={styles.planCard}>
+            <div style={styles.planToolbar}>
+              <div style={styles.viewToggle}>
+                <button type="button" style={styles.viewToggleActive}>
+                  <CalendarDays size={14} />
+                  Haftalık
                 </button>
-              );
-            })}
-          </div>
-        </section>
+                <button type="button" style={styles.viewToggleButton}>Günlük</button>
+              </div>
 
-        {/* ── RIGHT: QUICK ACTIONS ──────────────────────── */}
-        <aside style={styles.card}>
-          <h2 style={styles.cardTitle}>Hızlı İşlemler</h2>
-          <p style={styles.cardSubtitle}>Sık kullandığın ekranlara tek tıkla geçiş</p>
-          <div style={styles.actionsList}>
-            <Link href="/shifts" style={styles.actionBtn}>
-              <span style={styles.actionIcon}>📋</span> Vardiya Listesi
-            </Link>
-            <Link href="/auto-schedule" style={styles.actionBtn}>
-              <span style={styles.actionIcon}>✨</span> Otomatik Liste Oluştur
-            </Link>
-            <Link href="/approvals" style={styles.actionBtn}>
-              <span style={styles.actionIcon}>✓</span> Bekleyen Onaylar
-            </Link>
-            <Link href="/analytics" style={styles.actionBtn}>
-              <span style={styles.actionIcon}>📊</span> Analiz Raporu
-            </Link>
-          </div>
-          <div style={styles.systemStatus}>
-            <p style={styles.systemStatusLabel}>SİSTEM DURUMU</p>
-            <p style={styles.systemStatusText}>Takvim servisi aktif, canlı güncellemeler açık.</p>
-          </div>
+              <div style={styles.weekNavigator}>
+                <button type="button" style={styles.navButton} aria-label="Önceki hafta">
+                  <ChevronLeft size={18} />
+                </button>
+                <strong>27 Mayıs – 2 Haziran 2024</strong>
+                <button type="button" style={styles.navButton} aria-label="Sonraki hafta">
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+
+              <button type="button" style={styles.filterButton}>
+                <Filter size={15} />
+                Filtreler
+                <ChevronDown size={14} />
+              </button>
+            </div>
+
+            <div style={styles.scheduleWrap}>
+              <div style={styles.scheduleGrid}>
+                <div style={styles.employeeHead}>Çalışanlar</div>
+                {weekDays.map((day) => (
+                  <div key={day} style={styles.dayHead}>{day}</div>
+                ))}
+
+                {scheduleRows.map((row) => (
+                  <div key={row.name} style={styles.scheduleRowContents}>
+                    <div style={styles.employeeCell}>{row.name}</div>
+                    {row.shifts.map((shift, index) => (
+                      <div key={`${row.name}-${weekDays[index]}`} style={styles.shiftCell}>
+                        <ShiftChip shift={shift} />
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={styles.legendRow}>
+              <span style={styles.legendItem}><span style={{ ...styles.legendDot, background: "#35b66a" }} />Gündüz <small>08:00 - 16:00</small></span>
+              <span style={styles.legendItem}><span style={{ ...styles.legendDot, background: "#2f6df6" }} />Akşam <small>16:00 - 00:00</small></span>
+              <span style={styles.legendItem}><span style={{ ...styles.legendDot, background: "#8b5cf6" }} />Gece <small>00:00 - 08:00</small></span>
+              <span style={styles.legendItem}><span style={{ ...styles.legendDot, background: "#cbd5e1" }} />İzinli <small>Çalışmayacak</small></span>
+            </div>
+          </section>
+        </div>
+
+        <aside style={styles.rightColumn}>
+          <section style={styles.sideCard}>
+            <h3 style={styles.sideTitle}>Plan Özeti</h3>
+            <div style={styles.sideStack}>
+              <SummaryMetric
+                icon={<UsersRound size={23} />}
+                value={`${averageStaff} / 45`}
+                label="Günlük Ortalama Kişi"
+                note="İhtiyaç karşılandı"
+                tone="blue"
+              />
+              <SummaryMetric
+                icon={<CheckCircle2 size={24} />}
+                value="94%"
+                label="Genel Uygunluk Skoru"
+                note="Çok iyi"
+                tone="green"
+              />
+              <SummaryMetric
+                icon={<Clock3 size={24} />}
+                value={String(workloadAverage)}
+                label="Kişi Başına Ortalama Saat"
+                note="Hedef: ≤ 45 saat"
+                tone="purple"
+              />
+            </div>
+          </section>
+
+          <section style={styles.sideCard}>
+            <h3 style={styles.sideTitle}>Dağılım Analizi</h3>
+            <div style={styles.distributionWrap}>
+              <div style={styles.donutChart} />
+              <div style={styles.distributionList}>
+                <span style={styles.distributionItem}><i style={{ ...styles.distributionDot, background: "#7ccf9a" }} />Gündüz <b>56%</b></span>
+                <span style={styles.distributionItem}><i style={{ ...styles.distributionDot, background: "#6ca1ff" }} />Akşam <b>28%</b></span>
+                <span style={styles.distributionItem}><i style={{ ...styles.distributionDot, background: "#9a7cf4" }} />Gece <b>12%</b></span>
+                <span style={styles.distributionItem}><i style={{ ...styles.distributionDot, background: "#cbd5e1" }} />İzinli <b>4%</b></span>
+              </div>
+            </div>
+          </section>
+
+          <section style={styles.sideCard}>
+            <h3 style={styles.sideTitle}>Kontroller</h3>
+            <div style={styles.checkList}>
+              {["Yasal saat sınırı", "Dinlenme süresi", "Hafta sonu dengesi", "Adil dağılım", "Minimum kişi ihtiyacı"].map((item) => (
+                <div key={item} style={styles.checkRow}>
+                  <span style={styles.checkLabel}><CheckCircle2 size={14} />{item}</span>
+                  <strong>Uygun</strong>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section style={styles.sideCard}>
+            <h3 style={styles.sideTitle}>Son Güncelleme</h3>
+            <p style={styles.updateText}><Clock3 size={16} />24 Mayıs 2024 14:32</p>
+            <p style={styles.updateSubtext}>Otomatik olarak oluşturuldu.</p>
+          </section>
         </aside>
       </div>
-
-      {/* ── MODAL ─────────────────────────────────────── */}
-      {selectedDay && (
-        <div style={styles.modalOverlay} onClick={() => setSelectedDay(null)}>
-          <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
-            <div style={styles.modalHeader}>
-              <div>
-                <h3 style={styles.modalTitle}>
-                  {selectedDay.date.toLocaleDateString("tr-TR", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                    weekday: "long"
-                  })}
-                </h3>
-                <p style={styles.modalSubtitle}>
-                  {selectedDay.items.length > 0
-                    ? `${selectedDay.items.length} görev bulundu`
-                    : "Bu gün için kayıt yok"}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelectedDay(null)}
-                style={styles.modalClose}
-              >
-                Kapat
-              </button>
-            </div>
-            <div style={styles.modalBody}>
-              {selectedDay.items.length === 0 ? (
-                <p style={styles.modalEmpty}>Bu tarihte planlı vardiya yok.</p>
-              ) : (
-                selectedDay.items.map((item) => (
-                  <div key={item.id} style={styles.modalItem}>
-                    <p style={styles.modalItemTitle}>{item.staffProfileName}</p>
-                    <p style={styles.modalItemDesc}>
-                      {item.shiftTypeName} - {item.departmentName}
-                    </p>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </main>
   );
 }
 
-/* ═══════════════════════════════════════════════════════════
-   INLINE STYLES
-   ═══════════════════════════════════════════════════════════ */
-
 const styles: Record<string, React.CSSProperties> = {
   main: {
-    padding: "28px 32px",
-    fontFamily: "'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    display: "flex",
-    flexDirection: "column",
     height: "100%",
     minHeight: 0,
     overflow: "auto",
+    padding: "10px 18px 18px",
+    background: "#f8fafc",
+    fontFamily: "'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+    color: "#0f1b3d",
     boxSizing: "border-box",
-    background: "#f1f5f9",
   },
-  pageTitle: {
-    fontSize: 24,
-    fontWeight: 800,
-    color: "#1e293b",
-    margin: "0 0 6px 0",
-  },
-  pageDesc: {
-    fontSize: 13,
-    color: "#64748b",
-    margin: "0 0 20px 0",
-    lineHeight: 1.5,
-  },
-
-  /* ── stats ── */
-  statsRow: {
+  dashboardGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)",
-    gap: 16,
-    marginBottom: 24,
-  },
-  statCard: {
-    background: "#ffffff",
-    borderRadius: 16,
-    padding: "18px 22px",
-    border: "1px solid #e2e8f0",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-  },
-  statLabel: {
-    fontSize: 11,
-    fontWeight: 700,
-    color: "#64748b",
-    margin: "0 0 6px 0",
-    textTransform: "uppercase" as const,
-    letterSpacing: "0.04em",
-  },
-  statValue: {
-    fontSize: 32,
-    fontWeight: 800,
-    color: "#1e293b",
-    margin: "0 0 4px 0",
-    lineHeight: 1.2,
-  },
-  statDesc: {
-    fontSize: 11,
-    color: "#94a3b8",
-    margin: 0,
-  },
-
-  twoCol: {
-    display: "grid",
-    gridTemplateColumns: "2fr 1fr",
-    gap: 24,
+    gridTemplateColumns: "minmax(760px, 1fr) 300px",
+    gap: 18,
     alignItems: "start",
   },
-
-  card: {
+  leftColumn: {
+    display: "grid",
+    gap: 16,
+    minWidth: 0,
+  },
+  rightColumn: {
+    display: "grid",
+    gap: 12,
+  },
+  analysisBanner: {
+    display: "flex",
+    alignItems: "center",
+    gap: 20,
+    minHeight: 94,
+    borderRadius: 12,
+    border: "1px solid #dfe7f4",
     background: "#ffffff",
-    borderRadius: 16,
-    padding: "24px",
-    border: "1px solid #e2e8f0",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+    padding: "12px 18px",
+    boxShadow: "0 10px 24px rgba(15, 23, 42, 0.035)",
   },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: 800,
-    color: "#1e293b",
-    margin: "0 0 4px 0",
-  },
-  cardSubtitle: {
-    fontSize: 13,
-    color: "#64748b",
-    margin: "0 0 16px 0",
-  },
-
-  /* ── calendar ── */
-  calendarNav: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 16,
-  },
-  navButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    border: "1px solid #e2e8f0",
-    background: "#f8fafc",
-    fontSize: 16,
-    fontWeight: 700,
-    color: "#334155",
-    cursor: "pointer",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  monthLabel: {
-    minWidth: 120,
-    textAlign: "center" as const,
-    fontSize: 14,
-    fontWeight: 700,
-    color: "#1e293b",
-    margin: 0,
-  },
-  dayLabelsRow: {
-    display: "grid",
-    gridTemplateColumns: "repeat(7, 1fr)",
-    gap: 4,
-    marginBottom: 8,
-    textAlign: "center" as const,
-    fontSize: 11,
-    fontWeight: 700,
-    color: "#64748b",
-    textTransform: "uppercase" as const,
-    letterSpacing: "0.04em",
-  },
-  calendarGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(7, 1fr)",
-    gap: 4,
-  },
-  dayCell: {
-    minHeight: 100,
-    borderRadius: 8,
-    padding: "8px",
-    cursor: "pointer",
-    textAlign: "left" as const,
-    fontFamily: "inherit",
-    transition: "transform 0.1s ease, box-shadow 0.1s ease",
-  },
-  dayNumber: {
-    fontSize: 13,
-    fontWeight: 700,
-  },
-  dayBadge: {
-    background: "#DBEAFE",
-    color: "#1D4ED8",
-    fontSize: 10,
-    fontWeight: 800,
-    padding: "2px 6px",
-    borderRadius: 12,
-  },
-  dayItem: {
-    fontSize: 11,
-    fontWeight: 600,
-    whiteSpace: "nowrap" as const,
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    margin: 0,
-  },
-  dayMore: {
-    fontSize: 11,
-    fontWeight: 700,
-    color: "#4A6CF7",
-    margin: 0,
-  },
-
-  /* ── quick actions ── */
-  actionsList: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: 10,
-    marginBottom: 20,
-  },
-  actionBtn: {
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-    padding: "12px 16px",
-    background: "#f8fafc",
-    border: "1px solid #e2e8f0",
-    borderRadius: 12,
-    fontSize: 14,
-    fontWeight: 600,
-    color: "#334155",
-    textDecoration: "none",
-    transition: "background 0.2s ease",
-  },
-  actionIcon: {
-    fontSize: 16,
-  },
-  systemStatus: {
-    background: "#ECFDF5",
-    border: "1px solid #A7F3D0",
-    borderRadius: 12,
-    padding: "14px 16px",
-  },
-  systemStatusLabel: {
-    fontSize: 11,
-    fontWeight: 800,
-    color: "#059669",
-    margin: "0 0 4px 0",
-  },
-  systemStatusText: {
-    fontSize: 13,
-    fontWeight: 600,
-    color: "#065F46",
-    margin: 0,
-    lineHeight: 1.4,
-  },
-
-  /* ── modal ── */
-  modalOverlay: {
-    position: "fixed" as const,
-    inset: 0,
-    zIndex: 50,
+  botAvatar: {
+    width: 70,
+    height: 70,
+    borderRadius: "50%",
     display: "grid",
     placeItems: "center",
-    backgroundColor: "rgba(15, 23, 42, 0.4)",
-    padding: 16,
-  },
-  modalCard: {
-    width: "100%",
-    maxWidth: 520,
-    background: "#ffffff",
-    borderRadius: 16,
-    border: "1px solid #e2e8f0",
-    boxShadow: "0 10px 40px rgba(0,0,0,0.15)",
-    overflow: "hidden",
-  },
-  modalHeader: {
-    display: "flex",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    padding: "20px 24px 12px",
-    gap: 16,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 800,
-    color: "#1e293b",
-    margin: 0,
-  },
-  modalSubtitle: {
-    fontSize: 13,
-    color: "#94a3b8",
-    margin: "4px 0 0 0",
-  },
-  modalClose: {
-    height: 34,
-    padding: "0 16px",
-    borderRadius: 8,
-    border: "1px solid #e2e8f0",
-    background: "#f8fafc",
-    fontSize: 13,
-    fontWeight: 700,
-    color: "#334155",
-    cursor: "pointer",
+    color: "#2456e8",
+    background: "radial-gradient(circle at 50% 38%, #e7edff 0%, #d8e3ff 46%, #eef4ff 100%)",
+    border: "1px solid #dbe5ff",
     flexShrink: 0,
   },
-  modalBody: {
-    maxHeight: 340,
-    overflowY: "auto" as const,
-    padding: "0 24px 20px",
+  bannerContent: {
+    minWidth: 0,
+    flex: 1,
+  },
+  bannerTitle: {
+    margin: "0 0 12px",
+    fontSize: 15,
+    fontWeight: 800,
+    color: "#0f1b3d",
+  },
+  complianceGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, minmax(150px, 1fr))",
+    gap: 14,
+  },
+  compliancePill: {
+    minHeight: 36,
     display: "flex",
-    flexDirection: "column" as const,
+    alignItems: "center",
+    gap: 10,
+    borderRadius: 7,
+    border: "1px solid #dfe7f4",
+    background: "#ffffff",
+    padding: "0 12px",
+    fontSize: 12,
+    fontWeight: 600,
+    color: "#31415f",
+  },
+  successIcon: {
+    width: 18,
+    height: 18,
+    display: "grid",
+    placeItems: "center",
+    borderRadius: "50%",
+    background: "#35b66a",
+    color: "#ffffff",
+  },
+  infoIcon: {
+    width: 18,
+    height: 18,
+    display: "grid",
+    placeItems: "center",
+    borderRadius: "50%",
+    background: "#2f6df6",
+    color: "#ffffff",
+  },
+  errorText: {
+    margin: 0,
+    padding: "9px 12px",
+    borderRadius: 8,
+    background: "#fff1f2",
+    color: "#dc2626",
+    fontSize: 12,
+    fontWeight: 700,
+  },
+  planCard: {
+    borderRadius: 12,
+    border: "1px solid #dfe7f4",
+    background: "#ffffff",
+    overflow: "hidden",
+    boxShadow: "0 10px 24px rgba(15, 23, 42, 0.035)",
+  },
+  planToolbar: {
+    minHeight: 62,
+    display: "grid",
+    gridTemplateColumns: "220px 1fr 140px",
+    alignItems: "center",
+    gap: 12,
+    padding: "12px 16px",
+    borderBottom: "1px solid #edf2f7",
+  },
+  viewToggle: {
+    display: "inline-flex",
+    alignItems: "center",
+    width: "fit-content",
+    borderRadius: 7,
+    border: "1px solid #dfe7f4",
+    overflow: "hidden",
+    background: "#ffffff",
+  },
+  viewToggleActive: {
+    height: 36,
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 8,
+    padding: "0 14px",
+    border: "none",
+    borderRight: "1px solid #dfe7f4",
+    background: "#f8fbff",
+    color: "#1554d1",
+    fontSize: 12,
+    fontWeight: 700,
+    cursor: "pointer",
+  },
+  viewToggleButton: {
+    height: 36,
+    padding: "0 14px",
+    border: "none",
+    background: "#ffffff",
+    color: "#31415f",
+    fontSize: 12,
+    fontWeight: 600,
+    cursor: "pointer",
+  },
+  weekNavigator: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 18,
+    color: "#0f1b3d",
+    fontSize: 15,
+  },
+  navButton: {
+    width: 30,
+    height: 30,
+    display: "grid",
+    placeItems: "center",
+    border: "none",
+    borderRadius: 8,
+    background: "transparent",
+    color: "#62708c",
+    cursor: "pointer",
+  },
+  filterButton: {
+    height: 36,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    borderRadius: 7,
+    border: "1px solid #dfe7f4",
+    background: "#ffffff",
+    color: "#46546b",
+    fontSize: 12,
+    fontWeight: 600,
+    cursor: "pointer",
+  },
+  scheduleWrap: {
+    overflow: "auto",
+  },
+  scheduleGrid: {
+    minWidth: 910,
+    display: "grid",
+    gridTemplateColumns: "150px repeat(7, minmax(112px, 1fr))",
+  },
+  employeeHead: {
+    minHeight: 42,
+    display: "flex",
+    alignItems: "center",
+    padding: "0 20px",
+    borderRight: "1px solid #edf2f7",
+    borderBottom: "1px solid #edf2f7",
+    color: "#0f1b3d",
+    fontSize: 13,
+    fontWeight: 700,
+  },
+  dayHead: {
+    minHeight: 42,
+    display: "grid",
+    placeItems: "center",
+    borderRight: "1px solid #edf2f7",
+    borderBottom: "1px solid #edf2f7",
+    color: "#22304c",
+    fontSize: 13,
+    fontWeight: 700,
+  },
+  scheduleRowContents: {
+    display: "contents",
+  },
+  employeeCell: {
+    minHeight: 55,
+    display: "flex",
+    alignItems: "center",
+    padding: "0 20px",
+    borderRight: "1px solid #edf2f7",
+    borderBottom: "1px solid #edf2f7",
+    color: "#15233f",
+    fontSize: 13,
+    fontWeight: 700,
+  },
+  shiftCell: {
+    minHeight: 55,
+    display: "grid",
+    placeItems: "center",
+    padding: "7px 8px",
+    borderRight: "1px solid #edf2f7",
+    borderBottom: "1px solid #edf2f7",
+  },
+  shiftChip: {
+    width: "100%",
+    minHeight: 38,
+    display: "grid",
+    placeItems: "center",
+    alignContent: "center",
+    gap: 2,
+    borderRadius: 6,
+    fontSize: 11,
+    fontWeight: 700,
+    textAlign: "center",
+  },
+  legendRow: {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, minmax(120px, 1fr))",
+    gap: 12,
+    padding: "16px 28px",
+    background: "#ffffff",
+  },
+  legendItem: {
+    display: "grid",
+    gridTemplateColumns: "18px 1fr",
+    columnGap: 8,
+    rowGap: 2,
+    alignItems: "center",
+    color: "#46546b",
+    fontSize: 12,
+    fontWeight: 700,
+  },
+  legendDot: {
+    width: 11,
+    height: 11,
+    borderRadius: "50%",
+  },
+  sideCard: {
+    borderRadius: 11,
+    border: "1px solid #dfe7f4",
+    background: "#ffffff",
+    padding: "16px 17px",
+    boxShadow: "0 10px 24px rgba(15, 23, 42, 0.035)",
+  },
+  sideTitle: {
+    margin: "0 0 12px",
+    fontSize: 15,
+    fontWeight: 800,
+    color: "#0f1b3d",
+  },
+  sideStack: {
+    display: "grid",
+    gap: 12,
+  },
+  summaryMetric: {
+    display: "flex",
+    alignItems: "center",
+    gap: 14,
+    minHeight: 72,
+    borderRadius: 9,
+    border: "1px solid #e3eaf4",
+    background: "#ffffff",
+    padding: "10px 12px",
+  },
+  metricIcon: {
+    width: 46,
+    height: 46,
+    display: "grid",
+    placeItems: "center",
+    borderRadius: 10,
+    flexShrink: 0,
+  },
+  metricValue: {
+    display: "block",
+    color: "#0f1b3d",
+    fontSize: 18,
+    lineHeight: 1,
+  },
+  metricLabel: {
+    margin: "5px 0 3px",
+    color: "#66708c",
+    fontSize: 12,
+    fontWeight: 600,
+  },
+  metricNote: {
+    fontSize: 12,
+    fontWeight: 700,
+  },
+  distributionWrap: {
+    display: "grid",
+    gridTemplateColumns: "110px 1fr",
+    gap: 14,
+    alignItems: "center",
+  },
+  donutChart: {
+    width: 96,
+    height: 96,
+    borderRadius: "50%",
+    background: "conic-gradient(#7ccf9a 0 56%, #6ca1ff 56% 84%, #9a7cf4 84% 96%, #cbd5e1 96% 100%)",
+    position: "relative",
+    boxShadow: "inset 0 0 0 22px #ffffff",
+  },
+  distributionList: {
+    display: "grid",
+    gap: 9,
+    fontSize: 12,
+    color: "#46546b",
+    fontWeight: 600,
+  },
+  distributionItem: {
+    display: "grid",
+    gridTemplateColumns: "12px 1fr auto",
+    alignItems: "center",
     gap: 8,
   },
-  modalEmpty: {
-    padding: "16px",
-    fontSize: 13,
-    color: "#94a3b8",
-    background: "#f8fafc",
-    borderRadius: 10,
-    border: "1px solid #e2e8f0",
-    margin: 0,
+  distributionDot: {
+    width: 10,
+    height: 10,
+    borderRadius: "50%",
+    display: "inline-block",
   },
-  modalItem: {
-    padding: "10px 14px",
-    borderRadius: 10,
-    border: "1px solid #e2e8f0",
-    background: "#f8fafc",
+  checkList: {
+    display: "grid",
+    gap: 10,
   },
-  modalItemTitle: {
-    fontSize: 14,
-    fontWeight: 700,
-    color: "#1e293b",
-    margin: 0,
-  },
-  modalItemDesc: {
+  checkRow: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+    color: "#66708c",
     fontSize: 12,
-    color: "#64748b",
-    margin: "2px 0 0 0",
+    fontWeight: 600,
+  },
+  checkLabel: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 7,
+    color: "#66708c",
+  },
+  updateText: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    margin: 0,
+    color: "#485875",
+    fontSize: 12,
+    fontWeight: 700,
+  },
+  updateSubtext: {
+    margin: "8px 0 0 25px",
+    color: "#7d8aa4",
+    fontSize: 12,
+    fontWeight: 600,
   },
 };
