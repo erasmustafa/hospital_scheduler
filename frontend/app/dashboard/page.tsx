@@ -43,6 +43,8 @@ type AssignmentRow = {
 };
 
 type ShiftKind = "Gündüz" | "Akşam" | "Gece" | "Nöbet" | "İzinli" | "Dinlenme";
+type ViewMode = "weekly" | "daily";
+type ShiftFilter = ShiftKind | "Tümü";
 
 type ScheduleCell = {
   type: ShiftKind;
@@ -101,6 +103,15 @@ function formatWeekRange(startDate: Date) {
   }
 
   return `${startDate.getDate()} ${startMonth} – ${endDate.getDate()} ${endMonth} ${endDate.getFullYear()}`;
+}
+
+function formatSingleDay(date: Date) {
+  return date.toLocaleDateString("tr-TR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    weekday: "long",
+  });
 }
 
 function normalizeTime(value?: string | null) {
@@ -171,11 +182,12 @@ function SummaryMetric({
 
 function ShiftChip({ shift }: { shift: ScheduleCell }) {
   const tone = shiftStyles[shift.type];
+  const isRest = shift.type === "Dinlenme";
 
   return (
     <div style={{ ...styles.shiftChip, background: tone.bg, color: tone.text }}>
       <strong>{shift.assignment?.shiftTypeName ?? shift.type}</strong>
-      <span>{shift.time}</span>
+      {isRest ? null : <span>{shift.time}</span>}
     </div>
   );
 }
@@ -187,11 +199,17 @@ export default function DashboardPage() {
   const [weekStart, setWeekStart] = useState(() => getMonday(new Date()));
   const [lastUpdated, setLastUpdated] = useState("");
   const [isDistributionHovered, setIsDistributionHovered] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>("weekly");
+  const [shiftFilter, setShiftFilter] = useState<ShiftFilter>("Tümü");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [hoveredNav, setHoveredNav] = useState<"prev" | "next" | null>(null);
+  const [pressedNav, setPressedNav] = useState<"prev" | "next" | null>(null);
   const [summaryError, setSummaryError] = useState<string | null>(null);
   const [scheduleError, setScheduleError] = useState<string | null>(null);
 
   const weekDates = useMemo(() => Array.from({ length: 7 }, (_, index) => addDays(weekStart, index)), [weekStart]);
-  const weekDateKeys = useMemo(() => weekDates.map(toIsoDate), [weekDates]);
+  const visibleDates = useMemo(() => (viewMode === "weekly" ? weekDates : [weekStart]), [viewMode, weekDates, weekStart]);
+  const visibleDateKeys = useMemo(() => visibleDates.map(toIsoDate), [visibleDates]);
 
   const loadSummary = useCallback(async () => {
     try {
@@ -265,7 +283,7 @@ export default function DashboardPage() {
       return {
         id: staffKey,
         name: person.fullName,
-        shifts: weekDateKeys.map((dateKey) => {
+        shifts: visibleDateKeys.map((dateKey) => {
           const assignment =
             assignmentMap.get(`${staffKey}:${dateKey}`) ?? assignmentMap.get(`${person.fullName}:${dateKey}`);
           const type = inferShiftKind(assignment);
@@ -278,14 +296,26 @@ export default function DashboardPage() {
         }),
       };
     });
-  }, [activeStaff, assignmentMap, assignments, staff, weekDateKeys]);
+  }, [activeStaff, assignmentMap, assignments, staff, visibleDateKeys]);
+
+  const filteredScheduleRows = useMemo<ScheduleRow[]>(() => {
+    if (shiftFilter === "Tümü") return scheduleRows;
+
+    return scheduleRows.map((row) => ({
+      ...row,
+      shifts: row.shifts.map((shift) => (shift.type === shiftFilter ? shift : {
+        type: "Dinlenme",
+        time: "Dinlenme",
+      })),
+    }));
+  }, [scheduleRows, shiftFilter]);
 
   const totalAssignments = assignments.length;
   const averageStaff = summary?.activeStaff ?? activeStaff.length;
   const workloadAverage = totalAssignments > 0 ? Math.round((totalAssignments * 8 * 10) / Math.max(scheduleRows.length, 1)) / 10 : 0;
   const suitabilityScore = totalAssignments > 0 ? 94 : 0;
   const staffWorkloadBars = useMemo(() => {
-    return scheduleRows.slice(0, 6).map((row) => {
+    return filteredScheduleRows.slice(0, 6).map((row) => {
       const plannedShifts = row.shifts.filter((shift) => shift.type !== "Dinlenme" && shift.type !== "İzinli").length;
       const hours = plannedShifts * 8;
 
@@ -296,7 +326,19 @@ export default function DashboardPage() {
         percent: Math.min(100, Math.round((hours / 45) * 100)),
       };
     });
-  }, [scheduleRows]);
+  }, [filteredScheduleRows]);
+
+  const navigateSchedule = useCallback((direction: -1 | 1) => {
+    setWeekStart((current) => addDays(current, direction * (viewMode === "weekly" ? 7 : 1)));
+  }, [viewMode]);
+
+  const navButtonStyle = useCallback((key: "prev" | "next") => ({
+    ...styles.navButton,
+    ...(hoveredNav === key ? styles.navButtonHover : null),
+    ...(pressedNav === key ? styles.navButtonPressed : null),
+  }), [hoveredNav, pressedNav]);
+
+  const activeDateCount = visibleDates.length;
 
   return (
     <main style={styles.main}>
@@ -323,60 +365,114 @@ export default function DashboardPage() {
           <section style={styles.planCard}>
             <div style={styles.planToolbar}>
               <div style={styles.viewToggle}>
-                <button type="button" style={styles.viewToggleActive}>
+                <button
+                  type="button"
+                  style={viewMode === "weekly" ? styles.viewToggleActive : styles.viewToggleButton}
+                  onClick={() => setViewMode("weekly")}
+                >
                   <CalendarDays size={14} />
                   Haftalık
                 </button>
-                <button type="button" style={styles.viewToggleButton}>Günlük</button>
+                <button
+                  type="button"
+                  style={viewMode === "daily" ? styles.viewToggleActive : styles.viewToggleButton}
+                  onClick={() => setViewMode("daily")}
+                >
+                  Günlük
+                </button>
               </div>
 
               <div style={styles.weekNavigator}>
                 <button
                   type="button"
-                  style={styles.navButton}
-                  aria-label="Önceki hafta"
-                  onClick={() => setWeekStart((current) => addDays(current, -7))}
+                  style={navButtonStyle("prev")}
+                  aria-label={viewMode === "weekly" ? "Önceki hafta" : "Önceki gün"}
+                  onClick={() => navigateSchedule(-1)}
+                  onMouseEnter={() => setHoveredNav("prev")}
+                  onMouseLeave={() => {
+                    setHoveredNav(null);
+                    setPressedNav(null);
+                  }}
+                  onMouseDown={() => setPressedNav("prev")}
+                  onMouseUp={() => setPressedNav(null)}
                 >
                   <ChevronLeft size={18} />
                 </button>
-                <strong>{formatWeekRange(weekStart)}</strong>
+                <strong>{viewMode === "weekly" ? formatWeekRange(weekStart) : formatSingleDay(weekStart)}</strong>
                 <button
                   type="button"
-                  style={styles.navButton}
-                  aria-label="Sonraki hafta"
-                  onClick={() => setWeekStart((current) => addDays(current, 7))}
+                  style={navButtonStyle("next")}
+                  aria-label={viewMode === "weekly" ? "Sonraki hafta" : "Sonraki gün"}
+                  onClick={() => navigateSchedule(1)}
+                  onMouseEnter={() => setHoveredNav("next")}
+                  onMouseLeave={() => {
+                    setHoveredNav(null);
+                    setPressedNav(null);
+                  }}
+                  onMouseDown={() => setPressedNav("next")}
+                  onMouseUp={() => setPressedNav(null)}
                 >
                   <ChevronRight size={18} />
                 </button>
               </div>
 
-              <button type="button" style={styles.filterButton}>
-                <Filter size={15} />
-                Filtreler
-                <ChevronDown size={14} />
-              </button>
+              <div style={styles.filterWrap}>
+                <button
+                  type="button"
+                  style={{
+                    ...styles.filterButton,
+                    ...(isFilterOpen ? styles.filterButtonActive : null),
+                  }}
+                  onClick={() => setIsFilterOpen((current) => !current)}
+                >
+                  <Filter size={15} />
+                  {shiftFilter === "Tümü" ? "Filtreler" : shiftFilter}
+                  <ChevronDown size={14} />
+                </button>
+                {isFilterOpen ? (
+                  <div style={styles.filterMenu}>
+                    {(["Tümü", "Gündüz", "Akşam", "Gece", "Nöbet", "İzinli", "Dinlenme"] as ShiftFilter[]).map((item) => (
+                      <button
+                        key={item}
+                        type="button"
+                        style={{
+                          ...styles.filterMenuItem,
+                          ...(shiftFilter === item ? styles.filterMenuItemActive : null),
+                        }}
+                        onClick={() => {
+                          setShiftFilter(item);
+                          setIsFilterOpen(false);
+                        }}
+                      >
+                        {item}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
             </div>
 
             <div style={styles.scheduleWrap}>
               <div
                 style={{
                   ...styles.scheduleGrid,
-                  gridTemplateRows: `30px repeat(${Math.max(scheduleRows.length, 1)}, minmax(0, 1fr))`,
+                  gridTemplateColumns: `150px repeat(${activeDateCount}, minmax(112px, 1fr))`,
+                  gridTemplateRows: `30px repeat(${Math.max(filteredScheduleRows.length, 1)}, minmax(0, 1fr))`,
                 }}
               >
                 <div style={styles.employeeHead}>Çalışanlar</div>
-                {weekDates.map((day) => (
+                {visibleDates.map((day) => (
                   <div key={toIsoDate(day)} style={styles.dayHead}>{formatDayLabel(day)}</div>
                 ))}
 
-                {scheduleRows.length === 0 ? (
+                {filteredScheduleRows.length === 0 ? (
                   <div style={styles.emptySchedule}>Bu hafta için personel veya vardiya kaydı bulunamadı.</div>
                 ) : (
-                  scheduleRows.map((row) => (
+                  filteredScheduleRows.map((row) => (
                     <div key={row.id} style={styles.scheduleRowContents}>
                       <div style={styles.employeeCell}>{row.name}</div>
                       {row.shifts.map((shift, index) => (
-                        <div key={`${row.id}-${weekDateKeys[index]}`} style={styles.shiftCell}>
+                        <div key={`${row.id}-${visibleDateKeys[index]}`} style={styles.shiftCell}>
                           <ShiftChip shift={shift} />
                         </div>
                       ))}
@@ -603,6 +699,7 @@ const styles: Record<string, React.CSSProperties> = {
     gap: 12,
     padding: "12px 16px",
     borderBottom: "1px solid #edf2f7",
+    position: "relative",
   },
   viewToggle: {
     display: "inline-flex",
@@ -655,6 +752,22 @@ const styles: Record<string, React.CSSProperties> = {
     background: "transparent",
     color: "#62708c",
     cursor: "pointer",
+    transition: "transform 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease",
+  },
+  navButtonHover: {
+    background: "#eef4ff",
+    color: "#1d4ed8",
+    transform: "translateY(-1px)",
+    boxShadow: "0 8px 18px rgba(37, 99, 235, 0.14)",
+  },
+  navButtonPressed: {
+    transform: "translateY(0) scale(0.94)",
+    boxShadow: "0 4px 10px rgba(37, 99, 235, 0.12)",
+  },
+  filterWrap: {
+    position: "relative",
+    display: "flex",
+    justifyContent: "flex-end",
   },
   filterButton: {
     height: 36,
@@ -669,6 +782,46 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 12,
     fontWeight: 600,
     cursor: "pointer",
+    transition: "background 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease",
+  },
+  filterButtonActive: {
+    borderColor: "#bcd0ff",
+    background: "#f5f8ff",
+    color: "#1d4ed8",
+    boxShadow: "0 8px 18px rgba(37, 99, 235, 0.1)",
+  },
+  filterMenu: {
+    position: "absolute",
+    top: 42,
+    right: 0,
+    zIndex: 20,
+    width: 150,
+    display: "grid",
+    gap: 4,
+    borderRadius: 10,
+    border: "1px solid #dce6f5",
+    background: "rgba(255, 255, 255, 0.96)",
+    padding: 6,
+    boxShadow: "0 18px 38px rgba(15, 23, 42, 0.14)",
+    backdropFilter: "blur(12px)",
+  },
+  filterMenuItem: {
+    height: 30,
+    border: "none",
+    borderRadius: 7,
+    background: "transparent",
+    color: "#46546b",
+    fontSize: 12,
+    fontWeight: 700,
+    textAlign: "left",
+    padding: "0 10px",
+    cursor: "pointer",
+    transition: "background 150ms ease, color 150ms ease, transform 150ms ease",
+  },
+  filterMenuItemActive: {
+    background: "#eef4ff",
+    color: "#1d4ed8",
+    transform: "translateX(2px)",
   },
   scheduleWrap: {
     flex: 1,
