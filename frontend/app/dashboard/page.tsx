@@ -42,7 +42,7 @@ type AssignmentRow = {
   endTime?: string | null;
 };
 
-type ShiftKind = "Gündüz" | "Akşam" | "Gece" | "Nöbet" | "İzinli" | "Kayıt yok";
+type ShiftKind = "Gündüz" | "Akşam" | "Gece" | "Nöbet" | "İzinli" | "Dinlenme";
 
 type ScheduleCell = {
   type: ShiftKind;
@@ -64,7 +64,7 @@ const shiftStyles: Record<ShiftKind, { bg: string; text: string }> = {
   Gece: { bg: "#f2eafe", text: "#6d35d5" },
   Nöbet: { bg: "#fff7e6", text: "#b7791f" },
   İzinli: { bg: "#f4f6fa", text: "#46546b" },
-  "Kayıt yok": { bg: "#f8fafc", text: "#9aa7bb" },
+  Dinlenme: { bg: "#f8fafc", text: "#9aa7bb" },
 };
 
 function toIsoDate(date: Date) {
@@ -109,7 +109,7 @@ function normalizeTime(value?: string | null) {
 }
 
 function inferShiftKind(assignment?: AssignmentRow): ShiftKind {
-  if (!assignment) return "Kayıt yok";
+  if (!assignment) return "Dinlenme";
   const label = assignment.shiftTypeName.toLocaleLowerCase("tr-TR");
   const start = normalizeTime(assignment.startTime);
 
@@ -121,7 +121,7 @@ function inferShiftKind(assignment?: AssignmentRow): ShiftKind {
 }
 
 function formatAssignmentTime(assignment?: AssignmentRow) {
-  if (!assignment) return "Plan yok";
+  if (!assignment) return "Dinlenme";
   const start = normalizeTime(assignment.startTime) || "08:00";
   const end = normalizeTime(assignment.endTime) || "16:00";
   return `${start} - ${end}`;
@@ -186,6 +186,7 @@ export default function DashboardPage() {
   const [assignments, setAssignments] = useState<AssignmentRow[]>([]);
   const [weekStart, setWeekStart] = useState(() => getMonday(new Date()));
   const [lastUpdated, setLastUpdated] = useState("");
+  const [isDistributionHovered, setIsDistributionHovered] = useState(false);
   const [summaryError, setSummaryError] = useState<string | null>(null);
   const [scheduleError, setScheduleError] = useState<string | null>(null);
 
@@ -283,6 +284,19 @@ export default function DashboardPage() {
   const averageStaff = summary?.activeStaff ?? activeStaff.length;
   const workloadAverage = totalAssignments > 0 ? Math.round((totalAssignments * 8 * 10) / Math.max(scheduleRows.length, 1)) / 10 : 0;
   const suitabilityScore = totalAssignments > 0 ? 94 : 0;
+  const staffWorkloadBars = useMemo(() => {
+    return scheduleRows.slice(0, 6).map((row) => {
+      const plannedShifts = row.shifts.filter((shift) => shift.type !== "Dinlenme" && shift.type !== "İzinli").length;
+      const hours = plannedShifts * 8;
+
+      return {
+        id: row.id,
+        name: row.name,
+        hours,
+        percent: Math.min(100, Math.round((hours / 45) * 100)),
+      };
+    });
+  }, [scheduleRows]);
 
   return (
     <main style={styles.main}>
@@ -390,7 +404,7 @@ export default function DashboardPage() {
                 icon={<CheckCircle2 size={24} />}
                 value={`${suitabilityScore}%`}
                 label="Genel Uygunluk Skoru"
-                note={totalAssignments ? "Çok iyi" : "Kayıt yok"}
+                note={totalAssignments ? "Çok iyi" : "Dinlenme"}
                 tone="green"
               />
               <SummaryMetric
@@ -403,10 +417,22 @@ export default function DashboardPage() {
             </div>
           </section>
 
-          <section style={styles.sideCard}>
+          <section
+            style={{
+              ...styles.sideCard,
+              ...(isDistributionHovered ? styles.distributionCardHover : null),
+            }}
+            onMouseEnter={() => setIsDistributionHovered(true)}
+            onMouseLeave={() => setIsDistributionHovered(false)}
+          >
             <h3 style={styles.sideTitle}>Dağılım Analizi</h3>
             <div style={styles.distributionWrap}>
-              <div style={styles.donutChart} />
+              <div
+                style={{
+                  ...styles.donutChart,
+                  ...(isDistributionHovered ? styles.donutChartHover : null),
+                }}
+              />
               <div style={styles.distributionList}>
                 <span style={styles.distributionItem}><i style={{ ...styles.distributionDot, background: "#7ccf9a" }} />Gündüz <b>56%</b></span>
                 <span style={styles.distributionItem}><i style={{ ...styles.distributionDot, background: "#6ca1ff" }} />Akşam <b>28%</b></span>
@@ -417,14 +443,23 @@ export default function DashboardPage() {
           </section>
 
           <section style={styles.sideCard}>
-            <h3 style={styles.sideTitle}>Kontroller</h3>
-            <div style={styles.checkList}>
-              {["Personel eşleşmesi", "Haftalık tarih aralığı", "Vardiya saatleri", "Birim bilgisi", "Aktif kayıtlar"].map((item) => (
-                <div key={item} style={styles.checkRow}>
-                  <span style={styles.checkLabel}><CheckCircle2 size={14} />{item}</span>
-                  <strong>Uygun</strong>
-                </div>
-              ))}
+            <h3 style={styles.sideTitle}>Bireysel Çalışma Grafiği</h3>
+            <div style={styles.workloadList}>
+              {staffWorkloadBars.length === 0 ? (
+                <p style={styles.workloadEmpty}>Bu hafta için kayıt bulunamadı.</p>
+              ) : (
+                staffWorkloadBars.map((item) => (
+                  <div key={item.id} style={styles.workloadRow}>
+                    <div style={styles.workloadMeta}>
+                      <span>{item.name}</span>
+                      <strong>{item.hours} saat</strong>
+                    </div>
+                    <div style={styles.workloadTrack}>
+                      <span style={{ ...styles.workloadFill, width: `${item.percent}%` }} />
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </section>
 
@@ -775,6 +810,17 @@ const styles: Record<string, React.CSSProperties> = {
     background: "conic-gradient(#7ccf9a 0 56%, #6ca1ff 56% 84%, #9a7cf4 84% 96%, #cbd5e1 96% 100%)",
     position: "relative",
     boxShadow: "inset 0 0 0 22px #ffffff",
+    transition: "transform 260ms ease, box-shadow 260ms ease, filter 260ms ease",
+  },
+  distributionCardHover: {
+    transform: "translateY(-2px)",
+    boxShadow: "0 18px 34px rgba(37, 99, 235, 0.12)",
+    transition: "transform 260ms ease, box-shadow 260ms ease",
+  },
+  donutChartHover: {
+    transform: "scale(1.08) rotate(8deg)",
+    filter: "saturate(1.08)",
+    boxShadow: "inset 0 0 0 22px #ffffff, 0 14px 28px rgba(37, 99, 235, 0.18)",
   },
   distributionList: {
     display: "grid",
@@ -795,24 +841,45 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: "50%",
     display: "inline-block",
   },
-  checkList: {
+  workloadList: {
     display: "grid",
     gap: 10,
   },
-  checkRow: {
+  workloadRow: {
+    display: "grid",
+    gap: 7,
+    borderRadius: 8,
+    border: "1px solid #e7edf7",
+    background: "#fbfdff",
+    padding: "9px 10px",
+  },
+  workloadMeta: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 12,
-    color: "#66708c",
+    gap: 10,
+    fontSize: 12,
+    fontWeight: 700,
+    color: "#273653",
+  },
+  workloadTrack: {
+    height: 7,
+    overflow: "hidden",
+    borderRadius: 99,
+    background: "#edf3ff",
+  },
+  workloadFill: {
+    display: "block",
+    height: "100%",
+    borderRadius: 99,
+    background: "linear-gradient(90deg, #2563eb, #60a5fa)",
+    transition: "width 360ms ease",
+  },
+  workloadEmpty: {
+    margin: 0,
+    color: "#7d8aa4",
     fontSize: 12,
     fontWeight: 600,
-  },
-  checkLabel: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 7,
-    color: "#66708c",
   },
   updateText: {
     display: "flex",
