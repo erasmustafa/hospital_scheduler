@@ -344,7 +344,12 @@ export default function DashboardPage() {
             </div>
 
             <div style={styles.scheduleWrap}>
-              <div style={styles.scheduleGrid}>
+              <div
+                style={{
+                  ...styles.scheduleGrid,
+                  gridTemplateRows: `38px repeat(${Math.max(scheduleRows.length, 1)}, minmax(0, 1fr))`,
+                }}
+              >
                 <div style={styles.employeeHead}>Çalışanlar</div>
                 {weekDates.map((day) => (
                   <div key={toIsoDate(day)} style={styles.dayHead}>{formatDayLabel(day)}</div>
@@ -367,12 +372,6 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div style={styles.legendRow}>
-              <span style={styles.legendItem}><span style={{ ...styles.legendDot, background: "#35b66a" }} />Gündüz <small>08:00 - 16:00</small></span>
-              <span style={styles.legendItem}><span style={{ ...styles.legendDot, background: "#2f6df6" }} />Akşam <small>16:00 - 00:00</small></span>
-              <span style={styles.legendItem}><span style={{ ...styles.legendDot, background: "#8b5cf6" }} />Gece <small>00:00 - 08:00</small></span>
-              <span style={styles.legendItem}><span style={{ ...styles.legendDot, background: "#cbd5e1" }} />Kayıt yok <small>Planlanmadı</small></span>
-            </div>
           </section>
         </div>
 
@@ -444,27 +443,35 @@ const styles: Record<string, React.CSSProperties> = {
   main: {
     height: "100%",
     minHeight: 0,
-    overflow: "auto",
-    padding: "10px 18px 18px",
+    overflow: "hidden",
+    padding: "10px 18px",
     background: "#f8fafc",
     fontFamily: "'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
     color: "#0f1b3d",
     boxSizing: "border-box",
   },
   dashboardGrid: {
+    height: "100%",
+    minHeight: 0,
     display: "grid",
     gridTemplateColumns: "minmax(760px, 1fr) 300px",
     gap: 18,
-    alignItems: "start",
+    alignItems: "stretch",
   },
   leftColumn: {
     display: "grid",
+    gridTemplateRows: "auto auto minmax(0, 1fr)",
     gap: 16,
     minWidth: 0,
+    minHeight: 0,
   },
   rightColumn: {
     display: "grid",
+    gridAutoRows: "min-content",
+    alignContent: "stretch",
     gap: 12,
+    minHeight: 0,
+    overflow: "hidden",
   },
   analysisBanner: {
     display: "flex",
@@ -544,6 +551,9 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 700,
   },
   planCard: {
+    minHeight: 0,
+    display: "flex",
+    flexDirection: "column",
     borderRadius: 12,
     border: "1px solid #dfe7f4",
     background: "#ffffff",
@@ -626,15 +636,18 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: "pointer",
   },
   scheduleWrap: {
+    flex: 1,
+    minHeight: 0,
     overflow: "auto",
   },
   scheduleGrid: {
+    height: "100%",
     minWidth: 910,
     display: "grid",
     gridTemplateColumns: "150px repeat(7, minmax(112px, 1fr))",
   },
   employeeHead: {
-    minHeight: 42,
+    minHeight: 0,
     display: "flex",
     alignItems: "center",
     padding: "0 20px",
@@ -645,7 +658,7 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 700,
   },
   dayHead: {
-    minHeight: 42,
+    minHeight: 0,
     display: "grid",
     placeItems: "center",
     borderRight: "1px solid #edf2f7",
@@ -658,7 +671,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: "contents",
   },
   employeeCell: {
-    minHeight: 55,
+    minHeight: 0,
     display: "flex",
     alignItems: "center",
     padding: "0 20px",
@@ -669,7 +682,7 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 700,
   },
   shiftCell: {
-    minHeight: 55,
+    minHeight: 0,
     display: "grid",
     placeItems: "center",
     padding: "7px 8px",
@@ -690,35 +703,13 @@ const styles: Record<string, React.CSSProperties> = {
   },
   emptySchedule: {
     gridColumn: "1 / -1",
-    minHeight: 160,
+    minHeight: 0,
     display: "grid",
     placeItems: "center",
     color: "#94a3b8",
     fontSize: 13,
     fontWeight: 700,
     borderBottom: "1px solid #edf2f7",
-  },
-  legendRow: {
-    display: "grid",
-    gridTemplateColumns: "repeat(4, minmax(120px, 1fr))",
-    gap: 12,
-    padding: "16px 28px",
-    background: "#ffffff",
-  },
-  legendItem: {
-    display: "grid",
-    gridTemplateColumns: "18px 1fr",
-    columnGap: 8,
-    rowGap: 2,
-    alignItems: "center",
-    color: "#46546b",
-    fontSize: 12,
-    fontWeight: 700,
-  },
-  legendDot: {
-    width: 11,
-    height: 11,
-    borderRadius: "50%",
   },
   sideCard: {
     borderRadius: 11,
