@@ -347,7 +347,7 @@ export default function DashboardPage() {
               <div
                 style={{
                   ...styles.scheduleGrid,
-                  gridTemplateRows: `38px repeat(${Math.max(scheduleRows.length, 1)}, minmax(0, 1fr))`,
+                  gridTemplateRows: `30px repeat(${Math.max(scheduleRows.length, 1)}, minmax(0, 1fr))`,
                 }}
               >
                 <div style={styles.employeeHead}>Çalışanlar</div>
@@ -454,7 +454,7 @@ const styles: Record<string, React.CSSProperties> = {
     height: "100%",
     minHeight: 0,
     display: "grid",
-    gridTemplateColumns: "minmax(760px, 1fr) 300px",
+    gridTemplateColumns: "minmax(760px, 1fr) 270px",
     gap: 18,
     alignItems: "stretch",
   },
@@ -502,7 +502,7 @@ const styles: Record<string, React.CSSProperties> = {
   bannerTitle: {
     margin: "0 0 12px",
     fontSize: 15,
-    fontWeight: 800,
+    fontWeight: 700,
     color: "#0f1b3d",
   },
   complianceGrid: {
@@ -654,7 +654,7 @@ const styles: Record<string, React.CSSProperties> = {
     borderRight: "1px solid #edf2f7",
     borderBottom: "1px solid #edf2f7",
     color: "#0f1b3d",
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: 700,
   },
   dayHead: {
@@ -664,7 +664,7 @@ const styles: Record<string, React.CSSProperties> = {
     borderRight: "1px solid #edf2f7",
     borderBottom: "1px solid #edf2f7",
     color: "#22304c",
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: 700,
   },
   scheduleRowContents: {
@@ -721,7 +721,7 @@ const styles: Record<string, React.CSSProperties> = {
   sideTitle: {
     margin: "0 0 12px",
     fontSize: 15,
-    fontWeight: 800,
+    fontWeight: 700,
     color: "#0f1b3d",
   },
   sideStack: {
