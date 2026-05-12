@@ -359,8 +359,10 @@ export default function DashboardPage() {
             </div>
           </section>
 
-          {summaryError ? <p style={styles.errorText}>{summaryError}</p> : null}
-          {scheduleError ? <p style={styles.errorText}>{scheduleError}</p> : null}
+          <div style={styles.errorStack}>
+            {summaryError ? <p style={styles.errorText}>{summaryError}</p> : null}
+            {scheduleError ? <p style={styles.errorText}>{scheduleError}</p> : null}
+          </div>
 
           <section style={styles.planCard}>
             <div style={styles.planToolbar}>
@@ -595,6 +597,10 @@ const styles: Record<string, React.CSSProperties> = {
     gap: 16,
     minWidth: 0,
     minHeight: 0,
+  },
+  errorStack: {
+    display: "grid",
+    gap: 8,
   },
   rightColumn: {
     display: "grid",
