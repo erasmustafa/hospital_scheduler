@@ -13,6 +13,7 @@ import {
   Filter,
   Info,
   UsersRound,
+  X,
 } from "lucide-react";
 import { apiClient } from "@/lib/api";
 
@@ -208,6 +209,7 @@ export default function DashboardPage() {
   const [shiftFilter, setShiftFilter] = useState<ShiftFilter>("Tümü");
   const [departmentFilter, setDepartmentFilter] = useState("Tümü");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [activeModal, setActiveModal] = useState<"workload" | "distribution" | null>(null);
   const [hoveredNav, setHoveredNav] = useState<"prev" | "next" | null>(null);
   const [pressedNav, setPressedNav] = useState<"prev" | "next" | null>(null);
   const [summaryError, setSummaryError] = useState<string | null>(null);
@@ -338,7 +340,7 @@ export default function DashboardPage() {
   const workloadAverage = totalAssignments > 0 ? Math.round((totalAssignments * 8 * 10) / Math.max(scheduleRows.length, 1)) / 10 : 0;
   const suitabilityScore = totalAssignments > 0 ? 94 : 0;
   const staffWorkloadBars = useMemo(() => {
-    return filteredScheduleRows.slice(0, 6).map((row) => {
+    return filteredScheduleRows.map((row) => {
       const plannedShifts = row.shifts.filter((shift) => shift.type !== "Dinlenme" && shift.type !== "İzinli").length;
       const hours = plannedShifts * 8;
 
@@ -349,6 +351,34 @@ export default function DashboardPage() {
         percent: Math.min(100, Math.round((hours / 45) * 100)),
       };
     });
+  }, [filteredScheduleRows]);
+  const visibleWorkloadBars = useMemo(() => staffWorkloadBars.slice(0, 3), [staffWorkloadBars]);
+  const distributionItems = useMemo(() => {
+    const counts = new Map<ShiftKind, number>([
+      ["Gündüz", 0],
+      ["Akşam", 0],
+      ["Gece", 0],
+      ["Nöbet", 0],
+      ["İzinli", 0],
+      ["Dinlenme", 0],
+    ]);
+
+    for (const row of filteredScheduleRows) {
+      for (const shift of row.shifts) {
+        counts.set(shift.type, (counts.get(shift.type) ?? 0) + 1);
+      }
+    }
+
+    const total = Array.from(counts.values()).reduce((sum, count) => sum + count, 0);
+
+    return Array.from(counts.entries())
+      .filter(([, count]) => count > 0)
+      .map(([type, count]) => ({
+        type,
+        count,
+        percent: total > 0 ? Math.round((count / total) * 100) : 0,
+        color: shiftStyles[type].text,
+      }));
   }, [filteredScheduleRows]);
 
   const navigateSchedule = useCallback((direction: -1 | 1) => {
@@ -563,12 +593,22 @@ export default function DashboardPage() {
           <section
             style={{
               ...styles.sideCard,
+              ...styles.clickableSideCard,
               ...(isDistributionHovered ? styles.distributionCardHover : null),
             }}
+            role="button"
+            tabIndex={0}
             onMouseEnter={() => setIsDistributionHovered(true)}
             onMouseLeave={() => setIsDistributionHovered(false)}
+            onClick={() => setActiveModal("distribution")}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") setActiveModal("distribution");
+            }}
           >
-            <h3 style={styles.sideTitle}>Dağılım Analizi</h3>
+            <div style={styles.sideTitleRow}>
+              <h3 style={{ ...styles.sideTitle, margin: 0 }}>Dağılım Analizi</h3>
+              <span style={styles.sideActionText}>Detay</span>
+            </div>
             <div style={styles.distributionWrap}>
               <div
                 style={{
@@ -586,12 +626,19 @@ export default function DashboardPage() {
           </section>
 
           <section style={styles.sideCard}>
-            <h3 style={styles.sideTitle}>Bireysel Çalışma Grafiği</h3>
+            <div style={styles.sideTitleRow}>
+              <h3 style={{ ...styles.sideTitle, margin: 0 }}>Bireysel Çalışma Grafiği</h3>
+              {staffWorkloadBars.length > visibleWorkloadBars.length ? (
+                <button type="button" style={styles.inlineActionButton} onClick={() => setActiveModal("workload")}>
+                  Tümünü gör
+                </button>
+              ) : null}
+            </div>
             <div style={styles.workloadList}>
-              {staffWorkloadBars.length === 0 ? (
+              {visibleWorkloadBars.length === 0 ? (
                 <p style={styles.workloadEmpty}>Bu hafta için kayıt bulunamadı.</p>
               ) : (
-                staffWorkloadBars.map((item) => (
+                visibleWorkloadBars.map((item) => (
                   <div key={item.id} style={styles.workloadRow}>
                     <div style={styles.workloadMeta}>
                       <span>{item.name}</span>
@@ -613,6 +660,62 @@ export default function DashboardPage() {
           </section>
         </aside>
       </div>
+
+      {activeModal ? (
+        <div style={styles.modalOverlay} role="dialog" aria-modal="true">
+          <section style={styles.modalCard}>
+            <div style={styles.modalHeader}>
+              <div>
+                <h2 style={styles.modalTitle}>
+                  {activeModal === "workload" ? "Bireysel Çalışma Grafiği" : "Dağılım Analizi"}
+                </h2>
+                <p style={styles.modalSubtitle}>
+                  {activeModal === "workload"
+                    ? "Seçili hafta ve filtrelere göre personel bazlı çalışma yükü."
+                    : "Seçili hafta ve filtrelere göre vardiya dağılımı."}
+                </p>
+              </div>
+              <button type="button" style={styles.modalCloseButton} onClick={() => setActiveModal(null)} aria-label="Kapat">
+                <X size={18} />
+              </button>
+            </div>
+
+            {activeModal === "workload" ? (
+              <div style={styles.modalWorkloadList}>
+                {staffWorkloadBars.map((item) => (
+                  <div key={item.id} style={styles.modalWorkloadRow}>
+                    <div style={styles.workloadMeta}>
+                      <span>{item.name}</span>
+                      <strong>{item.hours} saat</strong>
+                    </div>
+                    <div style={styles.workloadTrack}>
+                      <span style={{ ...styles.workloadFill, width: `${item.percent}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={styles.modalDistributionGrid}>
+                <div style={styles.modalDonutWrap}>
+                  <div style={styles.modalDonutChart} />
+                  <strong>{filteredScheduleRows.length} personel</strong>
+                  <span>{visibleDates.length} gün</span>
+                </div>
+                <div style={styles.distributionDetailList}>
+                  {distributionItems.map((item) => (
+                    <div key={item.type} style={styles.distributionDetailRow}>
+                      <span style={{ ...styles.distributionDot, background: item.color }} />
+                      <strong>{item.type}</strong>
+                      <span>{item.count} kayıt</span>
+                      <b>{item.percent}%</b>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        </div>
+      ) : null}
     </main>
   );
 }
@@ -1001,6 +1104,31 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 700,
     color: "#0f1b3d",
   },
+  sideTitleRow: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+    marginBottom: 12,
+  },
+  sideActionText: {
+    color: "#2563eb",
+    fontSize: 11,
+    fontWeight: 700,
+  },
+  clickableSideCard: {
+    cursor: "pointer",
+    transition: "transform 260ms ease, box-shadow 260ms ease",
+  },
+  inlineActionButton: {
+    border: "none",
+    background: "transparent",
+    color: "#2563eb",
+    fontSize: 11,
+    fontWeight: 700,
+    cursor: "pointer",
+    padding: 0,
+  },
   sideStack: {
     display: "grid",
     gap: 12,
@@ -1122,6 +1250,116 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#7d8aa4",
     fontSize: 12,
     fontWeight: 600,
+  },
+  modalOverlay: {
+    position: "fixed",
+    inset: 0,
+    zIndex: 80,
+    display: "grid",
+    placeItems: "center",
+    padding: 24,
+    background: "rgba(15, 23, 42, 0.34)",
+    backdropFilter: "blur(10px)",
+  },
+  modalCard: {
+    width: "min(760px, calc(100vw - 48px))",
+    maxHeight: "min(720px, calc(100vh - 48px))",
+    display: "flex",
+    flexDirection: "column",
+    overflow: "hidden",
+    borderRadius: 18,
+    border: "1px solid rgba(226, 232, 240, 0.9)",
+    background: "rgba(255, 255, 255, 0.96)",
+    boxShadow: "0 28px 80px rgba(15, 23, 42, 0.22)",
+  },
+  modalHeader: {
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 18,
+    padding: "20px 22px",
+    borderBottom: "1px solid #e8eef7",
+  },
+  modalTitle: {
+    margin: 0,
+    color: "#0f1b3d",
+    fontSize: 20,
+    fontWeight: 700,
+  },
+  modalSubtitle: {
+    margin: "7px 0 0",
+    color: "#64748b",
+    fontSize: 13,
+    fontWeight: 600,
+  },
+  modalCloseButton: {
+    width: 36,
+    height: 36,
+    display: "grid",
+    placeItems: "center",
+    borderRadius: 10,
+    border: "1px solid #dbe5f2",
+    background: "#ffffff",
+    color: "#334155",
+    cursor: "pointer",
+  },
+  modalWorkloadList: {
+    display: "grid",
+    gap: 10,
+    overflow: "auto",
+    padding: 20,
+  },
+  modalWorkloadRow: {
+    display: "grid",
+    gap: 9,
+    borderRadius: 12,
+    border: "1px solid #e4ebf6",
+    background: "#fbfdff",
+    padding: "12px 14px",
+  },
+  modalDistributionGrid: {
+    display: "grid",
+    gridTemplateColumns: "220px 1fr",
+    gap: 20,
+    overflow: "auto",
+    padding: 20,
+  },
+  modalDonutWrap: {
+    display: "grid",
+    justifyItems: "center",
+    alignContent: "center",
+    gap: 8,
+    minHeight: 260,
+    borderRadius: 16,
+    border: "1px solid #e4ebf6",
+    background: "#f8fbff",
+    color: "#0f1b3d",
+    fontSize: 13,
+  },
+  modalDonutChart: {
+    width: 150,
+    height: 150,
+    borderRadius: "50%",
+    background: "conic-gradient(#078247 0 38%, #1554d1 38% 52%, #6d35d5 52% 72%, #46546b 72% 80%, #9aa7bb 80% 100%)",
+    boxShadow: "inset 0 0 0 34px #ffffff, 0 18px 34px rgba(37, 99, 235, 0.16)",
+  },
+  distributionDetailList: {
+    display: "grid",
+    gap: 10,
+    alignContent: "start",
+  },
+  distributionDetailRow: {
+    display: "grid",
+    gridTemplateColumns: "12px 1fr auto auto",
+    alignItems: "center",
+    gap: 10,
+    borderRadius: 12,
+    border: "1px solid #e4ebf6",
+    background: "#ffffff",
+    padding: "12px 14px",
+    color: "#334155",
+    fontSize: 13,
+    fontWeight: 700,
   },
   updateText: {
     display: "flex",
