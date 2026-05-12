@@ -55,6 +55,7 @@ type ScheduleCell = {
 type ScheduleRow = {
   id: string;
   name: string;
+  departmentName: string | null;
   shifts: ScheduleCell[];
 };
 
@@ -64,7 +65,7 @@ const shiftStyles: Record<ShiftKind, { bg: string; text: string }> = {
   Gündüz: { bg: "#ecfdf3", text: "#078247" },
   Akşam: { bg: "#eef4ff", text: "#1554d1" },
   Gece: { bg: "#f2eafe", text: "#6d35d5" },
-  Nöbet: { bg: "#fff7e6", text: "#b7791f" },
+  Nöbet: { bg: "#f2eafe", text: "#6d35d5" },
   İzinli: { bg: "#f4f6fa", text: "#46546b" },
   Dinlenme: { bg: "#f8fafc", text: "#9aa7bb" },
 };
@@ -133,6 +134,10 @@ function inferShiftKind(assignment?: AssignmentRow): ShiftKind {
 
 function formatAssignmentTime(assignment?: AssignmentRow) {
   if (!assignment) return "Dinlenme";
+  const label = assignment.shiftTypeName.toLocaleLowerCase("tr-TR");
+
+  if (label.includes("nöbet") || label.includes("nobet")) return "08:00 - 08:00";
+
   const start = normalizeTime(assignment.startTime) || "08:00";
   const end = normalizeTime(assignment.endTime) || "16:00";
   return `${start} - ${end}`;
@@ -201,6 +206,7 @@ export default function DashboardPage() {
   const [isDistributionHovered, setIsDistributionHovered] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("weekly");
   const [shiftFilter, setShiftFilter] = useState<ShiftFilter>("Tümü");
+  const [departmentFilter, setDepartmentFilter] = useState("Tümü");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [hoveredNav, setHoveredNav] = useState<"prev" | "next" | null>(null);
   const [pressedNav, setPressedNav] = useState<"prev" | "next" | null>(null);
@@ -283,6 +289,7 @@ export default function DashboardPage() {
       return {
         id: staffKey,
         name: person.fullName,
+        departmentName: person.departmentName,
         shifts: visibleDateKeys.map((dateKey) => {
           const assignment =
             assignmentMap.get(`${staffKey}:${dateKey}`) ?? assignmentMap.get(`${person.fullName}:${dateKey}`);
@@ -299,16 +306,32 @@ export default function DashboardPage() {
   }, [activeStaff, assignmentMap, assignments, staff, visibleDateKeys]);
 
   const filteredScheduleRows = useMemo<ScheduleRow[]>(() => {
-    if (shiftFilter === "Tümü") return scheduleRows;
+    const departmentFilteredRows = departmentFilter === "Tümü"
+      ? scheduleRows
+      : scheduleRows.filter((row) => row.departmentName === departmentFilter);
 
-    return scheduleRows.map((row) => ({
+    if (shiftFilter === "Tümü") return departmentFilteredRows;
+
+    return departmentFilteredRows.map((row) => ({
       ...row,
       shifts: row.shifts.map((shift) => (shift.type === shiftFilter ? shift : {
         type: "Dinlenme",
         time: "Dinlenme",
       })),
     }));
-  }, [scheduleRows, shiftFilter]);
+  }, [departmentFilter, scheduleRows, shiftFilter]);
+
+  const departmentOptions = useMemo(() => {
+    const departments = new Set(
+      scheduleRows
+        .map((row) => row.departmentName)
+        .filter((department): department is string => Boolean(department)),
+    );
+
+    return ["Tümü", ...Array.from(departments)];
+  }, [scheduleRows]);
+
+  const activeFilterCount = Number(shiftFilter !== "Tümü") + Number(departmentFilter !== "Tümü");
 
   const totalAssignments = assignments.length;
   const averageStaff = summary?.activeStaff ?? activeStaff.length;
@@ -427,28 +450,50 @@ export default function DashboardPage() {
                   }}
                   onClick={() => setIsFilterOpen((current) => !current)}
                 >
-                  <Filter size={15} />
-                  {shiftFilter === "Tümü" ? "Filtreler" : shiftFilter}
-                  <ChevronDown size={14} />
+                  <Filter size={14} />
+                  <span style={styles.filterButtonLabel}>
+                    {activeFilterCount > 0 ? `${activeFilterCount} filtre` : "Filtreler"}
+                  </span>
+                  <ChevronDown size={13} />
                 </button>
                 {isFilterOpen ? (
                   <div style={styles.filterMenu}>
-                    {(["Tümü", "Gündüz", "Akşam", "Gece", "Nöbet", "İzinli", "Dinlenme"] as ShiftFilter[]).map((item) => (
-                      <button
-                        key={item}
-                        type="button"
-                        style={{
-                          ...styles.filterMenuItem,
-                          ...(shiftFilter === item ? styles.filterMenuItemActive : null),
-                        }}
-                        onClick={() => {
-                          setShiftFilter(item);
-                          setIsFilterOpen(false);
-                        }}
-                      >
-                        {item}
-                      </button>
-                    ))}
+                    <div style={styles.filterSection}>
+                      <span style={styles.filterSectionTitle}>Birim</span>
+                      <div style={styles.filterOptionGrid}>
+                        {departmentOptions.map((item) => (
+                          <button
+                            key={item}
+                            type="button"
+                            style={{
+                              ...styles.filterMenuItem,
+                              ...(departmentFilter === item ? styles.filterMenuItemActive : null),
+                            }}
+                            onClick={() => setDepartmentFilter(item)}
+                          >
+                            {item}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div style={styles.filterSection}>
+                      <span style={styles.filterSectionTitle}>Vardiya</span>
+                      <div style={styles.filterOptionGrid}>
+                        {(["Tümü", "Gündüz", "Akşam", "Gece", "Nöbet", "İzinli", "Dinlenme"] as ShiftFilter[]).map((item) => (
+                          <button
+                            key={item}
+                            type="button"
+                            style={{
+                              ...styles.filterMenuItem,
+                              ...(shiftFilter === item ? styles.filterMenuItemActive : null),
+                            }}
+                            onClick={() => setShiftFilter(item)}
+                          >
+                            {item}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 ) : null}
               </div>
@@ -700,7 +745,7 @@ const styles: Record<string, React.CSSProperties> = {
   planToolbar: {
     minHeight: 62,
     display: "grid",
-    gridTemplateColumns: "220px 1fr 140px",
+    gridTemplateColumns: "220px 1fr 156px",
     alignItems: "center",
     gap: 12,
     padding: "12px 16px",
@@ -783,19 +828,27 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: "flex-end",
   },
   filterButton: {
-    height: 36,
+    width: 142,
+    height: 38,
     display: "inline-flex",
     alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    borderRadius: 7,
+    justifyContent: "space-between",
+    gap: 7,
+    borderRadius: 8,
     border: "1px solid #dfe7f4",
     background: "#ffffff",
     color: "#46546b",
     fontSize: 12,
     fontWeight: 600,
+    padding: "0 10px",
     cursor: "pointer",
     transition: "background 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease",
+  },
+  filterButtonLabel: {
+    flex: 1,
+    overflow: "hidden",
+    textAlign: "left",
+    whiteSpace: "nowrap",
   },
   filterButtonActive: {
     borderColor: "#bcd0ff",
@@ -808,18 +861,34 @@ const styles: Record<string, React.CSSProperties> = {
     top: 42,
     right: 0,
     zIndex: 20,
-    width: 150,
+    width: 230,
     display: "grid",
-    gap: 4,
+    gap: 10,
     borderRadius: 10,
     border: "1px solid #dce6f5",
     background: "rgba(255, 255, 255, 0.96)",
-    padding: 6,
+    padding: 8,
     boxShadow: "0 18px 38px rgba(15, 23, 42, 0.14)",
     backdropFilter: "blur(12px)",
   },
+  filterSection: {
+    display: "grid",
+    gap: 6,
+  },
+  filterSectionTitle: {
+    padding: "0 4px",
+    color: "#64748b",
+    fontSize: 10,
+    fontWeight: 700,
+    textTransform: "uppercase",
+    letterSpacing: "0.04em",
+  },
+  filterOptionGrid: {
+    display: "grid",
+    gap: 4,
+  },
   filterMenuItem: {
-    height: 30,
+    minHeight: 30,
     border: "none",
     borderRadius: 7,
     background: "transparent",
