@@ -629,6 +629,31 @@ export default function ShiftsPage() {
             transform: translateY(0) scale(0.985);
             background: #eef4ff !important;
           }
+
+          .shift-bulk-action {
+            transition:
+              transform 160ms ease,
+              filter 160ms ease,
+              box-shadow 160ms ease,
+              border-color 160ms ease,
+              background 160ms ease;
+          }
+
+          .shift-bulk-action:hover:not(:disabled) {
+            transform: translateY(-1px);
+            filter: brightness(1.02);
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12) !important;
+          }
+
+          .shift-bulk-action:active:not(:disabled) {
+            transform: translateY(0) scale(0.98);
+            filter: brightness(0.97);
+          }
+
+          .shift-bulk-action:disabled {
+            cursor: not-allowed;
+            opacity: 0.72;
+          }
         `,
       }}
     />
@@ -663,102 +688,106 @@ export default function ShiftsPage() {
 
       {/* ── FILTER AREA ────────────────────────────────── */}
       <section style={styles.card}>
-        <h2 style={styles.sectionTitle}>Filtreleme Alanı</h2>
-        <div style={styles.filterGrid}>
-          <label style={styles.filterLabel}>
-            <span style={styles.filterLabelText}>Birim</span>
-            <select
-              className="shift-filter-control"
-              style={styles.filterInput}
-              value={departmentFilter}
-              onChange={(e) => setDepartmentFilter(e.target.value)}
-            >
-              <option value="">Tümü</option>
-              {departments.map((d) => (
-                <option key={d.id} value={String(d.id)}>
-                  {d.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label style={styles.filterLabel}>
-            <span style={styles.filterLabelText}>Durum</span>
-            <select
-              className="shift-filter-control"
-              style={styles.filterInput}
-              value={statusFilter}
-              onChange={(e) =>
-                setStatusFilter(e.target.value as typeof statusFilter)
-              }
-            >
-              <option value="">Tümü</option>
-              <option value="planned">Taslak</option>
-              <option value="approved">Onaylı</option>
-              <option value="cancelled">İptal</option>
-            </select>
-          </label>
-          <label style={styles.filterLabel}>
-            <span style={styles.filterLabelText}>Başlangıç Tarihi</span>
-            <input
-              className="shift-filter-control"
-              type="date"
-              style={styles.filterInput}
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-          </label>
-          <label style={styles.filterLabel}>
-            <span style={styles.filterLabelText}>Bitiş Tarihi</span>
-            <input
-              className="shift-filter-control"
-              type="date"
-              style={styles.filterInput}
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
-          </label>
-          <div style={{ display: "flex", alignItems: "flex-end" }}>
-            <button
-              type="button"
-              className="shift-filter-control"
-              onClick={() => void load()}
-              style={styles.filterButton}
-            >
-              Filtrele
-            </button>
+        <div style={styles.filterPanel}>
+          <div style={styles.filterPanelMain}>
+            <h2 style={styles.sectionTitle}>Filtreleme Alanı</h2>
+            <div style={styles.filterGrid}>
+              <label style={styles.filterLabel}>
+                <span style={styles.filterLabelText}>Birim</span>
+                <select
+                  className="shift-filter-control"
+                  style={styles.filterInput}
+                  value={departmentFilter}
+                  onChange={(e) => setDepartmentFilter(e.target.value)}
+                >
+                  <option value="">Tümü</option>
+                  {departments.map((d) => (
+                    <option key={d.id} value={String(d.id)}>
+                      {d.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label style={styles.filterLabel}>
+                <span style={styles.filterLabelText}>Durum</span>
+                <select
+                  className="shift-filter-control"
+                  style={styles.filterInput}
+                  value={statusFilter}
+                  onChange={(e) =>
+                    setStatusFilter(e.target.value as typeof statusFilter)
+                  }
+                >
+                  <option value="">Tümü</option>
+                  <option value="planned">Taslak</option>
+                  <option value="approved">Onaylı</option>
+                  <option value="cancelled">İptal</option>
+                </select>
+              </label>
+              <label style={styles.filterLabel}>
+                <span style={styles.filterLabelText}>Başlangıç Tarihi</span>
+                <input
+                  className="shift-filter-control"
+                  type="date"
+                  style={styles.filterInput}
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+              </label>
+              <label style={styles.filterLabel}>
+                <span style={styles.filterLabelText}>Bitiş Tarihi</span>
+                <input
+                  className="shift-filter-control"
+                  type="date"
+                  style={styles.filterInput}
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </label>
+              <div style={{ display: "flex", alignItems: "flex-end" }}>
+                <button
+                  type="button"
+                  className="shift-filter-control"
+                  onClick={() => void load()}
+                  style={styles.filterButton}
+                >
+                  Filtrele
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
-
-      {/* ── BULK ACTIONS ───────────────────────────────── */}
-      <section style={styles.card}>
-        <div style={styles.bulkHeader}>
-          <h2 style={styles.sectionTitle}>Toplu İşlemler</h2>
-          <span style={styles.filterNote}>Geçerli filtreler korunur.</span>
-        </div>
-        <div style={styles.bulkRow}>
-          <button
-            type="button"
-            onClick={() => void performBulk("approve")}
-            disabled={savingBulk !== null}
-            style={styles.bulkApprove}
-          >
-            ✓ Taslakları Onayla
-          </button>
-          <button
-            type="button"
-            onClick={() => void performBulk("delete")}
-            disabled={savingBulk !== null}
-            style={styles.bulkDelete}
-          >
-            ✗ Temizle
-          </button>
-          <button type="button" style={styles.bulkExcel} onClick={handleExcelExport}>
-            ↓ Excel Çıktısı
-          </button>
-          <button type="button" style={styles.bulkNew} onClick={openCreateModal}>
-            + Yeni Vardiya
-          </button>
+          <aside style={styles.bulkPanel}>
+            <div style={styles.bulkHeader}>
+              <h2 style={styles.bulkTitle}>Toplu İşlemler</h2>
+              <span style={styles.filterNote}>Geçerli filtreler korunur.</span>
+            </div>
+            <div style={styles.bulkRow}>
+              <button
+                type="button"
+                className="shift-bulk-action"
+                onClick={() => void performBulk("approve")}
+                disabled={savingBulk !== null}
+                style={styles.bulkApprove}
+              >
+                ✓ Taslakları Onayla
+              </button>
+              <button
+                type="button"
+                className="shift-bulk-action"
+                onClick={() => void performBulk("delete")}
+                disabled={savingBulk !== null}
+                style={styles.bulkDelete}
+              >
+                ✗ Temizle
+              </button>
+              <button type="button" className="shift-bulk-action" style={styles.bulkExcel} onClick={handleExcelExport}>
+                ↓ Excel Çıktısı
+              </button>
+              <button type="button" className="shift-bulk-action" style={styles.bulkNew} onClick={openCreateModal}>
+                + Yeni Vardiya
+              </button>
+            </div>
+          </aside>
         </div>
       </section>
 
@@ -1276,6 +1305,16 @@ const styles: Record<string, React.CSSProperties> = {
     margin: "0 0 14px 0",
   },
 
+  filterPanel: {
+    display: "grid",
+    gridTemplateColumns: "minmax(0, 1fr) minmax(260px, 340px)",
+    gap: 20,
+    alignItems: "stretch",
+  },
+  filterPanelMain: {
+    minWidth: 0,
+  },
+
   /* ── filter grid ── */
   filterGrid: {
     display: "grid",
@@ -1325,11 +1364,26 @@ const styles: Record<string, React.CSSProperties> = {
   },
 
   /* ── bulk ── */
+  bulkPanel: {
+    borderLeft: "1px solid #e2e8f0",
+    paddingLeft: 20,
+    display: "flex",
+    flexDirection: "column" as const,
+    justifyContent: "space-between",
+    minWidth: 0,
+  },
   bulkHeader: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 14,
+    gap: 10,
+    marginBottom: 12,
+  },
+  bulkTitle: {
+    fontSize: 15,
+    fontWeight: 800,
+    color: "#1e293b",
+    margin: 0,
   },
   filterNote: {
     fontSize: 12,
@@ -1339,59 +1393,75 @@ const styles: Record<string, React.CSSProperties> = {
   bulkRow: {
     display: "flex",
     flexWrap: "wrap" as const,
-    gap: 10,
+    gap: 8,
   },
   bulkApprove: {
     display: "inline-flex",
     alignItems: "center",
+    justifyContent: "center",
     gap: 6,
-    padding: "10px 20px",
-    fontSize: 13,
+    minHeight: 36,
+    padding: "0 14px",
+    fontSize: 12,
     fontWeight: 700,
     color: "#ffffff",
-    background: "#059669",
+    background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
     border: "none",
-    borderRadius: 10,
+    borderRadius: 12,
     cursor: "pointer",
+    boxShadow: "0 8px 18px rgba(5, 150, 105, 0.20)",
+    whiteSpace: "nowrap" as const,
   },
   bulkDelete: {
     display: "inline-flex",
     alignItems: "center",
+    justifyContent: "center",
     gap: 6,
-    padding: "10px 20px",
-    fontSize: 13,
+    minHeight: 36,
+    padding: "0 14px",
+    fontSize: 12,
     fontWeight: 700,
     color: "#ffffff",
-    background: "#DC2626",
+    background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
     border: "none",
-    borderRadius: 10,
+    borderRadius: 12,
     cursor: "pointer",
+    boxShadow: "0 8px 18px rgba(220, 38, 38, 0.18)",
+    whiteSpace: "nowrap" as const,
   },
   bulkExcel: {
     display: "inline-flex",
     alignItems: "center",
+    justifyContent: "center",
     gap: 6,
-    padding: "10px 20px",
-    fontSize: 13,
+    minHeight: 36,
+    padding: "0 14px",
+    fontSize: 12,
     fontWeight: 700,
-    color: "#334155",
-    background: "#ffffff",
-    border: "1.5px solid #e2e8f0",
-    borderRadius: 10,
+    color: "#243754",
+    background: "linear-gradient(135deg, #ffffff 0%, #f8fbff 100%)",
+    border: "1px solid #dbe6f5",
+    borderRadius: 12,
     cursor: "pointer",
+    boxShadow: "0 6px 16px rgba(15, 23, 42, 0.04)",
+    whiteSpace: "nowrap" as const,
   },
   bulkNew: {
     display: "inline-flex",
     alignItems: "center",
+    justifyContent: "center",
     gap: 6,
-    padding: "10px 20px",
-    fontSize: 13,
+    minHeight: 36,
+    padding: "0 14px",
+    fontSize: 12,
     fontWeight: 700,
     color: "#ffffff",
-    background: "#1e293b",
+    background: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
     border: "none",
-    borderRadius: 10,
+    borderRadius: 12,
     cursor: "pointer",
+    boxShadow: "0 8px 18px rgba(15, 23, 42, 0.20)",
+    whiteSpace: "nowrap" as const,
   },
 
   /* ── table ── */
@@ -1423,7 +1493,6 @@ const styles: Record<string, React.CSSProperties> = {
     borderTop: "1px solid #e2e8f0",
     background: "rgba(255,255,255,0.96)",
     backdropFilter: "blur(10px)",
-    boxShadow: "0 -10px 24px -18px rgba(15,23,42,0.35)",
     fontSize: 12,
     fontWeight: 700,
     color: "#64748b",
