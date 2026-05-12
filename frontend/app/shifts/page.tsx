@@ -601,6 +601,34 @@ export default function ShiftsPage() {
           .shift-modal-toggle-row:hover .shift-modal-toggle-knob {
             box-shadow: 0 5px 14px rgba(15, 23, 42, 0.26) !important;
           }
+
+          .shift-filter-control {
+            transition:
+              transform 160ms ease,
+              border-color 160ms ease,
+              box-shadow 160ms ease,
+              background 160ms ease,
+              color 160ms ease;
+          }
+
+          .shift-filter-control:hover {
+            transform: translateY(-1px);
+            border-color: #a8bbff !important;
+            background: linear-gradient(135deg, #ffffff 0%, #f6f9ff 100%) !important;
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.10) !important;
+          }
+
+          .shift-filter-control:focus {
+            border-color: #4f73ff !important;
+            box-shadow:
+              0 0 0 4px rgba(79, 115, 255, 0.14),
+              0 12px 28px rgba(37, 99, 235, 0.12) !important;
+          }
+
+          .shift-filter-control:active {
+            transform: translateY(0) scale(0.985);
+            background: #eef4ff !important;
+          }
         `,
       }}
     />
@@ -640,6 +668,7 @@ export default function ShiftsPage() {
           <label style={styles.filterLabel}>
             <span style={styles.filterLabelText}>Birim</span>
             <select
+              className="shift-filter-control"
               style={styles.filterInput}
               value={departmentFilter}
               onChange={(e) => setDepartmentFilter(e.target.value)}
@@ -655,6 +684,7 @@ export default function ShiftsPage() {
           <label style={styles.filterLabel}>
             <span style={styles.filterLabelText}>Durum</span>
             <select
+              className="shift-filter-control"
               style={styles.filterInput}
               value={statusFilter}
               onChange={(e) =>
@@ -670,6 +700,7 @@ export default function ShiftsPage() {
           <label style={styles.filterLabel}>
             <span style={styles.filterLabelText}>Başlangıç Tarihi</span>
             <input
+              className="shift-filter-control"
               type="date"
               style={styles.filterInput}
               value={startDate}
@@ -679,6 +710,7 @@ export default function ShiftsPage() {
           <label style={styles.filterLabel}>
             <span style={styles.filterLabelText}>Bitiş Tarihi</span>
             <input
+              className="shift-filter-control"
               type="date"
               style={styles.filterInput}
               value={endDate}
@@ -688,6 +720,7 @@ export default function ShiftsPage() {
           <div style={{ display: "flex", alignItems: "flex-end" }}>
             <button
               type="button"
+              className="shift-filter-control"
               onClick={() => void load()}
               style={styles.filterButton}
             >
@@ -1246,42 +1279,46 @@ const styles: Record<string, React.CSSProperties> = {
   /* ── filter grid ── */
   filterGrid: {
     display: "grid",
-    gridTemplateColumns: "1fr 1fr 1fr 1fr auto",
-    gap: 16,
+    gridTemplateColumns: "minmax(118px, 156px) minmax(118px, 156px) minmax(130px, 168px) minmax(130px, 168px) auto",
+    gap: 12,
     alignItems: "end",
   },
   filterLabel: {
     display: "flex",
     flexDirection: "column" as const,
-    gap: 6,
+    gap: 5,
     fontSize: 13,
+    minWidth: 0,
   },
   filterLabelText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: 700,
     color: "#475569",
   },
   filterInput: {
-    height: 42,
-    borderRadius: 10,
-    border: "1px solid #e2e8f0",
-    padding: "0 14px",
-    fontSize: 14,
-    color: "#334155",
-    background: "#ffffff",
+    height: 38,
+    borderRadius: 12,
+    border: "1px solid #dbe6f5",
+    padding: "0 12px",
+    fontSize: 12,
+    fontWeight: 700,
+    color: "#243754",
+    background: "linear-gradient(135deg, #ffffff 0%, #f8fbff 100%)",
     fontFamily: "inherit",
     outline: "none",
     width: "100%",
+    boxShadow: "0 6px 16px rgba(15, 23, 42, 0.04)",
+    cursor: "pointer",
   },
   filterButton: {
-    height: 42,
-    padding: "0 28px",
-    fontSize: 14,
+    height: 38,
+    padding: "0 20px",
+    fontSize: 12,
     fontWeight: 700,
     color: "#ffffff",
     background: "linear-gradient(135deg, #4A6CF7 0%, #3B5BDB 100%)",
     border: "none",
-    borderRadius: 10,
+    borderRadius: 12,
     cursor: "pointer",
     boxShadow: "0 4px 14px rgba(74,108,247,0.35)",
     whiteSpace: "nowrap" as const,
