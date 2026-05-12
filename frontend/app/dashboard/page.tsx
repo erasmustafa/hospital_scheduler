@@ -128,6 +128,7 @@ function inferShiftKind(assignment?: AssignmentRow): ShiftKind {
 
   if (label.includes("izin")) return "İzinli";
   if (label.includes("nöbet") || label.includes("nobet")) return "Nöbet";
+  if (label.includes("mesai")) return "Gündüz";
   if (label.includes("gece") || start >= "20:00" || start < "08:00") return "Gece";
   if (label.includes("akşam") || label.includes("aksam") || start >= "16:00") return "Akşam";
   return "Gündüz";
@@ -187,7 +188,8 @@ function SummaryMetric({
 }
 
 function ShiftChip({ shift }: { shift: ScheduleCell }) {
-  const tone = shiftStyles[shift.type];
+  const isMesai = shift.assignment?.shiftTypeName.toLocaleLowerCase("tr-TR").includes("mesai");
+  const tone = isMesai ? shiftStyles.Gündüz : shiftStyles[shift.type];
   const isRest = shift.type === "Dinlenme";
 
   return (
