@@ -186,8 +186,8 @@ function ShiftChip({ shift }: { shift: ScheduleCell }) {
 
   return (
     <div style={{ ...styles.shiftChip, background: tone.bg, color: tone.text }}>
-      <strong>{shift.assignment?.shiftTypeName ?? shift.type}</strong>
-      {isRest ? null : <span>{shift.time}</span>}
+      <strong style={styles.shiftChipTitle}>{shift.assignment?.shiftTypeName ?? shift.type}</strong>
+      {isRest ? null : <span style={styles.shiftChipTime}>{shift.time}</span>}
     </div>
   );
 }
@@ -456,7 +456,7 @@ export default function DashboardPage() {
               <div
                 style={{
                   ...styles.scheduleGrid,
-                  gridTemplateColumns: `150px repeat(${activeDateCount}, minmax(112px, 1fr))`,
+                  gridTemplateColumns: `minmax(130px, 0.8fr) repeat(${activeDateCount}, minmax(0, 1fr))`,
                   gridTemplateRows: `30px repeat(${Math.max(filteredScheduleRows.length, 1)}, minmax(0, 1fr))`,
                 }}
               >
@@ -702,9 +702,10 @@ const styles: Record<string, React.CSSProperties> = {
     position: "relative",
   },
   viewToggle: {
-    display: "inline-flex",
+    display: "grid",
+    gridTemplateColumns: "repeat(2, 92px)",
     alignItems: "center",
-    width: "fit-content",
+    width: 184,
     borderRadius: 7,
     border: "1px solid #dfe7f4",
     overflow: "hidden",
@@ -714,25 +715,31 @@ const styles: Record<string, React.CSSProperties> = {
     height: 36,
     display: "inline-flex",
     alignItems: "center",
+    justifyContent: "center",
     gap: 8,
-    padding: "0 14px",
+    padding: "0 10px",
     border: "none",
-    borderRight: "1px solid #dfe7f4",
     background: "#f8fbff",
     color: "#1554d1",
     fontSize: 12,
     fontWeight: 700,
     cursor: "pointer",
+    transition: "background 160ms ease, color 160ms ease",
   },
   viewToggleButton: {
     height: 36,
-    padding: "0 14px",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    padding: "0 10px",
     border: "none",
     background: "#ffffff",
     color: "#31415f",
     fontSize: 12,
     fontWeight: 600,
     cursor: "pointer",
+    transition: "background 160ms ease, color 160ms ease",
   },
   weekNavigator: {
     display: "flex",
@@ -830,9 +837,10 @@ const styles: Record<string, React.CSSProperties> = {
   },
   scheduleGrid: {
     height: "100%",
-    minWidth: 910,
+    width: "100%",
+    minWidth: 0,
     display: "grid",
-    gridTemplateColumns: "150px repeat(7, minmax(112px, 1fr))",
+    gridTemplateColumns: "minmax(130px, 0.8fr) repeat(7, minmax(0, 1fr))",
   },
   employeeHead: {
     minHeight: 0,
@@ -873,21 +881,27 @@ const styles: Record<string, React.CSSProperties> = {
     minHeight: 0,
     display: "grid",
     placeItems: "center",
-    padding: "7px 8px",
+    padding: "6px 7px",
     borderRight: "1px solid #edf2f7",
     borderBottom: "1px solid #edf2f7",
   },
   shiftChip: {
     width: "100%",
-    minHeight: 38,
+    minHeight: 34,
     display: "grid",
     placeItems: "center",
     alignContent: "center",
-    gap: 2,
+    gap: 0,
     borderRadius: 6,
     fontSize: 11,
     fontWeight: 700,
     textAlign: "center",
+  },
+  shiftChipTitle: {
+    lineHeight: 1.12,
+  },
+  shiftChipTime: {
+    lineHeight: 1.1,
   },
   emptySchedule: {
     gridColumn: "1 / -1",
