@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import {
   BarChart3,
   BriefcaseBusiness,
@@ -203,6 +203,8 @@ function AnalyticsDropdown({
 
 export default function AnalyticsPage() {
   const today = useMemo(() => new Date(), []);
+  const dateFromInputRef = useRef<HTMLInputElement | null>(null);
+  const dateToInputRef = useRef<HTMLInputElement | null>(null);
   const [dateFrom, setDateFrom] = useState(
     isoDate(new Date(today.getFullYear(), today.getMonth(), today.getDate() - 30))
   );
@@ -243,6 +245,11 @@ export default function AnalyticsPage() {
       setLoading(false);
     }
   }, [dateFrom, dateTo, departmentFilter, statusFilter]);
+
+  const openDatePicker = (input: HTMLInputElement | null) => {
+    input?.focus();
+    input?.showPicker?.();
+  };
 
   useEffect(() => {
     void load();
@@ -437,13 +444,22 @@ export default function AnalyticsPage() {
           <span style={styles.fieldLabel}>Başlangıç</span>
           <span style={styles.selectWrap}>
             <input
+              ref={dateFromInputRef}
               className="analytics-date"
               type="date"
               style={styles.fieldInput}
               value={dateFrom}
               onChange={(event) => setDateFrom(event.target.value)}
             />
-            <CalendarDays size={15} style={styles.fieldIcon} />
+            <button
+              type="button"
+              className="analytics-action"
+              style={styles.dateIconButton}
+              aria-label="Başlangıç tarihi seç"
+              onClick={() => openDatePicker(dateFromInputRef.current)}
+            >
+              <CalendarDays size={15} />
+            </button>
           </span>
         </label>
 
@@ -451,13 +467,22 @@ export default function AnalyticsPage() {
           <span style={styles.fieldLabel}>Bitiş</span>
           <span style={styles.selectWrap}>
             <input
+              ref={dateToInputRef}
               className="analytics-date"
               type="date"
               style={styles.fieldInput}
               value={dateTo}
               onChange={(event) => setDateTo(event.target.value)}
             />
-            <CalendarDays size={15} style={styles.fieldIcon} />
+            <button
+              type="button"
+              className="analytics-action"
+              style={styles.dateIconButton}
+              aria-label="Bitiş tarihi seç"
+              onClick={() => openDatePicker(dateToInputRef.current)}
+            >
+              <CalendarDays size={15} />
+            </button>
           </span>
         </label>
 
@@ -793,6 +818,21 @@ const styles: Record<string, CSSProperties> = {
     color: "#52627f",
     pointerEvents: "none",
   },
+  dateIconButton: {
+    position: "absolute",
+    right: 8,
+    top: 6,
+    width: 28,
+    height: 28,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: "1px solid transparent",
+    borderRadius: 7,
+    background: "transparent",
+    color: "#52627f",
+    cursor: "pointer",
+  },
   analyzeButton: {
     height: 48,
     minWidth: 130,
@@ -1072,10 +1112,10 @@ const styles: Record<string, CSSProperties> = {
     cursor: "pointer",
   },
   pageButtonActive: {
-    borderColor: "#6d5dfc",
-    background: "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)",
-    color: "#ffffff",
-    boxShadow: "0 12px 24px rgba(79, 70, 229, 0.22)",
+    borderColor: "#ddd6fe",
+    background: "#f3efff",
+    color: "#6d28d9",
+    boxShadow: "0 10px 22px rgba(124, 58, 237, 0.12)",
   },
   pageSizeButton: {
     justifySelf: "end",
