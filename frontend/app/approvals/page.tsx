@@ -422,7 +422,7 @@ const styles: Record<string, CSSProperties> = {
   },
   pageTitle: {
     fontSize: 28,
-    fontWeight: 800,
+    fontWeight: 700,
     color: "#0f1b3d",
     margin: "0 0 8px",
     letterSpacing: "-0.02em",
@@ -445,7 +445,7 @@ const styles: Record<string, CSSProperties> = {
     background: "#ffffff",
     color: "#5b5cf6",
     fontSize: 13,
-    fontWeight: 800,
+    fontWeight: 700,
     cursor: "pointer",
     boxShadow: "0 8px 18px rgba(15, 23, 42, 0.04)",
   },
@@ -507,7 +507,7 @@ const styles: Record<string, CSSProperties> = {
     background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
     color: "#ffffff",
     fontSize: 13,
-    fontWeight: 800,
+    fontWeight: 700,
     cursor: "pointer",
     boxShadow: "0 12px 22px rgba(5, 150, 105, 0.22)",
   },
@@ -544,7 +544,7 @@ const styles: Record<string, CSSProperties> = {
     background: "#ffffff",
     color: "#5b5cf6",
     fontSize: 13,
-    fontWeight: 800,
+    fontWeight: 700,
     cursor: "pointer",
   },
   errorText: {
@@ -583,7 +583,7 @@ const styles: Record<string, CSSProperties> = {
     zIndex: 2,
     padding: "18px 24px",
     fontSize: 12,
-    fontWeight: 800,
+    fontWeight: 700,
     color: "#52627f",
     textAlign: "left",
     borderBottom: "1px solid #e5edf8",
@@ -624,10 +624,10 @@ const styles: Record<string, CSSProperties> = {
     background: "#f1edff",
     color: "#6d5dfc",
     fontSize: 13,
-    fontWeight: 800,
+    fontWeight: 700,
   },
   primaryText: {
-    fontWeight: 800,
+    fontWeight: 700,
     color: "#0f1b3d",
   },
   secondaryText: {
@@ -641,7 +641,7 @@ const styles: Record<string, CSSProperties> = {
     gap: 7,
     padding: "7px 12px",
     fontSize: 12,
-    fontWeight: 800,
+    fontWeight: 700,
     borderRadius: 8,
   },
   dateCell: {
@@ -659,7 +659,7 @@ const styles: Record<string, CSSProperties> = {
     background: "#f5f7fb",
     color: "#465674",
     fontSize: 12,
-    fontWeight: 800,
+    fontWeight: 700,
   },
   statusBadge: {
     display: "inline-flex",
@@ -667,7 +667,7 @@ const styles: Record<string, CSSProperties> = {
     gap: 7,
     padding: "7px 13px",
     fontSize: 12,
-    fontWeight: 800,
+    fontWeight: 700,
     borderRadius: 999,
   },
   metaCell: {
@@ -680,7 +680,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: "center",
     gap: 6,
     color: "#4f46e5",
-    fontWeight: 800,
+    fontWeight: 700,
   },
   metaDate: {
     color: "#7180a0",
@@ -695,7 +695,7 @@ const styles: Record<string, CSSProperties> = {
   approveBtn: {
     padding: "7px 12px",
     fontSize: 12,
-    fontWeight: 800,
+    fontWeight: 700,
     color: "#059669",
     background: "#ecfdf5",
     border: "1px solid #bbf7d0",
@@ -705,7 +705,7 @@ const styles: Record<string, CSSProperties> = {
   rejectBtn: {
     padding: "7px 12px",
     fontSize: 12,
-    fontWeight: 800,
+    fontWeight: 700,
     color: "#dc2626",
     background: "#fff1f2",
     border: "1px solid #fecaca",
@@ -723,7 +723,7 @@ const styles: Record<string, CSSProperties> = {
     background: "#ffffff",
     color: "#465674",
     fontSize: 12,
-    fontWeight: 800,
+    fontWeight: 700,
   },
   moreButton: {
     width: 30,
@@ -763,7 +763,7 @@ const styles: Record<string, CSSProperties> = {
     background: "#ffffff",
     color: "#465674",
     fontSize: 12,
-    fontWeight: 800,
+    fontWeight: 700,
   },
   pageButton: {
     width: 34,
@@ -773,7 +773,7 @@ const styles: Record<string, CSSProperties> = {
     background: "#ffffff",
     color: "#243754",
     fontSize: 13,
-    fontWeight: 800,
+    fontWeight: 700,
     cursor: "pointer",
   },
   pageButtonActive: {
@@ -783,6 +783,6 @@ const styles: Record<string, CSSProperties> = {
   },
   pageDots: {
     color: "#64748b",
-    fontWeight: 800,
+    fontWeight: 700,
   },
 };
