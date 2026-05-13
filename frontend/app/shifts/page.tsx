@@ -863,10 +863,10 @@ export default function ShiftsPage() {
       <section style={styles.statsRow}>
         <div style={{ ...styles.statCard, ...styles.statCardBlue }}>
           <span style={{ ...styles.statIconBox, ...styles.statIconBlue }}>
-            <ClipboardList size={30} />
+            <ClipboardList size={24} />
           </span>
           <span style={{ ...styles.statMiniBadge, ...styles.statMiniBadgeBlue }}>
-            <TrendingUp size={18} />
+            <TrendingUp size={14} />
           </span>
           <div style={styles.statContent}>
             <p style={styles.statLabel}>Toplam Kayıt</p>
@@ -876,10 +876,10 @@ export default function ShiftsPage() {
         </div>
         <div style={{ ...styles.statCard, ...styles.statCardGreen }}>
           <span style={{ ...styles.statIconBox, ...styles.statIconGreen }}>
-            <BriefcaseBusiness size={30} />
+            <BriefcaseBusiness size={24} />
           </span>
           <span style={{ ...styles.statMiniBadge, ...styles.statMiniBadgeGreen }}>
-            <Check size={18} />
+            <Check size={14} />
           </span>
           <div style={styles.statContent}>
             <p style={styles.statLabel}>Seçili Birim</p>
@@ -889,10 +889,10 @@ export default function ShiftsPage() {
         </div>
         <div style={{ ...styles.statCard, ...styles.statCardAmber }}>
           <span style={{ ...styles.statIconBox, ...styles.statIconAmber }}>
-            <Filter size={30} />
+            <Filter size={24} />
           </span>
           <span style={{ ...styles.statMiniBadge, ...styles.statMiniBadgeAmber }}>
-            <MoreHorizontal size={18} />
+            <MoreHorizontal size={14} />
           </span>
           <div style={styles.statContent}>
             <p style={styles.statLabel}>Durum</p>
@@ -904,10 +904,10 @@ export default function ShiftsPage() {
         </div>
         <div style={{ ...styles.statCard, ...styles.statCardPurple }}>
           <span style={{ ...styles.statIconBox, ...styles.statIconPurple }}>
-            <CalendarDays size={30} />
+            <CalendarDays size={24} />
           </span>
           <span style={{ ...styles.statMiniBadge, ...styles.statMiniBadgePurple }}>
-            <CalendarDays size={18} />
+            <CalendarDays size={14} />
           </span>
           <div style={styles.statContent}>
             <p style={styles.statLabel}>Tarih Aralığı</p>
@@ -1511,37 +1511,37 @@ const styles: Record<string, React.CSSProperties> = {
   },
   statCard: {
     position: "relative",
-    minHeight: 118,
+    minHeight: 94,
     display: "grid",
-    gridTemplateColumns: "86px minmax(0, 1fr)",
+    gridTemplateColumns: "64px minmax(0, 1fr)",
     alignItems: "center",
-    columnGap: 18,
+    columnGap: 14,
     overflow: "hidden",
     background: "linear-gradient(145deg, rgba(255,255,255,0.98) 0%, rgba(248,251,255,0.94) 100%)",
-    borderRadius: 22,
-    padding: "20px 24px",
+    borderRadius: 18,
+    padding: "16px 18px",
     border: "1px solid rgba(226, 232, 240, 0.95)",
-    boxShadow: "0 18px 42px rgba(15, 23, 42, 0.08)",
+    boxShadow: "0 12px 30px rgba(15, 23, 42, 0.07)",
   },
   statCardBlue: {
-    borderBottom: "3px solid #4f73ff",
+    borderBottom: "2px solid #4f73ff",
   },
   statCardGreen: {
-    borderBottom: "3px solid #34c77b",
+    borderBottom: "2px solid #34c77b",
   },
   statCardAmber: {
-    borderBottom: "3px solid #f6b83f",
+    borderBottom: "2px solid #f6b83f",
   },
   statCardPurple: {
-    borderBottom: "3px solid #a855f7",
+    borderBottom: "2px solid #a855f7",
   },
   statIconBox: {
-    width: 70,
-    height: 70,
+    width: 52,
+    height: 52,
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 20,
+    borderRadius: 15,
     justifySelf: "start",
   },
   statIconBlue: {
@@ -1562,10 +1562,10 @@ const styles: Record<string, React.CSSProperties> = {
   },
   statMiniBadge: {
     position: "absolute",
-    top: 22,
-    right: 20,
-    width: 38,
-    height: 38,
+    top: 16,
+    right: 16,
+    width: 30,
+    height: 30,
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
@@ -1591,10 +1591,10 @@ const styles: Record<string, React.CSSProperties> = {
     minWidth: 0,
   },
   statLabel: {
-    fontSize: 13,
+    fontSize: 11,
     fontWeight: 800,
     color: "#72809b",
-    margin: "0 0 8px 0",
+    margin: "0 0 6px 0",
     textTransform: "uppercase" as const,
     letterSpacing: "0.08em",
   },
@@ -1603,14 +1603,14 @@ const styles: Record<string, React.CSSProperties> = {
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap" as const,
-    fontSize: 32,
+    fontSize: 25,
     fontWeight: 800,
     color: "#172033",
-    margin: "0 0 8px 0",
+    margin: "0 0 6px 0",
     lineHeight: 1.05,
   },
   statDesc: {
-    fontSize: 13,
+    fontSize: 11,
     fontWeight: 600,
     color: "#8a96ad",
     margin: 0,
