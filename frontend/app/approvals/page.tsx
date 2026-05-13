@@ -105,7 +105,7 @@ function ShiftBadge({ label }: { label: string | null }) {
   const Icon = normalized.toLocaleLowerCase("tr-TR").includes("nöbet") ? Clock3 : normalized === "Tüm Gün" ? Sun : BriefcaseBusiness;
 
   return (
-    <span style={styles.shiftBadge}>
+    <span style={styles.shiftText}>
       <Icon size={13} />
       {normalized}
     </span>
@@ -886,13 +886,10 @@ const styles: Record<string, CSSProperties> = {
     gap: 8,
     color: "#465674",
   },
-  shiftBadge: {
+  shiftText: {
     display: "inline-flex",
     alignItems: "center",
     gap: 8,
-    padding: "7px 12px",
-    borderRadius: 8,
-    background: "#f5f7fb",
     color: "#465674",
     fontSize: 12,
     fontWeight: 700,
