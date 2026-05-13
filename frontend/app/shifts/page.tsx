@@ -8,7 +8,9 @@ import {
   Clock,
   FileText,
   Moon,
+  Pencil,
   Tag,
+  Trash2,
   UserRound,
   Users,
   X,
@@ -267,6 +269,7 @@ export default function ShiftsPage() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [savingBulk, setSavingBulk] = useState<"approve" | "delete" | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [creating, setCreating] = useState(false);
   const [createSuccess, setCreateSuccess] = useState(false);
@@ -356,9 +359,15 @@ export default function ShiftsPage() {
   };
 
   const handleDelete = async (id: number) => {
+    if (pendingDeleteId !== id) {
+      setPendingDeleteId(id);
+      return;
+    }
+
     try {
       await apiClient.delete(`/assignments/${id}/`);
       setRows((prev) => prev.filter((r) => r.id !== id));
+      setPendingDeleteId(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Silme işlemi başarısız.");
     }
@@ -764,6 +773,39 @@ export default function ShiftsPage() {
             cursor: not-allowed;
             opacity: 0.72;
           }
+
+          .shift-row-action {
+            transition:
+              transform 150ms ease,
+              border-color 150ms ease,
+              background 150ms ease,
+              box-shadow 150ms ease,
+              color 150ms ease;
+          }
+
+          .shift-row-action:hover {
+            transform: translateY(-1px);
+            border-color: #a8bbff !important;
+            background: #f6f9ff !important;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.12) !important;
+          }
+
+          .shift-row-action:active {
+            transform: translateY(0) scale(0.94);
+          }
+
+          .shift-row-action-danger:hover {
+            border-color: #fecaca !important;
+            background: #fff1f2 !important;
+            color: #dc2626 !important;
+          }
+
+          .shift-row-action-confirm:hover {
+            border-color: #dc2626 !important;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 12px 24px rgba(220, 38, 38, 0.26) !important;
+          }
         `,
       }}
     />
@@ -1025,23 +1067,31 @@ export default function ShiftsPage() {
                           </span>
                         </td>
                         <td style={{ ...styles.td, textAlign: "center" }}>
-                          <div
-                            style={{
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: 4,
-                              alignItems: "center",
-                            }}
-                          >
-                            <button type="button" style={styles.editBtn}>
-                              ✎ Düzenle
+                          <div style={styles.rowActionGroup}>
+                            <button
+                              type="button"
+                              className="shift-row-action"
+                              style={styles.editBtn}
+                              title="Düzenle"
+                              aria-label="Vardiyayı düzenle"
+                              onClick={() => setPendingDeleteId(null)}
+                            >
+                              <Pencil size={15} />
                             </button>
                             <button
                               type="button"
-                              style={styles.deleteBtn}
+                              className={`shift-row-action shift-row-action-danger ${
+                                pendingDeleteId === row.id ? "shift-row-action-confirm" : ""
+                              }`}
+                              style={{
+                                ...styles.deleteBtn,
+                                ...(pendingDeleteId === row.id ? styles.deleteBtnConfirm : {}),
+                              }}
                               onClick={() => void handleDelete(row.id)}
+                              title={pendingDeleteId === row.id ? "Silmek için tekrar tıkla" : "Sil"}
+                              aria-label={pendingDeleteId === row.id ? "Silme işlemini onayla" : "Vardiyayı sil"}
                             >
-                              🗑 Sil
+                              <Trash2 size={15} />
                             </button>
                           </div>
                         </td>
@@ -1576,8 +1626,11 @@ const styles: Record<string, React.CSSProperties> = {
   },
   bulkRow: {
     display: "flex",
-    flexWrap: "wrap" as const,
+    flexWrap: "nowrap" as const,
     gap: 8,
+    alignItems: "center",
+    overflowX: "auto" as const,
+    paddingBottom: 2,
   },
   bulkApprove: {
     display: "inline-flex",
@@ -1697,6 +1750,9 @@ const styles: Record<string, React.CSSProperties> = {
     borderCollapse: "collapse" as const,
   },
   th: {
+    position: "sticky" as const,
+    top: 0,
+    zIndex: 3,
     padding: "12px 16px",
     fontSize: 12,
     fontWeight: 700,
@@ -1716,23 +1772,47 @@ const styles: Record<string, React.CSSProperties> = {
   tableRow: {
     transition: "background 0.15s ease",
   },
+  rowActionGroup: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 7,
+    padding: 3,
+    borderRadius: 12,
+    background: "#f8fafc",
+    border: "1px solid #eef2f7",
+  },
   editBtn: {
-    padding: "5px 12px",
-    fontSize: 12,
-    fontWeight: 700,
-    color: "#059669",
-    background: "transparent",
-    border: "none",
+    width: 30,
+    height: 30,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#2563eb",
+    background: "#ffffff",
+    border: "1px solid #dbe6f5",
+    borderRadius: 10,
     cursor: "pointer",
+    boxShadow: "0 5px 12px rgba(15, 23, 42, 0.04)",
   },
   deleteBtn: {
-    padding: "5px 12px",
-    fontSize: 12,
-    fontWeight: 700,
+    width: 30,
+    height: 30,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
     color: "#DC2626",
-    background: "transparent",
-    border: "none",
+    background: "#ffffff",
+    border: "1px solid #fee2e2",
+    borderRadius: 10,
     cursor: "pointer",
+    boxShadow: "0 5px 12px rgba(15, 23, 42, 0.04)",
+  },
+  deleteBtnConfirm: {
+    color: "#ffffff",
+    background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+    borderColor: "#dc2626",
+    boxShadow: "0 10px 22px rgba(220, 38, 38, 0.24)",
   },
   modalOverlay: {
     position: "fixed" as const,
