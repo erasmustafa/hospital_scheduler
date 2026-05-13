@@ -1,16 +1,18 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
 import {
+  Archive,
   CalendarDays,
   Check,
   ChevronDown,
   Download,
   Filter,
   MoreVertical,
-  Plus,
+  RefreshCw,
   Search,
   Sun,
+  Trash2,
   UserRound,
   X,
   Ban,
@@ -60,6 +62,13 @@ const statusStyle: Record<ApprovalStatus, CSSProperties> = {
   approved: { background: "#ecfdf5", color: "#059669" },
   rejected: { background: "#fff1f2", color: "#dc2626" },
 };
+
+const filterOptions: Array<{ value: "" | ApprovalStatus; label: string }> = [
+  { value: "", label: "Tüm Talepler" },
+  { value: "pending", label: "Bekleyenler" },
+  { value: "approved", label: "Onaylananlar" },
+  { value: "rejected", label: "Reddedilenler" },
+];
 
 function formatDate(date: string | null) {
   if (!date) return "-";
@@ -119,8 +128,12 @@ export default function ApprovalsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filterType, setFilterType] = useState<"" | ApprovalStatus>("");
+  const [filterOpen, setFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [savingId, setSavingId] = useState<number | null>(null);
+  const [openActionId, setOpenActionId] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   const loadRequests = useCallback(async () => {
     setLoading(true);
@@ -159,6 +172,44 @@ export default function ApprovalsPage() {
     }
   };
 
+  const handleReportDownload = () => {
+    const headers = [
+      "Personel",
+      "Birim",
+      "Talep Türü",
+      "Günler",
+      "Vardiya",
+      "Not",
+      "Oluşturan",
+      "Durum",
+      "İnceleyen",
+    ];
+    const escapeCsv = (value: string) => `"${value.replaceAll('"', '""')}"`;
+    const csvRows = filteredRows.map((row) =>
+      [
+        row.staffProfileName,
+        row.departmentName || "-",
+        requestTypeLabel[row.requestType] || row.requestType,
+        formatDateRange(row.startDate, row.endDate),
+        row.shiftTypeName || "Tüm Gün",
+        row.notes || "-",
+        row.createdByName || "Sistem",
+        statusLabel[row.approvalStatus],
+        row.reviewedByName || "-",
+      ].map(escapeCsv).join(",")
+    );
+    const csv = [headers.map(escapeCsv).join(","), ...csvRows].join("\n");
+    const blob = new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `izin-uygunluk-talepleri-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
+
   const filteredRows = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLocaleLowerCase("tr-TR");
     return rows.filter((row) => {
@@ -178,7 +229,61 @@ export default function ApprovalsPage() {
     });
   }, [filterType, rows, searchTerm]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterType, searchTerm, rows.length]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredRows.length / pageSize));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const pagedRows = filteredRows.slice(
+    (safeCurrentPage - 1) * pageSize,
+    safeCurrentPage * pageSize
+  );
+  const activeFilterLabel = filterOptions.find((option) => option.value === filterType)?.label ?? "Tüm Talepler";
+
   return (
+    <>
+    <style
+      dangerouslySetInnerHTML={{
+        __html: `
+          .approvals-action {
+            transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease, background 150ms ease, color 150ms ease;
+          }
+          .approvals-action:hover:not(:disabled) {
+            transform: translateY(-1px);
+            border-color: #b8c6ff !important;
+            box-shadow: 0 12px 24px rgba(79, 70, 229, 0.12) !important;
+          }
+          .approvals-action:active:not(:disabled) {
+            transform: translateY(0) scale(0.97);
+          }
+          .approvals-action:disabled {
+            cursor: not-allowed;
+            opacity: 0.45;
+          }
+          .approvals-filter-option {
+            transition: transform 140ms ease, background 140ms ease, color 140ms ease;
+          }
+          .approvals-filter-option:hover {
+            transform: translateX(2px);
+            background: linear-gradient(135deg, #eef2ff 0%, #ffffff 100%) !important;
+            color: #4f46e5 !important;
+          }
+          .approvals-more-item {
+            transition: transform 140ms ease, background 140ms ease, color 140ms ease;
+          }
+          .approvals-more-item:hover {
+            transform: translateX(2px);
+            background: #f6f8ff !important;
+            color: #4f46e5 !important;
+          }
+          .approvals-more-item-danger:hover {
+            background: #fff1f2 !important;
+            color: #dc2626 !important;
+          }
+        `,
+      }}
+    />
     <main style={styles.main}>
       <section style={styles.pageShell}>
         <header style={styles.header}>
@@ -193,7 +298,7 @@ export default function ApprovalsPage() {
               </p>
             </div>
           </div>
-          <button type="button" style={styles.reportButton}>
+          <button type="button" className="approvals-action" style={styles.reportButton} onClick={handleReportDownload}>
             <Download size={16} />
             Raporu İndir
           </button>
@@ -201,22 +306,58 @@ export default function ApprovalsPage() {
 
         <section style={styles.toolbar}>
           <div style={styles.toolbarLeft}>
-            <label style={styles.selectShell}>
-              <select
-                value={filterType}
-                onChange={(event) => setFilterType(event.target.value as "" | ApprovalStatus)}
-                style={styles.filterSelect}
+            <div
+              style={styles.filterDropdown}
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                  setFilterOpen(false);
+                }
+              }}
+            >
+              <button
+                type="button"
+                className="approvals-action"
+                style={styles.filterDropdownButton}
+                onClick={() => setFilterOpen((current) => !current)}
+                aria-haspopup="listbox"
+                aria-expanded={filterOpen}
               >
-                <option value="">Tüm Talepler</option>
-                <option value="pending">Bekleyenler</option>
-                <option value="approved">Onaylananlar</option>
-                <option value="rejected">Reddedilenler</option>
-              </select>
-              <ChevronDown size={16} style={styles.selectChevron} />
-            </label>
-            <button type="button" style={styles.newButton}>
-              <Plus size={17} />
-              Yeni Talep
+                <span>{activeFilterLabel}</span>
+                <ChevronDown
+                  size={16}
+                  style={{
+                    ...styles.filterDropdownChevron,
+                    transform: filterOpen ? "rotate(180deg)" : "rotate(0deg)",
+                  }}
+                />
+              </button>
+              {filterOpen ? (
+                <div style={styles.filterDropdownMenu} role="listbox">
+                  {filterOptions.map((option) => (
+                    <button
+                      key={option.label}
+                      type="button"
+                      className="approvals-filter-option"
+                      style={{
+                        ...styles.filterDropdownItem,
+                        ...(option.value === filterType ? styles.filterDropdownItemActive : {}),
+                      }}
+                      onClick={() => {
+                        setFilterType(option.value);
+                        setFilterOpen(false);
+                      }}
+                      role="option"
+                      aria-selected={option.value === filterType}
+                    >
+                      <span>{option.label}</span>
+                      {option.value === filterType ? <Check size={14} /> : null}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+            <button type="button" className="approvals-action" style={styles.refreshButton} onClick={() => void loadRequests()} aria-label="Talepleri yenile">
+              <RefreshCw size={17} />
             </button>
           </div>
           <div style={styles.toolbarRight}>
@@ -229,7 +370,7 @@ export default function ApprovalsPage() {
                 style={styles.searchInput}
               />
             </label>
-            <button type="button" onClick={() => void loadRequests()} style={styles.filterButton}>
+            <button type="button" className="approvals-action" onClick={() => void loadRequests()} style={styles.filterButton}>
               <Filter size={16} />
               Filtrele
             </button>
@@ -261,14 +402,14 @@ export default function ApprovalsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredRows.length === 0 ? (
+                    {pagedRows.length === 0 ? (
                       <tr>
                         <td colSpan={11} style={styles.emptyCell}>
                           Gösterilecek izin veya uygunluk talebi bulunamadı.
                         </td>
                       </tr>
                     ) : (
-                      filteredRows.map((row, index) => {
+                      pagedRows.map((row, index) => {
                         const isPending = row.approvalStatus === "pending";
                         return (
                           <tr
@@ -343,9 +484,42 @@ export default function ApprovalsPage() {
                               )}
                             </td>
                             <td style={{ ...styles.td, textAlign: "center" }}>
-                              <button type="button" style={styles.moreButton} aria-label="Diğer işlemler">
+                              <div
+                                style={styles.moreMenuWrap}
+                                onBlur={(event) => {
+                                  if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                                    setOpenActionId(null);
+                                  }
+                                }}
+                              >
+                              <button
+                                type="button"
+                                className="approvals-action"
+                                style={styles.moreButton}
+                                aria-label="Diğer işlemler"
+                                aria-haspopup="menu"
+                                aria-expanded={openActionId === row.id}
+                                onClick={() => setOpenActionId((current) => (current === row.id ? null : row.id))}
+                              >
                                 <MoreVertical size={17} />
                               </button>
+                              {openActionId === row.id ? (
+                                <div style={styles.moreMenu} role="menu">
+                                  <button type="button" className="approvals-more-item" style={styles.moreMenuItem} role="menuitem" onClick={() => setOpenActionId(null)}>
+                                    <Archive size={14} />
+                                    Arşivle
+                                  </button>
+                                  <button type="button" className="approvals-more-item" style={styles.moreMenuItem} role="menuitem" onClick={() => setOpenActionId(null)}>
+                                    <RefreshCw size={14} />
+                                    Yeniden Değerlendir
+                                  </button>
+                                  <button type="button" className="approvals-more-item approvals-more-item-danger" style={{ ...styles.moreMenuItem, ...styles.moreMenuItemDanger }} role="menuitem" onClick={() => setOpenActionId(null)}>
+                                    <Trash2 size={14} />
+                                    Sil
+                                  </button>
+                                </div>
+                              ) : null}
+                              </div>
                             </td>
                           </tr>
                         );
@@ -357,16 +531,43 @@ export default function ApprovalsPage() {
               <footer style={styles.tableFooter}>
                 <span>Toplam {filteredRows.length} kayıt</span>
                 <div style={styles.pagination}>
-                  <button type="button" style={styles.pageSelect}>10 / sayfa</button>
-                  <button type="button" style={styles.pageButton}>‹</button>
-                  <button type="button" style={{ ...styles.pageButton, ...styles.pageButtonActive }}>1</button>
-                  <button type="button" style={styles.pageButton}>2</button>
-                  <button type="button" style={styles.pageButton}>3</button>
-                  <button type="button" style={styles.pageButton}>4</button>
-                  <button type="button" style={styles.pageButton}>5</button>
-                  <span style={styles.pageDots}>...</span>
-                  <button type="button" style={styles.pageButton}>16</button>
-                  <button type="button" style={styles.pageButton}>›</button>
+                  <button type="button" className="approvals-action" style={styles.pageSelect}>10 / sayfa</button>
+                  <button
+                    type="button"
+                    className="approvals-action"
+                    style={styles.pageButton}
+                    onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                    disabled={safeCurrentPage === 1}
+                  >
+                    ‹
+                  </button>
+                  {Array.from({ length: totalPages }, (_, index) => index + 1)
+                    .filter((page) => page <= 5 || page === totalPages || Math.abs(page - safeCurrentPage) <= 1)
+                    .map((page, index, pages) => (
+                      <Fragment key={page}>
+                        {index > 0 && page - pages[index - 1] > 1 ? <span style={styles.pageDots}>...</span> : null}
+                        <button
+                          type="button"
+                          className="approvals-action"
+                          style={{
+                            ...styles.pageButton,
+                            ...(page === safeCurrentPage ? styles.pageButtonActive : {}),
+                          }}
+                          onClick={() => setCurrentPage(page)}
+                        >
+                          {page}
+                        </button>
+                      </Fragment>
+                    ))}
+                  <button
+                    type="button"
+                    className="approvals-action"
+                    style={styles.pageButton}
+                    onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                    disabled={safeCurrentPage === totalPages}
+                  >
+                    ›
+                  </button>
                 </div>
               </footer>
             </>
@@ -374,6 +575,7 @@ export default function ApprovalsPage() {
         </section>
       </section>
     </main>
+    </>
   );
 }
 
@@ -468,19 +670,21 @@ const styles: Record<string, CSSProperties> = {
     gap: 14,
     flex: 1,
   },
-  selectShell: {
+  filterDropdown: {
     position: "relative",
     display: "inline-flex",
     width: 240,
-    height: 42,
   },
-  filterSelect: {
+  filterDropdownButton: {
     width: "100%",
-    height: "100%",
-    appearance: "none",
+    height: 42,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
     borderRadius: 8,
     border: "1px solid #dce6f6",
-    padding: "0 38px 0 16px",
+    padding: "0 13px 0 16px",
     fontSize: 13,
     fontWeight: 700,
     color: "#243754",
@@ -489,27 +693,59 @@ const styles: Record<string, CSSProperties> = {
     cursor: "pointer",
     outline: "none",
   },
-  selectChevron: {
-    position: "absolute",
-    right: 13,
-    top: 13,
+  filterDropdownChevron: {
     color: "#52627f",
-    pointerEvents: "none",
+    transition: "transform 150ms ease",
   },
-  newButton: {
+  filterDropdownMenu: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: "calc(100% + 8px)",
+    zIndex: 30,
+    padding: 6,
+    borderRadius: 12,
+    border: "1px solid #dce6f6",
+    background: "rgba(255,255,255,0.98)",
+    boxShadow: "0 18px 38px rgba(15, 23, 42, 0.14)",
+    backdropFilter: "blur(12px)",
+  },
+  filterDropdownItem: {
+    width: "100%",
+    minHeight: 34,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+    border: "none",
+    borderRadius: 9,
+    padding: "0 10px",
+    background: "transparent",
+    color: "#334155",
+    fontSize: 12,
+    fontWeight: 700,
+    fontFamily: "inherit",
+    cursor: "pointer",
+  },
+  filterDropdownItemActive: {
+    background: "linear-gradient(135deg, #eef2ff 0%, #f8fbff 100%)",
+    color: "#4f46e5",
+    boxShadow: "inset 3px 0 0 #5b5cf6",
+  },
+  refreshButton: {
     height: 42,
+    width: 42,
     display: "inline-flex",
     alignItems: "center",
-    gap: 10,
-    padding: "0 18px",
+    justifyContent: "center",
     borderRadius: 8,
-    border: "none",
-    background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-    color: "#ffffff",
+    border: "1px solid #dce6f6",
+    background: "#ffffff",
+    color: "#5b5cf6",
     fontSize: 13,
     fontWeight: 700,
     cursor: "pointer",
-    boxShadow: "0 12px 22px rgba(5, 150, 105, 0.22)",
+    boxShadow: "0 8px 18px rgba(15, 23, 42, 0.04)",
   },
   searchShell: {
     width: "min(440px, 100%)",
@@ -736,6 +972,44 @@ const styles: Record<string, CSSProperties> = {
     background: "transparent",
     color: "#243754",
     cursor: "pointer",
+  },
+  moreMenuWrap: {
+    position: "relative",
+    display: "inline-flex",
+    justifyContent: "center",
+  },
+  moreMenu: {
+    position: "absolute",
+    right: 0,
+    top: "calc(100% + 8px)",
+    zIndex: 35,
+    width: 176,
+    padding: 6,
+    borderRadius: 12,
+    border: "1px solid #dce6f6",
+    background: "rgba(255,255,255,0.98)",
+    boxShadow: "0 18px 38px rgba(15, 23, 42, 0.14)",
+    backdropFilter: "blur(12px)",
+  },
+  moreMenuItem: {
+    width: "100%",
+    minHeight: 34,
+    display: "flex",
+    alignItems: "center",
+    gap: 9,
+    border: "none",
+    borderRadius: 9,
+    padding: "0 10px",
+    background: "transparent",
+    color: "#334155",
+    fontSize: 12,
+    fontWeight: 700,
+    fontFamily: "inherit",
+    textAlign: "left",
+    cursor: "pointer",
+  },
+  moreMenuItemDanger: {
+    color: "#dc2626",
   },
   tableFooter: {
     minHeight: 64,
