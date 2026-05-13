@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   Bell,
+  BriefcaseBusiness,
   CalendarDays,
   Check,
   ChevronDown,
@@ -733,9 +734,14 @@ export default function AutoSchedulePage() {
     />
     <main style={styles.main}>
       <header style={styles.pageHeader}>
-        <div>
-          <h1 style={styles.pageTitle}>Otomatik Liste Oluştur</h1>
-          <p style={styles.pageSubtitle}>Seçilen birim için otomatik vardiya listesi oluşturun.</p>
+        <div style={styles.titleGroup}>
+          <span style={styles.pageIcon}>
+            <CalendarDays size={24} />
+          </span>
+          <div>
+            <h1 style={styles.pageTitle}>Otomatik Liste Oluştur</h1>
+            <p style={styles.pageSubtitle}>Seçilen birim için otomatik vardiya listesi oluşturun.</p>
+          </div>
         </div>
 
         <div style={styles.headerActions}>
@@ -775,7 +781,12 @@ export default function AutoSchedulePage() {
       <div style={styles.contentGrid}>
         <div style={styles.leftColumn}>
           <section style={styles.panel}>
-            <h2 style={styles.panelTitle}>Liste Oluştur</h2>
+            <div style={styles.cardTitleRow}>
+              <span style={styles.cardTitleIcon}>
+                <Copy size={15} />
+              </span>
+              <h2 style={styles.panelTitle}>Liste Oluştur</h2>
+            </div>
 
             <label style={styles.fieldLabel}>
               <span>Birim</span>
@@ -909,10 +920,152 @@ export default function AutoSchedulePage() {
               {generating ? "Liste oluşturuluyor..." : "Otomatik Liste Oluştur"}
             </button>
           </section>
+        </div>
 
-          <section style={styles.panel}>
+        <div style={styles.rightColumn}>
+          <section style={styles.shiftPanel}>
+            <div style={styles.shiftPanelHeader}>
+              <div>
+                <div style={styles.cardTitleRow}>
+                  <span style={styles.cardTitleIcon}>
+                    <Copy size={15} />
+                  </span>
+                  <h2 style={styles.panelTitle}>Vardiya Tipleri</h2>
+                </div>
+                <p style={styles.panelDescription}>Bu birim için tanımlı vardiya tipleri ve saat aralıkları.</p>
+              </div>
+              <div style={styles.shiftHeaderActions}>
+                <button
+                  type="button"
+                  className="auto-panel-action"
+                  style={styles.secondaryButton}
+                  onClick={openShiftTypeModal}
+                >
+                  <Plus size={17} />
+                  Yeni Vardiya Tipi
+                </button>
+                <button
+                  type="button"
+                  className="auto-panel-action"
+                  style={styles.squareButton}
+                  onClick={() => void refreshShiftTypes()}
+                  disabled={loadingShiftTypes}
+                  aria-label="Vardiya tiplerini yenile"
+                  title="Vardiya tiplerini yenile"
+                >
+                  <RefreshCw className={loadingShiftTypes ? "auto-spin-icon" : undefined} size={17} />
+                </button>
+              </div>
+            </div>
+
+            <div style={styles.statsGrid}>
+              <StatCard value={shiftTypeCounts.total} label="Toplam" tone="blue" />
+              <StatCard value={shiftTypeCounts.day} label="Gündüz" tone="green" />
+              <StatCard value={shiftTypeCounts.night} label="Gece" tone="purple" />
+              <StatCard value={shiftTypeCounts.duty} label="Nöbet" tone="orange" />
+            </div>
+
+            <div style={styles.shiftList}>
+              {loadingShiftTypes ? (
+                <p style={styles.emptyText}>Vardiya tipleri yükleniyor...</p>
+              ) : shiftTypes.length === 0 ? (
+                <p style={styles.emptyText}>Kayıtlı vardiya tipi bulunamadı.</p>
+              ) : (
+                shiftTypes.map((shiftType) => (
+                  <div key={shiftType.id} style={styles.shiftRow}>
+                    <span style={{ ...styles.shiftAccent, background: shiftType.color }} />
+                    <div style={styles.shiftNameBlock}>
+                      <strong style={styles.shiftName}>{shiftType.name}</strong>
+                      <span style={styles.shiftTime}>{shiftType.startTime}:00 - {shiftType.endTime}:00</span>
+                    </div>
+                    <span
+                      style={{
+                        ...styles.kindBadge,
+                        background:
+                          getShiftKind(shiftType) === "Nöbet"
+                            ? "#fff0c7"
+                            : getShiftKind(shiftType) === "Gece"
+                              ? "#ede9fe"
+                              : "#dcfce7",
+                        color:
+                          getShiftKind(shiftType) === "Nöbet"
+                            ? "#c47d00"
+                            : getShiftKind(shiftType) === "Gece"
+                              ? "#6d28d9"
+                              : "#15803d",
+                      }}
+                    >
+                      {getShiftKind(shiftType)}
+                    </span>
+                    <div style={styles.durationBlock}>
+                      <span>Süre</span>
+                      <strong>{getShiftDuration(shiftType)} saat</strong>
+                    </div>
+                    <div style={styles.moreMenuWrap}>
+                      <button
+                        type="button"
+                        className="auto-shift-more"
+                        style={styles.plainIconButton}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setOpenShiftMenuId((current) => (current === shiftType.id ? null : shiftType.id));
+                        }}
+                        aria-label={`${shiftType.name} işlemleri`}
+                        aria-haspopup="menu"
+                        aria-expanded={openShiftMenuId === shiftType.id}
+                      >
+                        <MoreVertical size={18} />
+                      </button>
+
+                      {openShiftMenuId === shiftType.id ? (
+                        <div style={styles.shiftActionMenu} role="menu">
+                          <button
+                            type="button"
+                            className="auto-shift-action"
+                            style={styles.shiftActionItem}
+                            onClick={() => editShiftType(shiftType)}
+                            role="menuitem"
+                          >
+                            <Pencil size={15} />
+                            Düzenle
+                          </button>
+                          <button
+                            type="button"
+                            className="auto-shift-action"
+                            style={styles.shiftActionItem}
+                            onClick={() => duplicateShiftType(shiftType)}
+                            role="menuitem"
+                          >
+                            <Copy size={15} />
+                            Kopyala
+                          </button>
+                          <button
+                            type="button"
+                            className="auto-shift-action auto-shift-action-danger"
+                            style={{ ...styles.shiftActionItem, ...styles.shiftActionItemDanger }}
+                            onClick={() => removeShiftType(shiftType.id)}
+                            role="menuitem"
+                          >
+                            <Trash2 size={15} />
+                            Kaldır
+                          </button>
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </section>
+
+          <section style={styles.recentPanel}>
             <div style={styles.sectionHeader}>
-              <h2 style={styles.panelTitle}>Son Oluşturulan Listeler</h2>
+              <div style={styles.cardTitleRow}>
+                <span style={styles.cardTitleIcon}>
+                  <Copy size={15} />
+                </span>
+                <h2 style={styles.panelTitle}>Son Oluşturulan Listeler</h2>
+              </div>
               <button type="button" style={styles.linkButton}>Tümünü Gör</button>
             </div>
 
@@ -923,7 +1076,7 @@ export default function AutoSchedulePage() {
                 <span>Oluşturulma</span>
                 <span>Oluşturan</span>
                 <span>Durum</span>
-                <span />
+                <span>İşlemler</span>
               </div>
 
               {recentLists.map((list) => (
@@ -967,143 +1120,6 @@ export default function AutoSchedulePage() {
             )}
           </section>
         </div>
-
-        <section style={styles.shiftPanel}>
-          <div style={styles.shiftPanelHeader}>
-            <div>
-              <h2 style={styles.panelTitle}>Vardiya Tipleri</h2>
-              <p style={styles.panelDescription}>Bu birim için tanımlı vardiya tipleri ve saat aralıkları.</p>
-            </div>
-            <div style={styles.shiftHeaderActions}>
-              <button
-                type="button"
-                className="auto-panel-action"
-                style={styles.secondaryButton}
-                onClick={openShiftTypeModal}
-              >
-                <Plus size={17} />
-                Yeni Vardiya Tipi
-              </button>
-              <button
-                type="button"
-                className="auto-panel-action"
-                style={styles.squareButton}
-                onClick={() => void refreshShiftTypes()}
-                disabled={loadingShiftTypes}
-                aria-label="Vardiya tiplerini yenile"
-                title="Vardiya tiplerini yenile"
-              >
-                <RefreshCw className={loadingShiftTypes ? "auto-spin-icon" : undefined} size={17} />
-              </button>
-            </div>
-          </div>
-
-          <div style={styles.statsGrid}>
-            <StatCard value={shiftTypeCounts.total} label="Toplam" />
-            <StatCard value={shiftTypeCounts.day} label="Gündüz" />
-            <StatCard value={shiftTypeCounts.night} label="Gece" />
-            <StatCard value={shiftTypeCounts.duty} label="Nöbet" />
-          </div>
-
-          <div style={styles.shiftList}>
-            {loadingShiftTypes ? (
-              <p style={styles.emptyText}>Vardiya tipleri yükleniyor...</p>
-            ) : shiftTypes.length === 0 ? (
-              <p style={styles.emptyText}>Kayıtlı vardiya tipi bulunamadı.</p>
-            ) : (
-              shiftTypes.map((shiftType) => (
-                <div key={shiftType.id} style={styles.shiftRow}>
-                  <span style={{ ...styles.shiftAccent, background: shiftType.color }} />
-                  <div style={styles.shiftNameBlock}>
-                    <strong style={styles.shiftName}>{shiftType.name}</strong>
-                    <span style={styles.shiftTime}>{shiftType.startTime} - {shiftType.endTime}</span>
-                  </div>
-                  <span
-                    style={{
-                      ...styles.kindBadge,
-                      background:
-                        getShiftKind(shiftType) === "Nöbet"
-                          ? "#fff0c7"
-                          : getShiftKind(shiftType) === "Gece"
-                            ? "#ede9fe"
-                            : "#dbeafe",
-                      color:
-                        getShiftKind(shiftType) === "Nöbet"
-                          ? "#c47d00"
-                          : getShiftKind(shiftType) === "Gece"
-                            ? "#6d28d9"
-                            : "#2563eb",
-                    }}
-                  >
-                    {getShiftKind(shiftType)}
-                  </span>
-                  <div style={styles.durationBlock}>
-                    <span>Süre</span>
-                    <strong>{getShiftDuration(shiftType)} saat</strong>
-                  </div>
-                  <div style={styles.moreMenuWrap}>
-                    <button
-                      type="button"
-                      className="auto-shift-more"
-                      style={styles.plainIconButton}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        setOpenShiftMenuId((current) => (current === shiftType.id ? null : shiftType.id));
-                      }}
-                      aria-label={`${shiftType.name} işlemleri`}
-                      aria-haspopup="menu"
-                      aria-expanded={openShiftMenuId === shiftType.id}
-                    >
-                      <MoreVertical size={18} />
-                    </button>
-
-                    {openShiftMenuId === shiftType.id ? (
-                      <div style={styles.shiftActionMenu} role="menu">
-                        <button
-                          type="button"
-                          className="auto-shift-action"
-                          style={styles.shiftActionItem}
-                          onClick={() => editShiftType(shiftType)}
-                          role="menuitem"
-                        >
-                          <Pencil size={15} />
-                          Düzenle
-                        </button>
-                        <button
-                          type="button"
-                          className="auto-shift-action"
-                          style={styles.shiftActionItem}
-                          onClick={() => duplicateShiftType(shiftType)}
-                          role="menuitem"
-                        >
-                          <Copy size={15} />
-                          Kopyala
-                        </button>
-                        <button
-                          type="button"
-                          className="auto-shift-action auto-shift-action-danger"
-                          style={{ ...styles.shiftActionItem, ...styles.shiftActionItemDanger }}
-                          onClick={() => removeShiftType(shiftType.id)}
-                          role="menuitem"
-                        >
-                          <Trash2 size={15} />
-                          Kaldır
-                        </button>
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-
-          <div style={styles.shiftInfoBox}>
-            <Info size={17} />
-            <span>
-              Vardiya tiplerinde değişiklik yapmanız halinde, taslak listeleri yeniden oluşturmanız önerilir.
-            </span>
-          </div>
-        </section>
       </div>
 
       {isShiftModalOpen && (
@@ -1313,11 +1329,22 @@ function RuleToggle({
   );
 }
 
-function StatCard({ value, label }: { value: number; label: string }) {
+function StatCard({ value, label, tone }: { value: number; label: string; tone: "blue" | "green" | "purple" | "orange" }) {
+  const toneStyles = {
+    blue: { icon: "#315fe8", bg: "#eef3ff" },
+    green: { icon: "#16a34a", bg: "#ecfdf3" },
+    purple: { icon: "#7c3aed", bg: "#f3e8ff" },
+    orange: { icon: "#f97316", bg: "#fff3e8" },
+  }[tone];
+  const Icon = tone === "blue" ? Copy : tone === "green" ? SlidersHorizontal : tone === "purple" ? Clock : BriefcaseBusiness;
+
   return (
     <div style={styles.statCard}>
-      <strong>{value}</strong>
-      <span>{label}</span>
+      <span style={{ ...styles.statIcon, background: toneStyles.bg, color: toneStyles.icon }}>
+        <Icon size={16} />
+      </span>
+      <span style={styles.statValue}>{value}</span>
+      <span style={styles.statLabel}>{label}</span>
     </div>
   );
 }
@@ -1325,7 +1352,7 @@ function StatCard({ value, label }: { value: number; label: string }) {
 const styles: Record<string, React.CSSProperties> = {
   main: {
     minHeight: "100%",
-    padding: "28px 30px",
+    padding: "26px 30px",
     boxSizing: "border-box",
     overflow: "auto",
     background:
@@ -1338,11 +1365,27 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: "center",
     justifyContent: "space-between",
     gap: 24,
-    marginBottom: 28,
+    marginBottom: 26,
+  },
+  titleGroup: {
+    display: "flex",
+    alignItems: "center",
+    gap: 14,
+  },
+  pageIcon: {
+    width: 54,
+    height: 54,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 12,
+    background: "#f0edff",
+    color: "#4f46e5",
+    flex: "0 0 auto",
   },
   pageTitle: {
     margin: 0,
-    fontSize: 22,
+    fontSize: 23,
     lineHeight: 1.15,
     fontWeight: 800,
     letterSpacing: "-0.03em",
@@ -1474,20 +1517,43 @@ const styles: Record<string, React.CSSProperties> = {
   },
   contentGrid: {
     display: "grid",
-    gridTemplateColumns: "minmax(460px, 0.96fr) minmax(520px, 1fr)",
-    gap: 18,
-    alignItems: "start",
+    gridTemplateColumns: "minmax(520px, 1.1fr) minmax(470px, 0.9fr)",
+    gap: 20,
+    alignItems: "stretch",
   },
   leftColumn: {
     display: "grid",
     gap: 18,
+    alignContent: "stretch",
+  },
+  rightColumn: {
+    display: "grid",
+    gridTemplateRows: "auto minmax(0, 1fr)",
+    gap: 18,
+    minHeight: 0,
   },
   panel: {
     borderRadius: 12,
     border: "1px solid #dfe7f4",
     background: "rgba(255,255,255,0.94)",
     boxShadow: "0 18px 38px rgba(30,64,175,0.06)",
-    padding: "25px 28px",
+    padding: "28px 30px",
+  },
+  cardTitleRow: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 12,
+  },
+  cardTitleIcon: {
+    width: 34,
+    height: 34,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 9,
+    background: "#efedff",
+    color: "#4f46e5",
+    flex: "0 0 auto",
   },
   panelTitle: {
     margin: 0,
@@ -1505,13 +1571,13 @@ const styles: Record<string, React.CSSProperties> = {
   fieldLabel: {
     display: "grid",
     gap: 9,
-    marginTop: 22,
+    marginTop: 24,
     fontSize: 12,
     fontWeight: 800,
     color: "#101a3c",
   },
   selectShell: {
-    height: 42,
+    height: 48,
     display: "flex",
     alignItems: "center",
     gap: 10,
@@ -1552,7 +1618,7 @@ const styles: Record<string, React.CSSProperties> = {
     gap: 20,
   },
   dateShell: {
-    height: 42,
+    height: 48,
     display: "flex",
     alignItems: "center",
     gap: 10,
@@ -1574,7 +1640,7 @@ const styles: Record<string, React.CSSProperties> = {
     fontFamily: "inherit",
   },
   rulesPanel: {
-    marginTop: 22,
+    marginTop: 24,
     border: "1px solid #dfe7f4",
     borderRadius: 10,
     background: "linear-gradient(180deg, #ffffff 0%, #fbfdff 100%)",
@@ -1605,7 +1671,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: "grid",
   },
   ruleRow: {
-    minHeight: 36,
+    minHeight: 42,
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
@@ -1642,8 +1708,8 @@ const styles: Record<string, React.CSSProperties> = {
   infoBox: {
     display: "flex",
     gap: 12,
-    marginTop: 22,
-    padding: "15px 16px",
+    marginTop: 28,
+    padding: "20px 18px",
     borderRadius: 10,
     border: "1px solid #bed1ff",
     background: "linear-gradient(90deg, #eaf2ff 0%, #f3f7ff 100%)",
@@ -1674,13 +1740,13 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#1c2b50",
   },
   primaryButton: {
-    marginTop: 18,
-    height: 42,
+    marginTop: 26,
+    height: 50,
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
-    padding: "0 20px",
+    padding: "0 26px",
     border: "none",
     borderRadius: 8,
     background: "linear-gradient(135deg, #365eff 0%, #234bdc 100%)",
@@ -1695,7 +1761,7 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: "center",
     justifyContent: "space-between",
     gap: 12,
-    marginBottom: 24,
+    marginBottom: 18,
   },
   linkButton: {
     border: "none",
@@ -1708,11 +1774,14 @@ const styles: Record<string, React.CSSProperties> = {
   recentTable: {
     display: "grid",
     gap: 0,
+    flex: 1,
+    minHeight: 0,
+    overflow: "auto",
   },
   recentHead: {
     display: "grid",
-    gridTemplateColumns: "1.25fr 0.9fr 1.02fr 0.72fr 0.62fr 34px",
-    gap: 14,
+    gridTemplateColumns: "1.28fr 0.92fr 1.08fr 0.76fr 0.7fr 58px",
+    gap: 12,
     padding: "0 0 12px",
     borderBottom: "1px solid #e4ebf6",
     color: "#63718d",
@@ -1721,10 +1790,10 @@ const styles: Record<string, React.CSSProperties> = {
   },
   recentRow: {
     display: "grid",
-    gridTemplateColumns: "1.25fr 0.9fr 1.02fr 0.72fr 0.62fr 34px",
+    gridTemplateColumns: "1.28fr 0.92fr 1.08fr 0.76fr 0.7fr 58px",
     alignItems: "center",
     gap: 14,
-    minHeight: 56,
+    minHeight: 54,
     borderBottom: "1px solid #edf2f8",
     color: "#1f3158",
     fontSize: 12,
@@ -1753,6 +1822,16 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#315a96",
     cursor: "pointer",
   },
+  recentPanel: {
+    minHeight: 0,
+    display: "flex",
+    flexDirection: "column",
+    borderRadius: 12,
+    border: "1px solid #dfe7f4",
+    background: "rgba(255,255,255,0.94)",
+    boxShadow: "0 18px 38px rgba(30,64,175,0.06)",
+    padding: "24px 26px",
+  },
   metaStrip: {
     display: "flex",
     flexWrap: "wrap",
@@ -1765,8 +1844,7 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#64748b",
   },
   shiftPanel: {
-    height: 616,
-    minHeight: 0,
+    minHeight: 430,
     display: "flex",
     flexDirection: "column",
     borderRadius: 12,
@@ -1795,9 +1873,9 @@ const styles: Record<string, React.CSSProperties> = {
     gap: 10,
     padding: "0 17px",
     borderRadius: 8,
-    border: "1px solid #9db4ff",
-    background: "#ffffff",
-    color: "#2456e8",
+    border: "none",
+    background: "linear-gradient(135deg, #653ff4 0%, #3157e8 100%)",
+    color: "#ffffff",
     fontSize: 13,
     fontWeight: 800,
     cursor: "pointer",
@@ -1823,15 +1901,35 @@ const styles: Record<string, React.CSSProperties> = {
   statCard: {
     height: 72,
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 7,
+    gap: 12,
     borderRadius: 8,
     border: "1px solid #dfe7f4",
     background: "linear-gradient(180deg, #ffffff 0%, #f8fbff 100%)",
-    color: "#2655e8",
+    color: "#16254b",
     boxShadow: "0 10px 22px rgba(30,64,175,0.04)",
+  },
+  statIcon: {
+    width: 36,
+    height: 36,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 10,
+    flex: "0 0 auto",
+  },
+  statValue: {
+    fontSize: 18,
+    lineHeight: 1,
+    fontWeight: 800,
+    color: "#3157e8",
+  },
+  statLabel: {
+    fontSize: 11,
+    fontWeight: 700,
+    color: "#243754",
   },
   shiftList: {
     display: "grid",
