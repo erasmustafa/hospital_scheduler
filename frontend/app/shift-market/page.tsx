@@ -416,7 +416,7 @@ export default function ShiftMarketPage() {
   };
 
   return (
-    <div className="flex h-screen flex-col bg-slate-50 font-sans relative">
+    <div className="relative flex h-screen min-w-0 flex-col overflow-hidden bg-slate-50 font-sans">
       {/* TOAST NOTIFICATION */}
       {notification && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 rounded-full bg-emerald-600 px-6 py-3 text-white shadow-xl animate-in slide-in-from-top-4">
@@ -426,31 +426,31 @@ export default function ShiftMarketPage() {
       )}
 
       {/* HEADER */}
-      <header className="flex items-center justify-between border-b border-slate-200 bg-white px-8 py-5 shadow-sm">
+      <header className="flex shrink-0 items-center justify-between gap-4 border-b border-slate-200 bg-white px-[clamp(16px,2vw,32px)] py-[clamp(12px,1.2vw,20px)] shadow-sm">
         <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
-            <Store className="h-6 w-6" />
+          <div className="flex h-[clamp(40px,3vw,48px)] w-[clamp(40px,3vw,48px)] items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+            <Store className="h-5 w-5 sm:h-6 sm:w-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <h1 className="flex items-center gap-2 text-[clamp(18px,1.7vw,24px)] font-bold text-slate-900">
               Vardiya Pazarı
               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-yellow-100 text-xs text-yellow-600">
                 ⭐
               </span>
             </h1>
-            <p className="text-sm font-medium text-slate-500">
+            <p className="text-[clamp(12px,0.9vw,14px)] font-medium text-slate-500">
               Fazla nöbet veya mesailerini devret, ihtiyacı olan personellere ulaş.
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-6">
-          <div className="relative">
+        <div className="flex min-w-0 items-center gap-[clamp(10px,1.2vw,24px)]">
+          <div className="relative hidden sm:block">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               placeholder="Panel içinde ara..."
-              className="h-10 w-64 rounded-full border border-slate-200 bg-slate-50 pl-10 pr-12 text-sm text-slate-800 transition focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="h-10 w-[clamp(180px,18vw,256px)] rounded-full border border-slate-200 bg-slate-50 pl-10 pr-12 text-sm text-slate-800 transition focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
             <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center rounded border border-slate-200 bg-white px-1.5 py-0.5 text-[10px] font-bold text-slate-400">
               ⌘K
@@ -475,9 +475,9 @@ export default function ShiftMarketPage() {
         </div>
       </header>
 
-      <div className="flex flex-1 gap-8 p-8 w-full overflow-hidden">
+      <div className="flex min-h-0 w-full flex-1 gap-[clamp(12px,1.6vw,32px)] overflow-hidden p-[clamp(12px,1.6vw,32px)]">
         {/* LEFT MAIN CONTENT */}
-        <div className="flex flex-1 flex-col gap-0.5 min-h-0">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-0.5">
           {/* TABS */}
           <div className="flex items-center gap-1 overflow-x-auto border-b border-slate-200 pb-px">
             {TABS.map((tab) => (
@@ -499,8 +499,8 @@ export default function ShiftMarketPage() {
           </div>
 
           {/* FILTERS — dynamic */}
-          <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-5 py-3">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-[clamp(12px,1.3vw,20px)] py-3">
+            <div className="flex min-w-0 flex-wrap items-center gap-3">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <input
@@ -508,7 +508,7 @@ export default function ShiftMarketPage() {
                   placeholder="İlanlarda ara..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="h-9 w-52 rounded-lg border border-slate-200 bg-white pl-9 pr-4 text-sm text-slate-700 placeholder:text-slate-400 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
+                  className="h-9 w-[clamp(160px,16vw,208px)] rounded-lg border border-slate-200 bg-white pl-9 pr-4 text-sm text-slate-700 placeholder:text-slate-400 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
                 />
               </div>
 
@@ -619,7 +619,7 @@ export default function ShiftMarketPage() {
               </div>
             )}
             {viewMode === "grid" ? (
-              <div className="grid grid-cols-5 gap-3">
+              <div className="grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-3">
                 {filteredListings.map((listing) => {
                   const isSaved = savedIds.has(listing.id);
                   return (
@@ -659,20 +659,20 @@ export default function ShiftMarketPage() {
               return (
                 <div
                   key={listing.id}
-                  className={`flex items-center rounded-xl border border-slate-100 ${borderColor} border-l-[3px] bg-white px-6 py-5 transition hover:shadow-md cursor-pointer`}
+                  className={`flex min-w-0 items-center rounded-xl border border-slate-100 ${borderColor} border-l-[3px] bg-white px-[clamp(14px,1.4vw,24px)] py-[clamp(14px,1.3vw,20px)] transition hover:shadow-md cursor-pointer`}
                   onClick={() => setSelectedListing(listing)}
                 >
                   {/* ICON */}
-                  <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${getListingIconBg(listing.listingType)}`}>
+                  <div className={`flex h-[clamp(44px,3.6vw,56px)] w-[clamp(44px,3.6vw,56px)] shrink-0 items-center justify-center rounded-2xl ${getListingIconBg(listing.listingType)}`}>
                     {getListingIcon(listing.listingType)}
                   </div>
 
                   {/* MAIN INFO */}
-                  <div className="ml-5 min-w-0 flex-1">
+                  <div className="ml-[clamp(12px,1.2vw,20px)] min-w-0 flex-1">
                     <span className={`inline-block rounded-md px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-widest ${getTypeColor(listing.listingType)}`}>
                       {getTypeLabel(listing.listingType)}
                     </span>
-                    <h3 className="mt-1.5 text-[17px] font-bold text-slate-900 leading-snug">
+                    <h3 className="mt-1.5 text-[clamp(14px,1.1vw,17px)] font-bold leading-snug text-slate-900">
                       {listing.shiftDate.split(" ").slice(0, 2).join(" ")} {listing.listingType === "shift_transfer" ? "Gece Nöbeti" : listing.listingType === "swap_request" ? "Nöbet Takası" : "Gündüz Mesaisi"}
                     </h3>
                     <div className="mt-2 flex items-center gap-5 text-[13px] text-slate-500">
@@ -683,7 +683,7 @@ export default function ShiftMarketPage() {
                   </div>
 
                   {/* DATE & TIME & REASON */}
-                  <div className="flex w-52 shrink-0 flex-col gap-1.5 border-l border-slate-100 pl-6">
+                  <div className="flex w-[clamp(170px,14vw,208px)] shrink-0 flex-col gap-1.5 border-l border-slate-100 pl-[clamp(12px,1.4vw,24px)]">
                     <span className="flex items-center gap-2 text-[13px] font-semibold text-slate-700">
                       <Calendar className="h-4 w-4 text-slate-400" />
                       {listing.shiftDate}
@@ -728,7 +728,7 @@ export default function ShiftMarketPage() {
               );
             }))
             }
-            <footer className="sticky bottom-0 z-10 mt-2 flex shrink-0 items-center justify-between rounded-xl border border-slate-100 bg-white/95 px-4 py-3 text-xs font-semibold text-slate-500 shadow-[0_-10px_24px_-18px_rgba(15,23,42,0.35)] backdrop-blur-md">
+            <footer className="sticky bottom-0 z-10 mt-2 flex shrink-0 items-center justify-between rounded-t-xl rounded-b-none border border-slate-100 bg-white/95 px-4 py-3 text-xs font-semibold text-slate-500 shadow-[0_-10px_24px_-18px_rgba(15,23,42,0.35)] backdrop-blur-md">
               <span>Liste sonu</span>
               <span className="rounded-full bg-blue-50 px-3 py-1 font-bold text-blue-600">
                 Toplam {filteredListings.length} ilan
@@ -738,7 +738,7 @@ export default function ShiftMarketPage() {
         </div>
 
         {/* RIGHT SIDEBAR */}
-        <aside className="w-80 shrink-0 space-y-4">
+        <aside className="hidden w-[clamp(260px,22vw,320px)] shrink-0 space-y-[clamp(10px,1vw,16px)] overflow-y-auto lg:block">
           <button 
             onClick={() => setIsCreateModalOpen(true)}
             className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-4 font-bold text-white shadow-md transition hover:bg-blue-700 hover:shadow-lg"
