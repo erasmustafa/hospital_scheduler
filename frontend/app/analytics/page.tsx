@@ -410,8 +410,15 @@ export default function AnalyticsPage() {
 
       <header style={styles.header}>
         <div>
-          <h1 style={styles.title}>Analiz Paneli</h1>
-          <p style={styles.subtitle}>Seçtiğiniz tarih aralığındaki personel çalışma verilerini analiz edin.</p>
+          <div style={styles.titleRow}>
+            <h1 style={styles.title}>Analiz Paneli</h1>
+            <span
+              style={styles.titleInfoBadge}
+              title="Seçtiğiniz tarih aralığındaki personel çalışma verilerini analiz edin."
+            >
+              i
+            </span>
+          </div>
         </div>
         <button type="button" className="analytics-action" style={styles.reportButton} onClick={handleReportDownload}>
           <Download size={16} />
@@ -675,6 +682,24 @@ const styles: Record<string, CSSProperties> = {
     fontWeight: 700,
     color: "#0f1735",
     letterSpacing: "-0.03em",
+  },
+  titleRow: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 9,
+  },
+  titleInfoBadge: {
+    width: 18,
+    height: 18,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "50%",
+    background: "#eef2ff",
+    color: "#5b50f6",
+    fontSize: 11,
+    fontWeight: 700,
+    cursor: "help",
   },
   subtitle: {
     margin: "8px 0 0",
@@ -962,7 +987,7 @@ const styles: Record<string, CSSProperties> = {
     flex: 1,
     minHeight: 0,
     overflow: "auto",
-    padding: "0 20px",
+    padding: 0,
   },
   table: {
     width: "100%",
