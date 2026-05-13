@@ -239,6 +239,8 @@ export default function ApprovalsPage() {
     (safeCurrentPage - 1) * pageSize,
     safeCurrentPage * pageSize
   );
+  const visibleStart = filteredRows.length === 0 ? 0 : (safeCurrentPage - 1) * pageSize + 1;
+  const visibleEnd = Math.min(safeCurrentPage * pageSize, filteredRows.length);
   const activeFilterLabel = filterOptions.find((option) => option.value === filterType)?.label ?? "Tüm Talepler";
 
   return (
@@ -529,9 +531,12 @@ export default function ApprovalsPage() {
                 </table>
               </div>
               <footer style={styles.tableFooter}>
-                <span>Toplam {filteredRows.length} kayıt</span>
+                <div style={styles.footerSummary}>
+                  <span>Toplam {filteredRows.length} personel</span>
+                  <span style={styles.footerDot}>•</span>
+                  <span>{filteredRows.length} kayıttan {visibleStart} - {visibleEnd} arası gösteriliyor</span>
+                </div>
                 <div style={styles.pagination}>
-                  <button type="button" className="approvals-action" style={styles.pageSelect}>10 / sayfa</button>
                   <button
                     type="button"
                     className="approvals-action"
@@ -569,6 +574,10 @@ export default function ApprovalsPage() {
                     ›
                   </button>
                 </div>
+                <button type="button" className="approvals-action" style={styles.pageSelect}>
+                  10 / sayfa
+                  <ChevronDown size={14} />
+                </button>
               </footer>
             </>
           )}
@@ -1009,26 +1018,42 @@ const styles: Record<string, CSSProperties> = {
     color: "#dc2626",
   },
   tableFooter: {
-    minHeight: 64,
-    display: "flex",
+    minHeight: 52,
+    display: "grid",
+    gridTemplateColumns: "1fr auto 1fr",
     alignItems: "center",
-    justifyContent: "space-between",
     gap: 16,
-    padding: "0 22px",
+    padding: "0 18px",
     borderTop: "1px solid #dce6f6",
     background: "#ffffff",
     color: "#465674",
     fontSize: 12,
     fontWeight: 700,
   },
+  footerSummary: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 9,
+    color: "#71809b",
+    whiteSpace: "nowrap",
+  },
+  footerDot: {
+    color: "#a8b3c7",
+  },
   pagination: {
     display: "flex",
     alignItems: "center",
-    gap: 10,
+    justifyContent: "center",
+    gap: 8,
   },
   pageSelect: {
-    height: 36,
-    padding: "0 18px",
+    justifySelf: "end",
+    height: 34,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    padding: "0 14px",
     borderRadius: 8,
     border: "1px solid #dce6f6",
     background: "#ffffff",
