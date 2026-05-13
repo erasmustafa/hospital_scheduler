@@ -5,6 +5,7 @@ import {
   BarChart3,
   BriefcaseBusiness,
   CalendarDays,
+  Check,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -76,6 +77,11 @@ type Department = {
   name: string;
 };
 
+type FilterOption = {
+  value: string;
+  label: string;
+};
+
 const avatarColors = [
   "linear-gradient(135deg, #6d5dfc 0%, #7c3aed 100%)",
   "linear-gradient(135deg, #8de16f 0%, #55c757 100%)",
@@ -116,6 +122,85 @@ function formatHours(value: number) {
   return value.toLocaleString("tr-TR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 }
 
+function AnalyticsDropdown({
+  label,
+  value,
+  options,
+  isOpen,
+  onToggle,
+  onChange,
+  onClose,
+}: {
+  label: string;
+  value: string;
+  options: FilterOption[];
+  isOpen: boolean;
+  onToggle: () => void;
+  onChange: (value: string) => void;
+  onClose: () => void;
+}) {
+  const selectedLabel = options.find((option) => option.value === value)?.label ?? options[0]?.label ?? "";
+
+  return (
+    <div
+      style={styles.field}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          onClose();
+        }
+      }}
+    >
+      <span style={styles.fieldLabel}>{label}</span>
+      <div style={styles.dropdownWrap}>
+        <button
+          type="button"
+          className="analytics-action"
+          style={styles.dropdownButton}
+          onClick={onToggle}
+          aria-haspopup="listbox"
+          aria-expanded={isOpen}
+        >
+          <span style={styles.dropdownButtonText}>{selectedLabel}</span>
+          <ChevronDown
+            size={15}
+            style={{
+              ...styles.dropdownChevron,
+              transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+            }}
+          />
+        </button>
+        {isOpen ? (
+          <div style={styles.dropdownMenu} role="listbox">
+            {options.map((option) => {
+              const selected = option.value === value;
+              return (
+                <button
+                  key={`${label}-${option.value}`}
+                  type="button"
+                  className="analytics-dropdown-option"
+                  style={{
+                    ...styles.dropdownOption,
+                    ...(selected ? styles.dropdownOptionActive : {}),
+                  }}
+                  role="option"
+                  aria-selected={selected}
+                  onClick={() => {
+                    onChange(option.value);
+                    onClose();
+                  }}
+                >
+                  <span>{option.label}</span>
+                  {selected ? <Check size={14} /> : null}
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 export default function AnalyticsPage() {
   const today = useMemo(() => new Date(), []);
   const [dateFrom, setDateFrom] = useState(
@@ -132,6 +217,7 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [openDropdown, setOpenDropdown] = useState<"department" | "status" | null>(null);
   const pageSize = 10;
 
   const load = useCallback(async () => {
@@ -175,6 +261,27 @@ export default function AnalyticsPage() {
   const totalOvertime = useMemo(
     () => staffSummary.reduce((sum, row) => sum + row.overtimeCount, 0),
     [staffSummary]
+  );
+
+  const departmentOptions = useMemo<FilterOption[]>(
+    () => [
+      { value: "", label: "Tümü" },
+      ...departments.map((department) => ({
+        value: String(department.id),
+        label: department.name,
+      })),
+    ],
+    [departments]
+  );
+
+  const statusOptions = useMemo<FilterOption[]>(
+    () => [
+      { value: "", label: "Tümü" },
+      { value: "planned", label: "Taslak" },
+      { value: "approved", label: "Onaylı" },
+      { value: "cancelled", label: "İptal" },
+    ],
+    []
   );
 
   const totalPages = Math.max(1, Math.ceil(staffSummary.length / pageSize));
@@ -272,8 +379,13 @@ export default function AnalyticsPage() {
               opacity: 0.55;
               cursor: not-allowed;
             }
-            .analytics-select {
-              appearance: none;
+            .analytics-dropdown-option {
+              transition: transform 140ms ease, background 140ms ease, color 140ms ease;
+            }
+            .analytics-dropdown-option:hover {
+              transform: translateX(2px);
+              background: linear-gradient(135deg, #eef2ff 0%, #ffffff 100%) !important;
+              color: #4f46e5 !important;
             }
             .analytics-date::-webkit-calendar-picker-indicator {
               opacity: 0;
@@ -301,43 +413,25 @@ export default function AnalyticsPage() {
       </header>
 
       <section style={styles.filterCard}>
-        <label style={styles.field}>
-          <span style={styles.fieldLabel}>Birim</span>
-          <span style={styles.selectWrap}>
-            <select
-              className="analytics-select"
-              style={styles.fieldInput}
-              value={departmentFilter}
-              onChange={(event) => setDepartmentFilter(event.target.value)}
-            >
-              <option value="">Tümü</option>
-              {departments.map((department) => (
-                <option key={department.id} value={String(department.id)}>
-                  {department.name}
-                </option>
-              ))}
-            </select>
-            <ChevronDown size={15} style={styles.fieldIcon} />
-          </span>
-        </label>
+        <AnalyticsDropdown
+          label="Birim"
+          value={departmentFilter}
+          options={departmentOptions}
+          isOpen={openDropdown === "department"}
+          onToggle={() => setOpenDropdown((current) => (current === "department" ? null : "department"))}
+          onChange={setDepartmentFilter}
+          onClose={() => setOpenDropdown(null)}
+        />
 
-        <label style={styles.field}>
-          <span style={styles.fieldLabel}>Durum</span>
-          <span style={styles.selectWrap}>
-            <select
-              className="analytics-select"
-              style={styles.fieldInput}
-              value={statusFilter}
-              onChange={(event) => setStatusFilter(event.target.value)}
-            >
-              <option value="">Tümü</option>
-              <option value="planned">Taslak</option>
-              <option value="approved">Onaylı</option>
-              <option value="cancelled">İptal</option>
-            </select>
-            <ChevronDown size={15} style={styles.fieldIcon} />
-          </span>
-        </label>
+        <AnalyticsDropdown
+          label="Durum"
+          value={statusFilter}
+          options={statusOptions}
+          isOpen={openDropdown === "status"}
+          onToggle={() => setOpenDropdown((current) => (current === "status" ? null : "status"))}
+          onChange={setStatusFilter}
+          onClose={() => setOpenDropdown(null)}
+        />
 
         <label style={styles.field}>
           <span style={styles.fieldLabel}>Başlangıç</span>
@@ -605,6 +699,78 @@ const styles: Record<string, CSSProperties> = {
   selectWrap: {
     position: "relative",
     display: "block",
+  },
+  dropdownWrap: {
+    position: "relative",
+    display: "block",
+  },
+  dropdownButton: {
+    width: "100%",
+    height: 40,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+    border: "1px solid #d9e4f4",
+    borderRadius: 7,
+    background: "linear-gradient(180deg, #ffffff 0%, #fbfdff 100%)",
+    color: "#34425f",
+    fontSize: 13,
+    fontWeight: 600,
+    fontFamily: "inherit",
+    padding: "0 12px 0 14px",
+    outline: "none",
+    boxSizing: "border-box",
+    cursor: "pointer",
+  },
+  dropdownButtonText: {
+    minWidth: 0,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  dropdownChevron: {
+    color: "#52627f",
+    flex: "0 0 auto",
+    transition: "transform 160ms ease",
+  },
+  dropdownMenu: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: "calc(100% + 8px)",
+    zIndex: 30,
+    maxHeight: 230,
+    overflow: "auto",
+    padding: 6,
+    border: "1px solid #d9e4f4",
+    borderRadius: 12,
+    background: "rgba(255,255,255,0.98)",
+    boxShadow: "0 18px 38px rgba(15, 23, 42, 0.14)",
+    backdropFilter: "blur(14px)",
+  },
+  dropdownOption: {
+    width: "100%",
+    minHeight: 34,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+    border: "none",
+    borderRadius: 9,
+    padding: "0 10px",
+    background: "transparent",
+    color: "#34425f",
+    fontSize: 12,
+    fontWeight: 700,
+    fontFamily: "inherit",
+    textAlign: "left",
+    cursor: "pointer",
+  },
+  dropdownOptionActive: {
+    background: "linear-gradient(135deg, #eef2ff 0%, #f8fbff 100%)",
+    color: "#4f46e5",
+    boxShadow: "inset 3px 0 0 #6d5dfc",
   },
   fieldInput: {
     width: "100%",
