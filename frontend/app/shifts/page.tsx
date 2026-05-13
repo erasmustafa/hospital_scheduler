@@ -7,8 +7,13 @@ import {
   ChevronDown,
   Clock,
   FileText,
+  Filter,
   Moon,
   Pencil,
+  BriefcaseBusiness,
+  ClipboardList,
+  MoreHorizontal,
+  TrendingUp,
   Tag,
   Trash2,
   UserRound,
@@ -856,29 +861,61 @@ export default function ShiftsPage() {
     <main style={styles.main}>
       {/* ── STAT CARDS ─────────────────────────────────── */}
       <section style={styles.statsRow}>
-        <div style={styles.statCard}>
-          <p style={styles.statLabel}>Toplam Kayıt</p>
-          <p style={styles.statValue}>{counts.total}</p>
-          <p style={styles.statDesc}>Filtreye uyan vardiya satırı</p>
+        <div style={{ ...styles.statCard, ...styles.statCardBlue }}>
+          <span style={{ ...styles.statIconBox, ...styles.statIconBlue }}>
+            <ClipboardList size={30} />
+          </span>
+          <span style={{ ...styles.statMiniBadge, ...styles.statMiniBadgeBlue }}>
+            <TrendingUp size={18} />
+          </span>
+          <div style={styles.statContent}>
+            <p style={styles.statLabel}>Toplam Kayıt</p>
+            <p style={styles.statValue}>{counts.total}</p>
+            <p style={styles.statDesc}>Filtreye uyan vardiya satırı</p>
+          </div>
         </div>
-        <div style={styles.statCard}>
-          <p style={styles.statLabel}>Seçili Birim</p>
-          <p style={{ ...styles.statValue, fontSize: 22 }}>{selectedDeptName}</p>
-          <p style={styles.statDesc}>Birim kapsamı</p>
+        <div style={{ ...styles.statCard, ...styles.statCardGreen }}>
+          <span style={{ ...styles.statIconBox, ...styles.statIconGreen }}>
+            <BriefcaseBusiness size={30} />
+          </span>
+          <span style={{ ...styles.statMiniBadge, ...styles.statMiniBadgeGreen }}>
+            <Check size={18} />
+          </span>
+          <div style={styles.statContent}>
+            <p style={styles.statLabel}>Seçili Birim</p>
+            <p style={styles.statValue}>{selectedDeptName}</p>
+            <p style={styles.statDesc}>Birim kapsamı</p>
+          </div>
         </div>
-        <div style={styles.statCard}>
-          <p style={styles.statLabel}>Durum</p>
-          <p style={{ ...styles.statValue, fontSize: 22 }}>
-            {statusFilter ? statusLabelTr[statusFilter] || statusFilter : "Tümü"}
-          </p>
-          <p style={styles.statDesc}>Aktif filtre durumu</p>
+        <div style={{ ...styles.statCard, ...styles.statCardAmber }}>
+          <span style={{ ...styles.statIconBox, ...styles.statIconAmber }}>
+            <Filter size={30} />
+          </span>
+          <span style={{ ...styles.statMiniBadge, ...styles.statMiniBadgeAmber }}>
+            <MoreHorizontal size={18} />
+          </span>
+          <div style={styles.statContent}>
+            <p style={styles.statLabel}>Durum</p>
+            <p style={styles.statValue}>
+              {statusFilter ? statusLabelTr[statusFilter] || statusFilter : "Tümü"}
+            </p>
+            <p style={styles.statDesc}>Aktif filtre durumu</p>
+          </div>
         </div>
-        <div style={styles.statCard}>
-          <p style={styles.statLabel}>Tarih Aralığı</p>
-          <p style={{ ...styles.statValue, fontSize: 22 }}>
-            {startDate || endDate ? `${startDate || "..."} – ${endDate || "..."}` : "Serbest"}
-          </p>
-          <p style={styles.statDesc}>Başlangıç / Bitiş filtresi</p>
+        <div style={{ ...styles.statCard, ...styles.statCardPurple }}>
+          <span style={{ ...styles.statIconBox, ...styles.statIconPurple }}>
+            <CalendarDays size={30} />
+          </span>
+          <span style={{ ...styles.statMiniBadge, ...styles.statMiniBadgePurple }}>
+            <CalendarDays size={18} />
+          </span>
+          <div style={styles.statContent}>
+            <p style={styles.statLabel}>Tarih Aralığı</p>
+            <p style={styles.statValue}>
+              {startDate || endDate ? `${startDate || "..."} – ${endDate || "..."}` : "Serbest"}
+            </p>
+            <p style={styles.statDesc}>Başlangıç / Bitiş filtresi</p>
+          </div>
         </div>
       </section>
 
@@ -1469,35 +1506,113 @@ const styles: Record<string, React.CSSProperties> = {
   statsRow: {
     display: "grid",
     gridTemplateColumns: "repeat(4, 1fr)",
-    gap: 16,
+    gap: 18,
     marginBottom: 20,
   },
   statCard: {
-    background: "#ffffff",
-    borderRadius: 16,
-    padding: "18px 22px",
-    border: "1px solid #e2e8f0",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-    borderLeft: "4px solid #4A6CF7",
+    position: "relative",
+    minHeight: 118,
+    display: "grid",
+    gridTemplateColumns: "86px minmax(0, 1fr)",
+    alignItems: "center",
+    columnGap: 18,
+    overflow: "hidden",
+    background: "linear-gradient(145deg, rgba(255,255,255,0.98) 0%, rgba(248,251,255,0.94) 100%)",
+    borderRadius: 22,
+    padding: "20px 24px",
+    border: "1px solid rgba(226, 232, 240, 0.95)",
+    boxShadow: "0 18px 42px rgba(15, 23, 42, 0.08)",
+  },
+  statCardBlue: {
+    borderBottom: "3px solid #4f73ff",
+  },
+  statCardGreen: {
+    borderBottom: "3px solid #34c77b",
+  },
+  statCardAmber: {
+    borderBottom: "3px solid #f6b83f",
+  },
+  statCardPurple: {
+    borderBottom: "3px solid #a855f7",
+  },
+  statIconBox: {
+    width: 70,
+    height: 70,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
+    justifySelf: "start",
+  },
+  statIconBlue: {
+    color: "#4f73ff",
+    background: "linear-gradient(145deg, #eef2ff 0%, #e7edff 100%)",
+  },
+  statIconGreen: {
+    color: "#22c55e",
+    background: "linear-gradient(145deg, #ecfdf5 0%, #dcfce7 100%)",
+  },
+  statIconAmber: {
+    color: "#f59e0b",
+    background: "linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%)",
+  },
+  statIconPurple: {
+    color: "#a855f7",
+    background: "linear-gradient(145deg, #faf5ff 0%, #f3e8ff 100%)",
+  },
+  statMiniBadge: {
+    position: "absolute",
+    top: 22,
+    right: 20,
+    width: 38,
+    height: 38,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 999,
+  },
+  statMiniBadgeBlue: {
+    color: "#4f73ff",
+    background: "#eef2ff",
+  },
+  statMiniBadgeGreen: {
+    color: "#22c55e",
+    background: "#ecfdf5",
+  },
+  statMiniBadgeAmber: {
+    color: "#f59e0b",
+    background: "#fff7ed",
+  },
+  statMiniBadgePurple: {
+    color: "#a855f7",
+    background: "#faf5ff",
+  },
+  statContent: {
+    minWidth: 0,
   },
   statLabel: {
-    fontSize: 11,
-    fontWeight: 700,
-    color: "#64748b",
-    margin: "0 0 6px 0",
+    fontSize: 13,
+    fontWeight: 800,
+    color: "#72809b",
+    margin: "0 0 8px 0",
     textTransform: "uppercase" as const,
-    letterSpacing: "0.04em",
+    letterSpacing: "0.08em",
   },
   statValue: {
+    maxWidth: "100%",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap" as const,
     fontSize: 32,
     fontWeight: 800,
-    color: "#1e293b",
-    margin: "0 0 4px 0",
-    lineHeight: 1.2,
+    color: "#172033",
+    margin: "0 0 8px 0",
+    lineHeight: 1.05,
   },
   statDesc: {
-    fontSize: 11,
-    color: "#94a3b8",
+    fontSize: 13,
+    fontWeight: 600,
+    color: "#8a96ad",
     margin: 0,
     lineHeight: 1.4,
   },
