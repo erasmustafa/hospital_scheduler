@@ -270,6 +270,7 @@ export default function ShiftsPage() {
   const [endDate, setEndDate] = useState("");
   const [savingBulk, setSavingBulk] = useState<"approve" | "delete" | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+  const [editingAssignmentId, setEditingAssignmentId] = useState<number | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [creating, setCreating] = useState(false);
   const [createSuccess, setCreateSuccess] = useState(false);
@@ -452,6 +453,7 @@ export default function ShiftsPage() {
   );
 
   const resetCreateForm = useCallback(() => {
+    setEditingAssignmentId(null);
     setCreateSuccess(false);
     setCreateErrorFields([]);
     setNewAssignment({
@@ -473,11 +475,36 @@ export default function ShiftsPage() {
     setShowCreateModal(true);
   };
 
+  const openEditModal = (row: ShiftRow) => {
+    const matchedDepartment = departments.find((department) => department.name === row.departmentName);
+    const matchedStaff = staffOptions.find((staff) => staff.fullName === row.staffProfileName);
+    const matchedShiftType = shiftTypeOptions.find((shiftType) => shiftType.name === row.shiftTypeName);
+
+    setPendingDeleteId(null);
+    setEditingAssignmentId(row.id);
+    setCreateSuccess(false);
+    setCreateErrorFields([]);
+    setNewAssignment({
+      shiftName: row.shiftTypeName,
+      departmentId: matchedDepartment ? String(matchedDepartment.id) : "",
+      staffProfileId: matchedStaff ? String(matchedStaff.id) : "",
+      shiftTypeId: matchedShiftType ? String(matchedShiftType.id) : "",
+      assignmentDate: row.assignmentDate,
+      startTime: (row.startTime || matchedShiftType?.startTime || "08:00").slice(0, 5),
+      endTime: (row.endTime || matchedShiftType?.endTime || "16:00").slice(0, 5),
+      isNightShift: row.shiftTypeName.toLocaleLowerCase("tr-TR").includes("gece"),
+      status: row.status || "planned",
+      notes: "",
+    });
+    setShowCreateModal(true);
+  };
+
   const closeCreateModal = () => {
     setShowCreateModal(false);
     setCreating(false);
     setCreateSuccess(false);
     setCreateErrorFields([]);
+    setEditingAssignmentId(null);
   };
 
   const handleCreateAssignment = async () => {
@@ -500,14 +527,20 @@ export default function ShiftsPage() {
     setCreateErrorFields([]);
     setCreateSuccess(false);
     try {
-      await apiClient.post("/assignments/", {
+      const payload = {
         departmentId: Number(newAssignment.departmentId),
         staffProfileId: Number(newAssignment.staffProfileId),
         shiftTypeId: Number(newAssignment.shiftTypeId),
         assignmentDate: newAssignment.assignmentDate,
         status: newAssignment.status,
         notes: newAssignment.notes.trim() || undefined,
-      });
+      };
+
+      if (editingAssignmentId) {
+        await apiClient.patch(`/assignments/${editingAssignmentId}/`, payload);
+      } else {
+        await apiClient.post("/assignments/", payload);
+      }
       await load();
       setError(null);
       setCreateSuccess(true);
@@ -516,7 +549,7 @@ export default function ShiftsPage() {
       }, 850);
     } catch (err) {
       setCreateSuccess(false);
-      setError(err instanceof Error ? err.message : "Yeni vardiya oluşturulamadı.");
+      setError(err instanceof Error ? err.message : "Vardiya kaydedilemedi.");
       setCreating(false);
     }
   };
@@ -806,6 +839,17 @@ export default function ShiftsPage() {
             color: #ffffff !important;
             box-shadow: 0 12px 24px rgba(220, 38, 38, 0.26) !important;
           }
+
+          .shift-table-row td {
+            transition:
+              background 150ms ease,
+              box-shadow 150ms ease;
+          }
+
+          .shift-table-row:hover td {
+            background: #f7fbff !important;
+            box-shadow: inset 0 1px 0 rgba(37, 99, 235, 0.04), inset 0 -1px 0 rgba(37, 99, 235, 0.04);
+          }
         `,
       }}
     />
@@ -988,6 +1032,7 @@ export default function ShiftsPage() {
                     return (
                       <tr
                         key={row.id}
+                        className="shift-table-row"
                         style={{
                           ...styles.tableRow,
                           backgroundColor:
@@ -1074,7 +1119,7 @@ export default function ShiftsPage() {
                               style={styles.editBtn}
                               title="Düzenle"
                               aria-label="Vardiyayı düzenle"
-                              onClick={() => setPendingDeleteId(null)}
+                              onClick={() => openEditModal(row)}
                             >
                               <Pencil size={15} />
                             </button>
@@ -1103,8 +1148,7 @@ export default function ShiftsPage() {
               </table>
             </div>
             <footer style={styles.tableFooter}>
-              <span>Liste sonu</span>
-              <span style={styles.tableFooterCount}>Toplam {rows.length} vardiya</span>
+              <span>Toplam {rows.length} vardiya</span>
             </footer>
           </>
         )}
@@ -1125,8 +1169,14 @@ export default function ShiftsPage() {
                   <CalendarDays size={28} />
                 </span>
                 <div>
-                  <h2 id="new-shift-modal-title" style={styles.modalTitle}>Vardiya Ekle</h2>
-                  <p style={styles.modalSubtitle}>Yeni vardiya bilgilerini girerek takviminize ekleyin.</p>
+                  <h2 id="new-shift-modal-title" style={styles.modalTitle}>
+                    {editingAssignmentId ? "Vardiya Düzenle" : "Vardiya Ekle"}
+                  </h2>
+                  <p style={styles.modalSubtitle}>
+                    {editingAssignmentId
+                      ? "Mevcut vardiya bilgilerini güncelleyin."
+                      : "Yeni vardiya bilgilerini girerek takviminize ekleyin."}
+                  </p>
                 </div>
               </div>
               <button
@@ -1379,7 +1429,15 @@ export default function ShiftsPage() {
                 disabled={creating || createSuccess}
               >
                 <Check size={17} />
-                {createSuccess ? "Vardiya Kaydedildi" : creating ? "Kaydediliyor..." : "Vardiyayı Kaydet"}
+                {createSuccess
+                  ? editingAssignmentId
+                    ? "Vardiya Güncellendi"
+                    : "Vardiya Kaydedildi"
+                  : creating
+                    ? "Kaydediliyor..."
+                    : editingAssignmentId
+                      ? "Vardiyayı Güncelle"
+                      : "Vardiyayı Kaydet"}
               </button>
             </div>
           </section>
@@ -1462,8 +1520,8 @@ const styles: Record<string, React.CSSProperties> = {
 
   filterPanel: {
     display: "grid",
-    gridTemplateColumns: "minmax(0, 1fr) minmax(260px, 340px)",
-    gap: 20,
+    gridTemplateColumns: "minmax(0, 1fr) minmax(500px, 540px)",
+    gap: 16,
     alignItems: "stretch",
   },
   filterPanelMain: {
@@ -1600,7 +1658,7 @@ const styles: Record<string, React.CSSProperties> = {
   /* ── bulk ── */
   bulkPanel: {
     borderLeft: "1px solid #e2e8f0",
-    paddingLeft: 20,
+    paddingLeft: 16,
     display: "flex",
     flexDirection: "column" as const,
     justifyContent: "space-between",
@@ -1629,8 +1687,7 @@ const styles: Record<string, React.CSSProperties> = {
     flexWrap: "nowrap" as const,
     gap: 8,
     alignItems: "center",
-    overflowX: "auto" as const,
-    paddingBottom: 2,
+    overflow: "visible",
   },
   bulkApprove: {
     display: "inline-flex",
@@ -1638,7 +1695,7 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: "center",
     gap: 6,
     minHeight: 36,
-    padding: "0 14px",
+    padding: "0 10px",
     fontSize: 12,
     fontWeight: 700,
     color: "#ffffff",
@@ -1655,7 +1712,7 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: "center",
     gap: 6,
     minHeight: 36,
-    padding: "0 14px",
+    padding: "0 10px",
     fontSize: 12,
     fontWeight: 700,
     color: "#ffffff",
@@ -1672,7 +1729,7 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: "center",
     gap: 6,
     minHeight: 36,
-    padding: "0 14px",
+    padding: "0 10px",
     fontSize: 12,
     fontWeight: 700,
     color: "#243754",
@@ -1689,7 +1746,7 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: "center",
     gap: 6,
     minHeight: 36,
-    padding: "0 14px",
+    padding: "0 10px",
     fontSize: 12,
     fontWeight: 700,
     color: "#ffffff",
@@ -1724,7 +1781,7 @@ const styles: Record<string, React.CSSProperties> = {
     zIndex: 2,
     display: "flex",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     gap: 12,
     padding: "11px 16px",
     borderTop: "1px solid #e2e8f0",
@@ -1770,7 +1827,7 @@ const styles: Record<string, React.CSSProperties> = {
     verticalAlign: "middle" as const,
   },
   tableRow: {
-    transition: "background 0.15s ease",
+    transition: "background 0.15s ease, box-shadow 0.15s ease",
   },
   rowActionGroup: {
     display: "inline-flex",
