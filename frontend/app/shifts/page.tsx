@@ -69,6 +69,12 @@ type ModalDropdownProps = {
   onChange: (value: string) => void;
 };
 
+type FilterDropdownProps = {
+  value: string;
+  options: DropdownOption[];
+  onChange: (value: string) => void;
+};
+
 const statusLabelTr: Record<string, string> = {
   planned: "Planlandı",
   approved: "Onaylandı",
@@ -176,6 +182,70 @@ function ModalDropdown({
                   ) : null}
                 </span>
                 {selected ? <Check size={16} /> : null}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function FilterDropdown({ value, options, onChange }: FilterDropdownProps) {
+  const [open, setOpen] = useState(false);
+  const selectedOption = options.find((option) => option.value === value) ?? options[0];
+
+  return (
+    <div
+      style={styles.filterDropdown}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setOpen(false);
+        }
+      }}
+    >
+      <button
+        type="button"
+        className="shift-filter-control shift-filter-dropdown-button"
+        style={styles.filterDropdownButton}
+        onClick={() => setOpen((current) => !current)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+      >
+        <span style={styles.filterDropdownValue}>{selectedOption?.label ?? "Tümü"}</span>
+        <span
+          style={{
+            ...styles.filterDropdownChevron,
+            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+          }}
+        >
+          <ChevronDown size={15} />
+        </span>
+      </button>
+
+      {open ? (
+        <div style={styles.filterDropdownMenu} role="listbox">
+          {options.map((option) => {
+            const selected = option.value === value;
+
+            return (
+              <button
+                key={option.value}
+                type="button"
+                className="shift-filter-dropdown-option"
+                style={{
+                  ...styles.filterDropdownItem,
+                  ...(selected ? styles.filterDropdownItemActive : {}),
+                }}
+                onClick={() => {
+                  onChange(option.value);
+                  setOpen(false);
+                }}
+                role="option"
+                aria-selected={selected}
+              >
+                <span>{option.label}</span>
+                {selected ? <Check size={14} /> : null}
               </button>
             );
           })}
@@ -630,6 +700,46 @@ export default function ShiftsPage() {
             background: #eef4ff !important;
           }
 
+          .shift-filter-dropdown-button:hover span:last-child {
+            border-color: transparent !important;
+            background: rgba(79, 115, 255, 0.10) !important;
+          }
+
+          .shift-filter-dropdown-option {
+            transition:
+              transform 150ms ease,
+              background 150ms ease,
+              color 150ms ease;
+          }
+
+          .shift-filter-dropdown-option:hover {
+            transform: translateX(2px);
+            background: linear-gradient(135deg, #eef4ff 0%, #ffffff 100%) !important;
+            color: #2456e8 !important;
+          }
+
+          .shift-filter-dropdown-option:active {
+            transform: translateX(1px) scale(0.99);
+          }
+
+          .shift-filter-button {
+            transition:
+              transform 160ms ease,
+              box-shadow 160ms ease,
+              filter 160ms ease;
+          }
+
+          .shift-filter-button:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.03);
+            box-shadow: 0 10px 22px rgba(74,108,247,0.28) !important;
+          }
+
+          .shift-filter-button:active {
+            transform: translateY(0) scale(0.985);
+            filter: brightness(0.98);
+          }
+
           .shift-bulk-action {
             transition:
               transform 160ms ease,
@@ -694,35 +804,30 @@ export default function ShiftsPage() {
             <div style={styles.filterGrid}>
               <label style={styles.filterLabel}>
                 <span style={styles.filterLabelText}>Birim</span>
-                <select
-                  className="shift-filter-control"
-                  style={styles.filterInput}
+                <FilterDropdown
                   value={departmentFilter}
-                  onChange={(e) => setDepartmentFilter(e.target.value)}
-                >
-                  <option value="">Tümü</option>
-                  {departments.map((d) => (
-                    <option key={d.id} value={String(d.id)}>
-                      {d.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setDepartmentFilter}
+                  options={[
+                    { value: "", label: "Tümü" },
+                    ...departments.map((department) => ({
+                      value: String(department.id),
+                      label: department.name,
+                    })),
+                  ]}
+                />
               </label>
               <label style={styles.filterLabel}>
                 <span style={styles.filterLabelText}>Durum</span>
-                <select
-                  className="shift-filter-control"
-                  style={styles.filterInput}
+                <FilterDropdown
                   value={statusFilter}
-                  onChange={(e) =>
-                    setStatusFilter(e.target.value as typeof statusFilter)
-                  }
-                >
-                  <option value="">Tümü</option>
-                  <option value="planned">Taslak</option>
-                  <option value="approved">Onaylı</option>
-                  <option value="cancelled">İptal</option>
-                </select>
+                  onChange={(nextValue) => setStatusFilter(nextValue as typeof statusFilter)}
+                  options={[
+                    { value: "", label: "Tümü" },
+                    { value: "planned", label: "Taslak" },
+                    { value: "approved", label: "Onaylı" },
+                    { value: "cancelled", label: "İptal" },
+                  ]}
+                />
               </label>
               <label style={styles.filterLabel}>
                 <span style={styles.filterLabelText}>Başlangıç Tarihi</span>
@@ -747,7 +852,7 @@ export default function ShiftsPage() {
               <div style={{ display: "flex", alignItems: "flex-end" }}>
                 <button
                   type="button"
-                  className="shift-filter-control"
+                  className="shift-filter-button"
                   onClick={() => void load()}
                   style={styles.filterButton}
                 >
@@ -1348,6 +1453,85 @@ const styles: Record<string, React.CSSProperties> = {
     width: "100%",
     boxShadow: "0 6px 16px rgba(15, 23, 42, 0.04)",
     cursor: "pointer",
+  },
+  filterDropdown: {
+    position: "relative",
+    width: "100%",
+  },
+  filterDropdownButton: {
+    height: 38,
+    width: "100%",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
+    borderRadius: 12,
+    border: "1px solid #dbe6f5",
+    padding: "0 8px 0 12px",
+    fontSize: 12,
+    fontWeight: 700,
+    color: "#243754",
+    background: "linear-gradient(135deg, #ffffff 0%, #f8fbff 100%)",
+    fontFamily: "inherit",
+    outline: "none",
+    boxShadow: "0 6px 16px rgba(15, 23, 42, 0.04)",
+    cursor: "pointer",
+  },
+  filterDropdownValue: {
+    minWidth: 0,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap" as const,
+  },
+  filterDropdownChevron: {
+    width: 26,
+    height: 26,
+    borderRadius: 9,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flex: "0 0 auto",
+    color: "#64748b",
+    background: "rgba(239, 246, 255, 0.72)",
+    border: "1px solid transparent",
+    transition: "transform 160ms ease, background 160ms ease, color 160ms ease",
+  },
+  filterDropdownMenu: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: "calc(100% + 6px)",
+    zIndex: 30,
+    padding: 5,
+    borderRadius: 14,
+    border: "1px solid #dbe6f5",
+    background: "rgba(255,255,255,0.98)",
+    boxShadow: "0 18px 40px rgba(15,23,42,0.14)",
+    backdropFilter: "blur(12px)",
+    animation: "shiftDropdownIn 160ms ease both",
+  },
+  filterDropdownItem: {
+    width: "100%",
+    minHeight: 32,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
+    border: "none",
+    borderRadius: 10,
+    padding: "0 10px",
+    background: "transparent",
+    color: "#334155",
+    fontSize: 12,
+    fontWeight: 700,
+    fontFamily: "inherit",
+    textAlign: "left" as const,
+    cursor: "pointer",
+  },
+  filterDropdownItemActive: {
+    color: "#1d4ed8",
+    background: "linear-gradient(135deg, #eaf1ff 0%, #f8fbff 100%)",
+    boxShadow: "inset 3px 0 0 #2563eb",
   },
   filterButton: {
     height: 38,
