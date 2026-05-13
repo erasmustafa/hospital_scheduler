@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import ChatHeader from "@/components/chat/ChatHeader";
@@ -25,7 +25,7 @@ const MOCK_SHIFTS: ShiftCardItem[] = [
   {
     id: "shift-1",
     staffName: "Emin Oral",
-    shiftLabel: "Gunduz Vardiyasi",
+    shiftLabel: "Gündüz Vardiyası",
     start: "08:00",
     end: "16:00",
     departmentId: "er",
@@ -33,7 +33,7 @@ const MOCK_SHIFTS: ShiftCardItem[] = [
   {
     id: "shift-2",
     staffName: "Demet Çelik Gelen",
-    shiftLabel: "Gece Vardiyasi",
+    shiftLabel: "Gece Vardiyası",
     start: "16:00",
     end: "00:00",
     departmentId: "icu",
@@ -194,8 +194,8 @@ export default function ChatShell() {
   };
 
   return (
-    <div className="h-full min-h-0 overflow-hidden bg-[#F4F7FB] p-4 xl:p-5">
-      <div className="grid h-full min-h-0 grid-cols-1 gap-4 rounded-[30px] border border-slate-200 bg-white p-3 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.28)] xl:grid-cols-[222px_minmax(0,1fr)_289px]">
+    <div className="h-full min-h-0 overflow-hidden bg-[#f3f6fb] p-3 xl:p-4">
+      <div className="grid h-full min-h-0 grid-cols-1 gap-0 overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_26px_70px_-46px_rgba(15,23,42,0.34)] xl:grid-cols-[300px_minmax(0,1fr)_320px]">
         <ChatSidebar
           search={search}
           onSearchChange={setSearch}
@@ -207,7 +207,7 @@ export default function ChatShell() {
           onSelectDepartment={setActiveDepartmentId}
         />
 
-        <main className="relative flex min-w-0 min-h-0 flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white">
+        <main className="relative flex min-h-0 min-w-0 flex-col overflow-hidden border-x border-slate-200 bg-white">
           <ChatHeader
             activeChannel={activeChannel}
             activeDepartment={activeDepartment}

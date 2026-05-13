@@ -36,14 +36,14 @@ function HeaderIconButton({
       onClick={onClick}
       aria-label={label}
       title={label}
-      className={`group relative flex h-10 w-10 items-center justify-center rounded-2xl border shadow-sm transition ${
+      className={`group relative flex h-10 w-10 items-center justify-center rounded-full border shadow-sm transition active:scale-95 ${
         active
           ? "border-blue-200 bg-blue-50 text-blue-700 shadow-blue-100/80"
           : "border-slate-200 bg-white text-slate-500 shadow-slate-200/60 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
       }`}
     >
       {icon}
-      <span className="pointer-events-none absolute -bottom-10 left-1/2 z-10 -translate-x-1/2 rounded-xl border border-slate-200 bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-slate-600 opacity-0 shadow-lg shadow-slate-200/70 transition group-hover:opacity-100">
+      <span className="pointer-events-none absolute -bottom-10 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-xl border border-slate-200 bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-slate-600 opacity-0 shadow-lg shadow-slate-200/70 transition group-hover:opacity-100">
         {label}
       </span>
     </button>
@@ -59,10 +59,11 @@ export default function ChatHeader({
   onOpenCommandPalette,
 }: ChatHeaderProps) {
   return (
-    <header className="flex shrink-0 items-center justify-between gap-4 border-b border-slate-200 bg-white px-5 py-2.5">
+    <header className="flex shrink-0 items-center justify-between gap-4 border-b border-slate-200 bg-white px-6 py-4">
       <div className="min-w-0">
         <div className="flex items-center gap-2">
-          <h2 className="truncate text-[20px] font-semibold tracking-[-0.02em] text-slate-950">
+          <span className="text-[20px] font-bold text-blue-600">#</span>
+          <h2 className="truncate text-[18px] font-bold tracking-[-0.02em] text-slate-950">
             {activeChannel?.name ?? "Kanal seçin"}
           </h2>
           <Star className="h-3.5 w-3.5 shrink-0 text-slate-400" />
@@ -76,7 +77,7 @@ export default function ChatHeader({
           <span className="flex items-center gap-1">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
             <span className="text-[11px] font-medium">
-              {activeChannel?.onlineCount ?? activeChannel?.memberCount ?? 0} cevrimici
+              {activeChannel?.onlineCount ?? activeChannel?.memberCount ?? 0} çevrimiçi
             </span>
           </span>
         </div>
@@ -102,14 +103,14 @@ export default function ChatHeader({
         />
         <button
           type="button"
-          className="rounded-2xl p-2 text-blue-600 transition hover:bg-blue-50"
+          className="rounded-full p-2 text-blue-600 transition hover:bg-blue-50 active:scale-95"
           aria-label="Katılımcı ekle"
         >
           <UserPlus className="h-4.5 w-4.5" />
         </button>
         <button
           type="button"
-          className="rounded-2xl p-2 text-slate-500 transition hover:bg-slate-100"
+          className="rounded-full p-2 text-slate-500 transition hover:bg-slate-100 active:scale-95"
           aria-label="Daha fazla"
         >
           <MoreVertical className="h-4.5 w-4.5" />

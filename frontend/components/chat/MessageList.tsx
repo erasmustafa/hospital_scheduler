@@ -20,10 +20,10 @@ export default function MessageList({
 
   return (
     <section
-      className="min-h-0 flex-1 overflow-y-auto px-3 py-4"
+      className="min-h-0 flex-1 overflow-y-auto px-6 py-5"
       style={{
         backgroundImage:
-          "linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.2)), url('/images/chat/chat-area-bg-v2.png')",
+          "linear-gradient(rgba(255,255,255,0.02), rgba(255,255,255,0.08)), url('/images/chat/chat-area-bg-v2.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
@@ -32,13 +32,13 @@ export default function MessageList({
       <div className="mx-auto max-w-5xl">
         {isLoading ? (
           <div className="rounded-3xl border border-slate-200 bg-white p-6 text-sm font-medium text-slate-500">
-            Mesajlar yukleniyor...
+            Mesajlar yükleniyor...
           </div>
         ) : null}
 
         {!isLoading && messages.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-slate-300 bg-white/80 p-8 text-center text-sm text-slate-500">
-            Bu kanalda henuz mesaj yok. Ilk mesaji gondererek akis baslatabiliriz.
+            Bu kanalda henüz mesaj yok. İlk mesajı göndererek akışı başlatabilirsiniz.
           </div>
         ) : null}
 
@@ -53,7 +53,7 @@ export default function MessageList({
                 {showDay ? (
                   <div className="flex items-center gap-4">
                     <div className="h-px flex-1 bg-slate-200" />
-                    <span className="rounded-full border border-slate-200 bg-white px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">
+                    <span className="rounded-full border border-slate-200 bg-white px-4 py-1.5 text-[11px] font-bold text-slate-700 shadow-sm">
                       {dayLabel}
                     </span>
                     <div className="h-px flex-1 bg-slate-200" />
@@ -64,7 +64,8 @@ export default function MessageList({
                   message={message}
                   isOwnMessage={
                     message.sender.id === "current-user" ||
-                    message.sender.name === "Mustafa Bedir"
+                    message.sender.name === "Mustafa Bedir" ||
+                    message.sender.name === "Mustafa Demir"
                   }
                   onAction={onMessageAction}
                 />
@@ -76,11 +77,11 @@ export default function MessageList({
         {typingUsers.length > 0 ? (
           <div className="mt-6 inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-medium text-slate-500 shadow-sm">
             <span className="flex gap-1">
-              <span className="h-2 w-2 animate-bounce rounded-full bg-blue-400 [animation-delay:-0.2s]" />
-              <span className="h-2 w-2 animate-bounce rounded-full bg-blue-300 [animation-delay:-0.1s]" />
-              <span className="h-2 w-2 animate-bounce rounded-full bg-blue-200" />
+              <span className="h-2 w-2 animate-bounce rounded-full bg-blue-500 [animation-delay:-0.2s]" />
+              <span className="h-2 w-2 animate-bounce rounded-full bg-blue-400 [animation-delay:-0.1s]" />
+              <span className="h-2 w-2 animate-bounce rounded-full bg-blue-300" />
             </span>
-            {typingUsers.join(", ")} yaziyor...
+            {typingUsers.join(", ")} yazıyor...
           </div>
         ) : null}
       </div>

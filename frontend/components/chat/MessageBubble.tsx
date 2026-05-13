@@ -52,7 +52,7 @@ function buildTaskFromMessage(message: Message): Task | null {
 
   return {
     id: `${message.id}-task`,
-    title: typeof metadata.title === "string" ? metadata.title : "Gorev",
+    title: typeof metadata.title === "string" ? metadata.title : "Görev",
     assigneeName:
       typeof metadata.assigneeName === "string" ? metadata.assigneeName : message.sender.name,
     priority:
@@ -79,7 +79,7 @@ function buildReminderFromMessage(message: Message): Reminder | null {
     title:
       typeof metadata.title === "string"
         ? metadata.title
-        : "Hatirlatici",
+        : "Hatırlatıcı",
     remindAt:
       typeof metadata.remindAt === "string" ? metadata.remindAt : message.createdAt,
     targetUserIds: [],
@@ -157,9 +157,9 @@ export default function MessageBubble({
   const hasInteractiveCard = Boolean(taskCard || reminderCard || shiftCard || decisionCard);
 
   const detailLabel = taskCard
-    ? "Gorev ayrintisi"
+    ? "Görev ayrıntısı"
     : reminderCard
-      ? "Hatirlatici ayrintisi"
+      ? "Hatırlatıcı ayrıntısı"
       : shiftCard
         ? "Vardiya ayrintisi"
         : decisionCard
@@ -173,7 +173,7 @@ export default function MessageBubble({
       className={`group flex w-full ${isOwnMessage ? "justify-end" : "justify-start"}`}
     >
       <div
-        className={`flex max-w-[720px] items-end gap-1.5 ${
+        className={`flex max-w-[620px] items-end gap-2 ${
           isOwnMessage ? "flex-row-reverse" : "flex-row"
         }`}
       >
@@ -181,7 +181,7 @@ export default function MessageBubble({
           className={`relative shrink-0 ${isOwnMessage ? "mr-0" : "ml-0"}`}
         >
           <div
-            className={`flex h-6 w-6 items-center justify-center rounded-full text-[9px] font-semibold text-white ${
+            className={`flex h-8 w-8 items-center justify-center rounded-full text-[10px] font-semibold text-white shadow-sm ${
               message.type === "system"
                 ? "bg-blue-500"
                 : isOwnMessage
@@ -210,8 +210,8 @@ export default function MessageBubble({
               message.type === "system"
                 ? "border-blue-100 bg-gradient-to-br from-blue-50 via-white to-indigo-50"
                 : isOwnMessage
-                  ? "border-blue-100 bg-gradient-to-br from-white via-blue-50/80 to-blue-100/80"
-                  : "border-slate-200 bg-white shadow-[0_12px_26px_rgba(148,163,184,0.22)]"
+                  ? "border-blue-100 bg-gradient-to-br from-white via-blue-50/90 to-blue-100/90"
+                  : "border-slate-200 bg-white/95 shadow-[0_12px_26px_rgba(148,163,184,0.26)]"
             } ${
               hasInteractiveCard ? "px-3 py-2" : "px-3 py-2.5"
             }`}
@@ -249,7 +249,7 @@ export default function MessageBubble({
                         </span>
                         <div className="min-w-0">
                           <p className="truncate text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
-                            Etkilesimli kart
+                            Etkileşimli kart
                           </p>
                           <p className="truncate text-[11px] font-medium text-slate-700">
                             {detailLabel}

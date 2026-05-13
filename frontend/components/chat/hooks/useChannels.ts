@@ -15,7 +15,7 @@ const MOCK_CHANNELS: Channel[] = [
   },
   {
     id: "dept-surgery",
-    name: "Ameliyathane Kanalı",
+    name: "Ameliyathane kanalı",
     type: "department",
     departmentId: "surgery",
     unreadCount: 2,
@@ -25,7 +25,7 @@ const MOCK_CHANNELS: Channel[] = [
   },
   {
     id: "dept-icu",
-    name: "Yoğun Bakım Kanalı",
+    name: "Yoğun Bakım kanalı",
     type: "department",
     departmentId: "icu",
     unreadCount: 0,
@@ -35,7 +35,7 @@ const MOCK_CHANNELS: Channel[] = [
   },
   {
     id: "dept-er",
-    name: "Acil Servis Kanalı",
+    name: "Acil Servis kanalı",
     type: "department",
     departmentId: "er",
     unreadCount: 7,
