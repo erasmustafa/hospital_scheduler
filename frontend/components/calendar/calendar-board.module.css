@@ -625,7 +625,8 @@
   color: #8a97ab;
 }
 
-.addShiftButton {
+.addShiftButton,
+.exportIconButton {
   width: 42px;
   min-height: 42px;
   display: inline-flex;
@@ -644,9 +645,17 @@
   transition: transform 140ms ease, box-shadow 140ms ease;
 }
 
-.addShiftButton:hover {
+.addShiftButton:hover,
+.exportIconButton:hover {
   transform: translateY(-1px);
   box-shadow: 0 20px 34px rgba(37, 99, 235, 0.26);
+}
+
+.exportIconButton {
+  border: 1px solid #dbe4ef;
+  background: #ffffff;
+  color: #4f46e5;
+  box-shadow: none;
 }
 
 .toolbarLegend {
@@ -770,23 +779,28 @@
   max-width: 120px;
 }
 
-.eventShiftName {
-  font-size: 10px;
-  color: #15803d;
-  white-space: nowrap;
-}
-
 .eventBadge {
-  min-width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   border-radius: 6px;
-  background: #6366f1;
-  color: #ffffff;
+  border: 2px solid currentColor;
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.eventBadgeMesai {
+  color: #16a34a;
+  background: #ecfdf3;
+}
+
+.eventBadgeNobet {
+  color: #4f46e5;
+  background: #eef2ff;
 }
 
 .holidayEventChip {
@@ -1010,8 +1024,17 @@
   color: #132544;
   font-weight: 700;
   text-decoration: none !important;
-  font-size: 12px;
-  padding: 10px 12px 0 0 !important;
+  font-size: 11px;
+  padding: 0 !important;
+}
+
+.page :global(.fc .fc-daygrid-day-top) {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  z-index: 2;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .page :global(.fc .fc-event) {
@@ -1047,7 +1070,8 @@
 
 .page :global(.fc .fc-daygrid-day-frame) {
   min-height: 118px;
-  padding: 8px 8px 6px;
+  position: relative;
+  padding: 30px 8px 6px;
 }
 
 .page :global(.fc .fc-daygrid-day.fc-day-today) {

@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CircleAlert,
+  Download,
   Plus,
   RefreshCcw,
   UserRound,
@@ -759,10 +760,14 @@ export function CalendarBoard() {
         <span className={styles.eventStaffName}>
           {props.staff_name || arg.event.title}
         </span>
-        {props.shift_type && !props.is_nobet ? (
-          <span className={styles.eventShiftName}>{props.shift_type}</span>
-        ) : null}
-        {props.is_nobet ? <span className={styles.eventBadge}>N</span> : null}
+        <span
+          className={`${styles.eventBadge} ${
+            props.is_nobet ? styles.eventBadgeNobet : styles.eventBadgeMesai
+          }`}
+          title={props.is_nobet ? "Nöbet" : props.shift_type || "Mesai"}
+        >
+          {props.is_nobet ? "N" : "M"}
+        </span>
       </div>
     );
   }, []);
@@ -1134,6 +1139,15 @@ export function CalendarBoard() {
                 title="Yeni vardiya ekle"
               >
                 <Plus size={16} />
+              </button>
+              <button
+                type="button"
+                className={styles.exportIconButton}
+                onClick={() => window.print()}
+                aria-label="Takvimi dışa aktar"
+                title="Takvimi dışa aktar"
+              >
+                <Download size={16} />
               </button>
             </div>
           </div>
