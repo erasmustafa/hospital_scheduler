@@ -15,7 +15,7 @@
 
 .calendarCard {
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto minmax(0, 1fr);
   gap: 12px;
   padding: 0;
   height: 100%;
@@ -625,8 +625,8 @@
   color: #8a97ab;
 }
 
-.addShiftButton,
-.exportButton {
+.addShiftButton {
+  width: 42px;
   min-height: 42px;
   display: inline-flex;
   align-items: center;
@@ -638,57 +638,44 @@
   color: #ffffff;
   font-size: 13px;
   font-weight: 700;
-  padding: 0 18px;
+  padding: 0;
   box-shadow: 0 16px 28px rgba(37, 99, 235, 0.2);
   cursor: pointer;
   transition: transform 140ms ease, box-shadow 140ms ease;
 }
 
-.addShiftButton:hover,
-.exportButton:hover {
+.addShiftButton:hover {
   transform: translateY(-1px);
   box-shadow: 0 20px 34px rgba(37, 99, 235, 0.26);
 }
 
-.calendarLegend {
+.toolbarLegend {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 10px 14px 0;
+  gap: 14px;
+  min-height: 42px;
+  padding-left: 4px;
 }
 
-.legendItems {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  flex-wrap: wrap;
-}
-
-.legendItems span {
+.toolbarLegend span {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   color: #243754;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.legendItems strong {
-  color: #475569;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
-.legendItems em {
-  width: 22px;
-  height: 22px;
+.toolbarLegend em {
+  width: 20px;
+  height: 20px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 6px;
   font-style: normal;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
 }
 
@@ -714,12 +701,6 @@
   border: 0;
   color: #94a3b8;
   background: #eef2f7;
-}
-
-.exportButton {
-  background: #f1f5ff;
-  color: #4f46e5;
-  box-shadow: none;
 }
 
 .infoText {

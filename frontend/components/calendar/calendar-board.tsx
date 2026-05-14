@@ -10,7 +10,6 @@ import {
   ChevronLeft,
   ChevronRight,
   CircleAlert,
-  Download,
   Plus,
   RefreshCcw,
   UserRound,
@@ -819,6 +818,12 @@ export function CalendarBoard() {
               >
                 Bugün
               </button>
+              <div className={styles.toolbarLegend}>
+                <span><em className={styles.legendMesai}>M</em>Mesai</span>
+                <span><em className={styles.legendNobet}>N</em>Nöbet</span>
+                <span><em className={styles.legendIzin}>İ</em>İzinli</span>
+                <span><em className={styles.legendEmpty}>-</em>Vardiya Yok</span>
+              </div>
             </div>
 
             <div className={styles.toolbarRight}>
@@ -1125,9 +1130,10 @@ export function CalendarBoard() {
                 onClick={() => {
                   window.location.href = "/shifts";
                 }}
+                aria-label="Yeni vardiya ekle"
+                title="Yeni vardiya ekle"
               >
                 <Plus size={16} />
-                Yeni Vardiya Ekle
               </button>
             </div>
           </div>
@@ -1162,18 +1168,6 @@ export function CalendarBoard() {
               eventDragStart={handleEventDragStart}
               eventDragStop={handleEventDragStop}
             />
-          </div>
-          <div className={styles.calendarLegend}>
-            <div className={styles.legendItems}>
-              <span><em className={styles.legendMesai}>M</em>Mesai <strong>08:00 - 16:00</strong></span>
-              <span><em className={styles.legendNobet}>N</em>Nöbet <strong>16:00 - 08:00</strong></span>
-              <span><em className={styles.legendIzin}>İ</em>İzinli</span>
-              <span><em className={styles.legendEmpty}>-</em>Vardiya Yok</span>
-            </div>
-            <button type="button" className={styles.exportButton}>
-              <Download size={16} />
-              Takvimi Dışa Aktar
-            </button>
           </div>
         </div>
       </div>
