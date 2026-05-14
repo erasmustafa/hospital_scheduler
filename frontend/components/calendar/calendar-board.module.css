@@ -16,7 +16,7 @@
 .calendarCard {
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr);
-  gap: 12px;
+  gap: 1px;
   padding: 0;
   height: 100%;
   min-height: 0;
@@ -804,7 +804,11 @@
 }
 
 .holidayEventChip {
+  display: inline-flex;
+  width: fit-content;
+  max-width: calc(100% - 10px);
   min-height: 20px;
+  align-items: center;
   padding: 2px 6px;
   border-radius: 6px;
   border: 1px solid #f3c8ce;
@@ -812,6 +816,9 @@
   color: #a92a3d;
   font-size: 11px;
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .dragGhost {
@@ -1059,12 +1066,12 @@
 
 .page :global(.fc .fc-col-header-cell-cushion) {
   color: #64748b;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.12em;
   line-height: 1;
   text-transform: uppercase;
-  padding: 11px 0;
+  padding: 5px 0;
   text-decoration: none !important;
 }
 
