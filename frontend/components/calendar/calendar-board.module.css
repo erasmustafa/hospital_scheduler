@@ -14,14 +14,14 @@
 }
 
 .calendarCard {
-  border: 1px solid #dbe3ef;
-  border-radius: 28px;
-  background: #ffffff;
-  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.06);
+  border: 1px solid #e0e7f3;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 46px rgba(23, 37, 84, 0.07);
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr);
-  gap: 14px;
-  padding: 22px 22px 26px;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  gap: 12px;
+  padding: 24px 26px 18px;
   height: 100%;
   min-height: 0;
   overflow: hidden;
@@ -32,6 +32,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  min-height: 50px;
 }
 
 .headerTitleWrap {
@@ -42,18 +43,19 @@
 
 .calendarCardHeader h2 {
   margin: 0;
-  font-size: 28px;
+  font-size: 27px;
   line-height: 1.05;
-  font-weight: 800;
+  font-weight: 700;
   color: #122340;
   letter-spacing: -0.04em;
 }
 
 .calendarCardHeader p {
   margin: 8px 0 0;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.5;
-  color: #6d7d92;
+  color: #64748b;
+  font-weight: 600;
 }
 
 .infoBadgeWrap {
@@ -105,8 +107,8 @@
 .calendarFrame {
   min-height: 0;
   height: 100%;
-  border: 1px solid #deE7f2;
-  border-radius: 22px;
+  border: 1px solid #e3ebf5;
+  border-radius: 16px;
   background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
   overflow: auto;
   padding: 0;
@@ -118,6 +120,10 @@
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
+  padding: 16px 16px;
+  border: 1px solid #e5ecf6;
+  border-radius: 16px;
+  background: #ffffff;
 }
 
 .toolbarLeft,
@@ -133,16 +139,16 @@
 .todayButton,
 .staticField,
 .selectField {
-  min-height: 44px;
+  min-height: 42px;
   border: 1px solid #dbe4ef;
-  border-radius: 16px;
+  border-radius: 12px;
   background: #ffffff;
   color: #213452;
 }
 
 .navButton,
 .iconAction {
-  width: 44px;
+  width: 42px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -155,8 +161,8 @@
   align-items: center;
   justify-content: center;
   padding: 0 18px;
-  font-size: 14px;
-  font-weight: 800;
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
 }
 
@@ -208,19 +214,19 @@
 
 .monthDropdown {
   position: relative;
-  min-width: 204px;
+  min-width: 170px;
   z-index: 8;
 }
 
 .monthDropdownButton {
   width: 100%;
-  min-height: 44px;
+  min-height: 42px;
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 0 14px;
   border: 1px solid #dbe4ef;
-  border-radius: 16px;
+  border-radius: 12px;
   background: #ffffff;
   color: #243754;
   cursor: pointer;
@@ -247,7 +253,7 @@
 }
 
 .monthDropdownLabel {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
   color: #243754;
   text-transform: capitalize;
@@ -334,19 +340,19 @@
 
 .scopeDropdown {
   position: relative;
-  min-width: 200px;
+  min-width: 150px;
   z-index: 8;
 }
 
 .scopeDropdownButton {
   width: 100%;
-  min-height: 44px;
+  min-height: 42px;
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 0 14px;
   border: 1px solid #dbe4ef;
-  border-radius: 16px;
+  border-radius: 12px;
   background: #ffffff;
   color: #243754;
   cursor: pointer;
@@ -373,7 +379,7 @@
 }
 
 .scopeDropdownLabel {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
   color: #243754;
   white-space: nowrap;
@@ -455,19 +461,19 @@
 
 .selectFieldDropdown {
   position: relative;
-  min-width: 200px;
+  min-width: 170px;
   z-index: 8;
 }
 
 .selectFieldButton {
   width: 100%;
-  min-height: 44px;
+  min-height: 42px;
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 0 14px;
   border: 1px solid #dbe4ef;
-  border-radius: 16px;
+  border-radius: 12px;
   background: #ffffff;
   color: #243754;
   cursor: pointer;
@@ -500,7 +506,7 @@
 }
 
 .selectFieldDropdownLabel {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
   color: #243754;
   white-space: nowrap;
@@ -623,6 +629,103 @@
   color: #8a97ab;
 }
 
+.addShiftButton,
+.exportButton {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #4f46e5, #2563eb);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 0 18px;
+  box-shadow: 0 16px 28px rgba(37, 99, 235, 0.2);
+  cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.addShiftButton:hover,
+.exportButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 20px 34px rgba(37, 99, 235, 0.26);
+}
+
+.calendarLegend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 14px 0;
+}
+
+.legendItems {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.legendItems span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #243754;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.legendItems strong {
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.legendItems em {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.legendMesai {
+  border: 2px solid #22c55e;
+  color: #16a34a;
+  background: #ecfdf3;
+}
+
+.legendNobet {
+  border: 2px solid #6366f1;
+  color: #4f46e5;
+  background: #eef2ff;
+}
+
+.legendIzin {
+  border: 2px solid #f97316;
+  color: #ea580c;
+  background: #fff7ed;
+}
+
+.legendEmpty {
+  border: 0;
+  color: #94a3b8;
+  background: #eef2f7;
+}
+
+.exportButton {
+  background: #f1f5ff;
+  color: #4f46e5;
+  box-shadow: none;
+}
+
 .infoText {
   margin: 0;
   font-size: 13px;
@@ -647,13 +750,23 @@
   min-height: 20px;
   padding: 1px 6px;
   border-radius: 6px;
-  border: 1px solid #c7d4f2;
-  background: #ecf3ff;
+  border: 1px solid #d2ddf4;
+  background: #f2f6ff;
   cursor: grab;
   box-shadow: 0 1px 2px rgba(38, 77, 143, 0.08);
   transition: transform 140ms ease, border-color 140ms ease, background-color 140ms ease,
     box-shadow 140ms ease;
   will-change: transform;
+}
+
+.assignmentEventChipMesai {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+
+.assignmentEventChipNobet {
+  border-color: #c7d2fe;
+  background: #eef2ff;
 }
 
 .assignmentEventChip:hover {
@@ -682,7 +795,7 @@
 
 .eventShiftName {
   font-size: 10px;
-  color: #41618e;
+  color: #15803d;
   white-space: nowrap;
 }
 
@@ -693,7 +806,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 6px;
-  background: #4a63d9;
+  background: #6366f1;
   color: #ffffff;
   font-size: 10px;
   font-weight: 700;
@@ -937,7 +1050,7 @@
 .page :global(.fc-theme-standard td),
 .page :global(.fc-theme-standard th),
 .page :global(.fc-theme-standard .fc-scrollgrid) {
-  border-color: #e4ecf4;
+  border-color: #e6edf6;
 }
 
 .page :global(.fc .fc-scrollgrid) {
@@ -945,18 +1058,31 @@
 }
 
 .page :global(.fc .fc-col-header-cell-cushion) {
-  color: #7a8ca2;
+  color: #64748b;
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.12em;
   line-height: 1;
   text-transform: uppercase;
-  padding: 8px 0;
+  padding: 11px 0;
   text-decoration: none !important;
 }
 
 .page :global(.fc .fc-daygrid-day-frame) {
-  min-height: 126px;
+  min-height: 118px;
+  padding: 8px 8px 6px;
+}
+
+.page :global(.fc .fc-daygrid-day.fc-day-today) {
+  background: #fff8db;
+}
+
+.page :global(.fc .fc-day-other) {
+  background: #fbfdff;
+}
+
+.page :global(.fc .fc-day-other .fc-daygrid-day-number) {
+  color: #a3afc2;
 }
 
 @media (max-width: 768px) {
