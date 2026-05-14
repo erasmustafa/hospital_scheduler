@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
+  ArrowLeftRight,
   Building2,
   CalendarDays,
   Check,
@@ -11,10 +12,15 @@ import {
   ChevronRight,
   CircleAlert,
   Download,
+  Hospital,
+  Info,
   Plus,
   RefreshCcw,
+  Target,
+  User,
   UserRound,
   Users,
+  X,
 } from "lucide-react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -1205,31 +1211,88 @@ export function CalendarBoard() {
                 role="dialog"
                 aria-modal="true"
               >
-                <h3>Vardiya işlemini onayla</h3>
-                <p className={styles.modalSubtitle}>
-                  Taşıma veya aynı birim içinde swap seçeneğini kullanabilirsiniz.
-                </p>
+                <div className={styles.modalHeader}>
+                  <span className={styles.modalHeroIcon} aria-hidden="true">
+                    <ArrowLeftRight size={34} />
+                  </span>
+                  <div className={styles.modalHeading}>
+                    <h3>Vardiya işlemini onayla</h3>
+                    <p>
+                      Taşıma veya aynı birim içinde swap seçeneğini
+                      kullanabilirsiniz.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className={styles.modalCloseButton}
+                    onClick={() => closeConfirmModal(true)}
+                    aria-label="Modalı kapat"
+                    disabled={isSubmittingMove}
+                  >
+                    <X size={22} />
+                  </button>
+                </div>
 
                 <div className={styles.summaryGrid}>
-                  <div>
-                    <span>Personel</span>
-                    <strong>{confirmState.sourceStaffName}</strong>
+                  <div className={styles.summaryItem}>
+                    <span
+                      className={`${styles.summaryIcon} ${styles.summaryIconBlue}`}
+                      aria-hidden="true"
+                    >
+                      <User size={24} />
+                    </span>
+                    <div>
+                      <span>Personel</span>
+                      <strong>{confirmState.sourceStaffName}</strong>
+                    </div>
                   </div>
-                  <div>
-                    <span>Vardiya</span>
-                    <strong>{confirmState.sourceShiftType}</strong>
+                  <div className={styles.summaryItem}>
+                    <span
+                      className={`${styles.summaryIcon} ${styles.summaryIconPurple}`}
+                      aria-hidden="true"
+                    >
+                      <CalendarDays size={24} />
+                    </span>
+                    <div>
+                      <span>Vardiya</span>
+                      <strong>{confirmState.sourceShiftType}</strong>
+                    </div>
                   </div>
-                  <div>
-                    <span>Birim</span>
-                    <strong>{confirmState.sourceDepartment}</strong>
+                  <div className={styles.summaryItem}>
+                    <span
+                      className={`${styles.summaryIcon} ${styles.summaryIconGreen}`}
+                      aria-hidden="true"
+                    >
+                      <Hospital size={24} />
+                    </span>
+                    <div>
+                      <span>Birim</span>
+                      <strong>{confirmState.sourceDepartment}</strong>
+                    </div>
                   </div>
-                  <div>
-                    <span>Kaynak Gün</span>
-                    <strong>{formatDateLabel(confirmState.sourceDate)}</strong>
+                  <div className={styles.summaryItem}>
+                    <span
+                      className={`${styles.summaryIcon} ${styles.summaryIconOrange}`}
+                      aria-hidden="true"
+                    >
+                      <CalendarDays size={24} />
+                    </span>
+                    <div>
+                      <span>Kaynak Gün</span>
+                      <strong>{formatDateLabel(confirmState.sourceDate)}</strong>
+                    </div>
                   </div>
-                  <div>
-                    <span>Hedef Gün</span>
-                    <strong>{formatDateLabel(confirmState.targetDate)}</strong>
+                  <div className={styles.summaryItem}>
+                    <span
+                      className={`${styles.summaryIcon} ${styles.summaryIconCyan}`}
+                      aria-hidden="true"
+                    >
+                      <Target size={24} />
+                    </span>
+                    <div>
+                      <span>Hedef Gün</span>
+                      <strong>{formatDateLabel(confirmState.targetDate)}</strong>
+                    </div>
                   </div>
                 </div>
 
@@ -1242,11 +1305,19 @@ export function CalendarBoard() {
                   ) : (
                     <div className={styles.swapList}>
                       {confirmState.swapCandidates.map((candidate) => (
-                        <label key={candidate.id} className={styles.swapOption}>
+                        <label
+                          key={candidate.id}
+                          className={`${styles.swapOption} ${
+                            confirmState.selectedTargetId === candidate.id
+                              ? styles.swapOptionSelected
+                              : ""
+                          }`}
+                        >
                           <input
                             type="radio"
                             name="swap_target"
                             value={candidate.id}
+                            className={styles.swapRadio}
                             checked={confirmState.selectedTargetId === candidate.id}
                             onChange={() =>
                               setConfirmState((current) =>
@@ -1258,13 +1329,31 @@ export function CalendarBoard() {
                           />
                           <span>
                             <strong>{candidate.staffName}</strong>
-                            <small>{candidate.shiftType}</small>
+                            <small
+                              className={`${styles.swapShiftPill} ${
+                                candidate.isNobet
+                                  ? styles.swapShiftPillNobet
+                                  : styles.swapShiftPillMesai
+                              }`}
+                            >
+                              {candidate.shiftType}
+                            </small>
                           </span>
-                          <em>{candidate.isNobet ? "N" : "M"}</em>
+                          <em className={styles.swapBadge}>
+                            {candidate.isNobet ? "N" : "M"}
+                          </em>
                         </label>
                       ))}
                     </div>
                   )}
+                </div>
+
+                <div className={styles.modalInfo}>
+                  <Info size={18} />
+                  <span>
+                    Onayladıktan sonra vardiya değişikliği ilgili personele ve
+                    yöneticilere bildirilir.
+                  </span>
                 </div>
 
                 <div className={styles.modalActions}>
@@ -1281,6 +1370,7 @@ export function CalendarBoard() {
                     onClick={() => void runMoveAction()}
                     disabled={isSubmittingMove}
                   >
+                    <ArrowLeftRight size={18} />
                     Sadece Taşı
                   </button>
                   <button
@@ -1289,6 +1379,7 @@ export function CalendarBoard() {
                     onClick={() => void runSwapAction()}
                     disabled={isSubmittingMove || confirmState.swapCandidates.length === 0}
                   >
+                    <Check size={18} />
                     Yer Değiştir
                   </button>
                 </div>
