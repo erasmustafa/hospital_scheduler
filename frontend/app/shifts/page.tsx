@@ -111,6 +111,47 @@ function formatDateTr(iso: string) {
   }
 }
 
+function hexToRgb(hex: string) {
+  const normalized = hex.replace("#", "").trim();
+  const fullHex =
+    normalized.length === 3
+      ? normalized
+          .split("")
+          .map((char) => `${char}${char}`)
+          .join("")
+      : normalized;
+
+  if (!/^[0-9a-fA-F]{6}$/.test(fullHex)) {
+    return null;
+  }
+
+  return {
+    r: parseInt(fullHex.slice(0, 2), 16),
+    g: parseInt(fullHex.slice(2, 4), 16),
+    b: parseInt(fullHex.slice(4, 6), 16),
+  };
+}
+
+function getSoftShiftBadgeStyle(color?: string) {
+  const fallback = "#6366f1";
+  const baseColor = color || fallback;
+  const rgb = hexToRgb(baseColor);
+
+  if (!rgb) {
+    return {
+      color: fallback,
+      backgroundColor: "rgba(99, 102, 241, 0.10)",
+      border: "1px solid rgba(99, 102, 241, 0.18)",
+    };
+  }
+
+  return {
+    color: baseColor,
+    backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.10)`,
+    border: `1px solid rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.18)`,
+  };
+}
+
 function ModalDropdown({
   value,
   placeholder,
@@ -863,7 +904,7 @@ export default function ShiftsPage() {
       <section style={styles.statsRow}>
         <div style={{ ...styles.statCard, ...styles.statCardBlue }}>
           <span style={{ ...styles.statIconBox, ...styles.statIconBlue }}>
-            <ClipboardList size={24} />
+            <ClipboardList size={22} />
           </span>
           <span style={{ ...styles.statMiniBadge, ...styles.statMiniBadgeBlue }}>
             <TrendingUp size={14} />
@@ -876,7 +917,7 @@ export default function ShiftsPage() {
         </div>
         <div style={{ ...styles.statCard, ...styles.statCardGreen }}>
           <span style={{ ...styles.statIconBox, ...styles.statIconGreen }}>
-            <BriefcaseBusiness size={24} />
+            <BriefcaseBusiness size={22} />
           </span>
           <span style={{ ...styles.statMiniBadge, ...styles.statMiniBadgeGreen }}>
             <Check size={14} />
@@ -889,7 +930,7 @@ export default function ShiftsPage() {
         </div>
         <div style={{ ...styles.statCard, ...styles.statCardAmber }}>
           <span style={{ ...styles.statIconBox, ...styles.statIconAmber }}>
-            <Filter size={24} />
+            <Filter size={22} />
           </span>
           <span style={{ ...styles.statMiniBadge, ...styles.statMiniBadgeAmber }}>
             <MoreHorizontal size={14} />
@@ -904,7 +945,7 @@ export default function ShiftsPage() {
         </div>
         <div style={{ ...styles.statCard, ...styles.statCardPurple }}>
           <span style={{ ...styles.statIconBox, ...styles.statIconPurple }}>
-            <CalendarDays size={24} />
+            <CalendarDays size={22} />
           </span>
           <span style={{ ...styles.statMiniBadge, ...styles.statMiniBadgePurple }}>
             <CalendarDays size={14} />
@@ -912,7 +953,7 @@ export default function ShiftsPage() {
           <div style={styles.statContent}>
             <p style={styles.statLabel}>Tarih Aralığı</p>
             <p style={styles.statValue}>
-              {startDate || endDate ? `${startDate || "..."} – ${endDate || "..."}` : "Serbest"}
+              {startDate || endDate ? `${startDate || "..."} / ${endDate || "..."}` : "Serbest"}
             </p>
             <p style={styles.statDesc}>Başlangıç / Bitiş filtresi</p>
           </div>
@@ -1102,8 +1143,7 @@ export default function ShiftsPage() {
                               borderRadius: 20,
                               fontSize: 12,
                               fontWeight: 700,
-                              color: "#ffffff",
-                              backgroundColor: row.shiftColor || "#6366f1",
+                              ...getSoftShiftBadgeStyle(row.shiftColor),
                             }}
                           >
                             {row.shiftTypeName}
@@ -1507,7 +1547,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: "grid",
     gridTemplateColumns: "repeat(4, 1fr)",
     gap: 18,
-    marginBottom: 20,
+    marginBottom: 17,
   },
   statCard: {
     position: "relative",
@@ -1524,20 +1564,20 @@ const styles: Record<string, React.CSSProperties> = {
     boxShadow: "0 12px 30px rgba(15, 23, 42, 0.07)",
   },
   statCardBlue: {
-    borderBottom: "2px solid #4f73ff",
+    borderBottom: "1px solid #4f73ff",
   },
   statCardGreen: {
-    borderBottom: "2px solid #34c77b",
+    borderBottom: "1px solid #34c77b",
   },
   statCardAmber: {
-    borderBottom: "2px solid #f6b83f",
+    borderBottom: "1px solid #f6b83f",
   },
   statCardPurple: {
-    borderBottom: "2px solid #a855f7",
+    borderBottom: "1px solid #a855f7",
   },
   statIconBox: {
-    width: 52,
-    height: 52,
+    width: 46,
+    height: 46,
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
@@ -1591,8 +1631,8 @@ const styles: Record<string, React.CSSProperties> = {
     minWidth: 0,
   },
   statLabel: {
-    fontSize: 11,
-    fontWeight: 800,
+    fontSize: 10,
+    fontWeight: 700,
     color: "#72809b",
     margin: "0 0 6px 0",
     textTransform: "uppercase" as const,
@@ -1603,8 +1643,8 @@ const styles: Record<string, React.CSSProperties> = {
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap" as const,
-    fontSize: 25,
-    fontWeight: 800,
+    fontSize: 20,
+    fontWeight: 700,
     color: "#172033",
     margin: "0 0 6px 0",
     lineHeight: 1.05,
@@ -1627,8 +1667,8 @@ const styles: Record<string, React.CSSProperties> = {
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 17,
-    fontWeight: 800,
+    fontSize: 16,
+    fontWeight: 700,
     color: "#1e293b",
     margin: "0 0 14px 0",
   },
@@ -1746,7 +1786,7 @@ const styles: Record<string, React.CSSProperties> = {
     background: "transparent",
     color: "#334155",
     fontSize: 12,
-    fontWeight: 700,
+    fontWeight: 600,
     fontFamily: "inherit",
     textAlign: "left" as const,
     cursor: "pointer",
@@ -1754,7 +1794,7 @@ const styles: Record<string, React.CSSProperties> = {
   filterDropdownItemActive: {
     color: "#1d4ed8",
     background: "linear-gradient(135deg, #eaf1ff 0%, #f8fbff 100%)",
-    boxShadow: "inset 3px 0 0 #2563eb",
+    boxShadow: "inset 0.5px 0 0 #2563eb",
   },
   filterButton: {
     height: 38,
@@ -1787,8 +1827,8 @@ const styles: Record<string, React.CSSProperties> = {
     marginBottom: 12,
   },
   bulkTitle: {
-    fontSize: 15,
-    fontWeight: 800,
+    fontSize: 16,
+    fontWeight: 700,
     color: "#1e293b",
     margin: 0,
   },
@@ -1998,7 +2038,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: 34,
   },
   modalCard: {
-    width: "min(1040px, calc(100vw - 68px))",
+    width: "min(880px, calc(100vw - 68px))",
     maxHeight: "calc(100vh - 68px)",
     overflowY: "auto" as const,
     display: "flex",

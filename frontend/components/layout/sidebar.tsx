@@ -8,15 +8,19 @@ import {
   BarChart3,
   CalendarDays,
   ClipboardCheck,
+  FolderArchive,
+  GitBranch,
   LayoutDashboard,
   ListChecks,
   LogOut,
   Menu,
   MessageSquare,
+  Settings,
   Sparkles,
   Users,
   PlaneTakeoff,
   Store,
+  ChevronUp,
 } from "lucide-react";
 import type { AuthUser } from "@/lib/auth";
 import { useUiStore } from "@/store/ui-store";
@@ -24,7 +28,7 @@ import { useUiStore } from "@/store/ui-store";
 const generalLinks = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, managerOnly: false },
   { href: "/approvals", label: "Onaylar", icon: ClipboardCheck, managerOnly: false },
-  { href: "/my-availability", label: "Izin/Uygunluk", icon: PlaneTakeoff, managerOnly: false },
+  { href: "/my-availability", label: "İzin/Uygunluk", icon: PlaneTakeoff, managerOnly: false },
   { href: "/shifts", label: "Vardiyalar", icon: ListChecks, managerOnly: true },
   { href: "/staff", label: "Personel", icon: Users, managerOnly: true },
   { href: "/auto-schedule", label: "Otomatik Liste", icon: Sparkles, managerOnly: true },
@@ -37,6 +41,12 @@ const userLinks = [
   { href: "/calendar", label: "Takvim", icon: CalendarDays, managerOnly: false },
 ];
 
+const managerProfileLinks = [
+  { href: "/archive", label: "Arşiv / Evrak", icon: FolderArchive },
+  { href: "/settings", label: "Ayarlar", icon: Settings },
+  { href: "/department-control", label: "Birim Kontrolü", icon: GitBranch },
+];
+
 type SidebarProps = {
   onLogout?: () => void;
   isLoggingOut?: boolean;
@@ -45,7 +55,7 @@ type SidebarProps = {
 
 function roleLabel(user?: AuthUser | null) {
   if (!user) return "Personel";
-  if (user.isSuperuser) return "Yonetici";
+  if (user.isSuperuser) return "Yönetici";
   if (user.canManageDepartment) return "Birim Yetkilisi";
   return "Personel";
 }
@@ -53,6 +63,7 @@ function roleLabel(user?: AuthUser | null) {
 export function Sidebar({ onLogout, isLoggingOut = false, user = null }: SidebarProps) {
   const pathname = usePathname();
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const collapsed = useUiStore((state) => state.sidebarCollapsed);
   const toggleSidebar = useUiStore((state) => state.toggleSidebar);
   const hasManagerAccess = Boolean(user?.isSuperuser || user?.canManageDepartment);
@@ -218,19 +229,61 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
 
       <div style={styles.footer}>
         <div
+          role={hasManagerAccess ? "button" : undefined}
+          tabIndex={hasManagerAccess ? 0 : undefined}
+          onClick={() => {
+            if (!collapsed && hasManagerAccess) {
+              setProfileMenuOpen((value) => !value);
+            }
+          }}
           style={{
             ...styles.profileBox,
             justifyContent: collapsed ? "center" : "flex-start",
+            cursor: !collapsed && hasManagerAccess ? "pointer" : "default",
           }}
         >
           <div style={styles.avatar}>{avatarLetter}</div>
           {!collapsed && (
-            <div style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
-              <span style={styles.profileName}>{displayName}</span>
-              <span style={styles.profileRole}>{roleLabel(user)}</span>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, flex: 1, minWidth: 0 }}>
+              <div style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                <span style={styles.profileName}>{displayName}</span>
+                <span style={styles.profileRole}>{roleLabel(user)}</span>
+              </div>
+              {hasManagerAccess && (
+                <ChevronUp
+                  size={15}
+                  style={{
+                    color: "rgba(255,255,255,0.75)",
+                    transform: profileMenuOpen ? "rotate(0deg)" : "rotate(180deg)",
+                    transition: "transform 160ms ease",
+                    flexShrink: 0,
+                  }}
+                />
+              )}
             </div>
           )}
         </div>
+        {!collapsed && hasManagerAccess && profileMenuOpen && (
+          <div style={styles.profileMenu}>
+            {managerProfileLinks.map((item) => {
+              const Icon = item.icon;
+              const active = isActiveLink(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  style={{
+                    ...styles.profileMenuItem,
+                    ...(active ? styles.profileMenuItemActive : {}),
+                  }}
+                >
+                  <Icon size={16} />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        )}
         <button
           type="button"
           onClick={onLogout}
@@ -241,10 +294,10 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
             opacity: isLoggingOut ? 0.75 : 1,
             cursor: isLoggingOut ? "wait" : "pointer",
           }}
-          title={collapsed ? "Cikis Yap" : undefined}
+            title={collapsed ? "Çıkış Yap" : undefined}
         >
           <LogOut size={16} />
-          {!collapsed && <span>{isLoggingOut ? "Cikis..." : "Logout"}</span>}
+          {!collapsed && <span>{isLoggingOut ? "Çıkış..." : "Logout"}</span>}
         </button>
       </div>
     </aside>
@@ -386,6 +439,34 @@ const styles: Record<string, React.CSSProperties> = {
     background: "rgba(255,255,255,0.1)",
     padding: "10px",
     borderRadius: 16,
+    transition: "background 160ms ease, box-shadow 160ms ease",
+  },
+  profileMenu: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 6,
+    padding: "8px",
+    borderRadius: 14,
+    background: "rgba(255,255,255,0.12)",
+    border: "1px solid rgba(255,255,255,0.14)",
+    boxShadow: "0 14px 26px rgba(30,64,175,0.16)",
+  },
+  profileMenuItem: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    minHeight: 38,
+    padding: "0 10px",
+    borderRadius: 10,
+    color: "rgba(255,255,255,0.88)",
+    textDecoration: "none",
+    fontSize: 13,
+    fontWeight: 700,
+    transition: "background 160ms ease, transform 160ms ease",
+  },
+  profileMenuItemActive: {
+    color: "#3B5BDB",
+    background: "#ffffff",
   },
   avatar: {
     width: 36,

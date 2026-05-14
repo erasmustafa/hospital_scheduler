@@ -812,7 +812,7 @@ const styles: Record<string, CSSProperties> = {
     background: "transparent",
     color: "#34425f",
     fontSize: 12,
-    fontWeight: 700,
+    fontWeight: 600,
     fontFamily: "inherit",
     textAlign: "left",
     cursor: "pointer",
@@ -820,7 +820,7 @@ const styles: Record<string, CSSProperties> = {
   dropdownOptionActive: {
     background: "linear-gradient(135deg, #eef2ff 0%, #f8fbff 100%)",
     color: "#4f46e5",
-    boxShadow: "inset 3px 0 0 #6d5dfc",
+    boxShadow: "inset 0.5px 0 0 #6d5dfc",
   },
   fieldInput: {
     width: "100%",

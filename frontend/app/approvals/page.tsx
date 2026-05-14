@@ -732,14 +732,14 @@ const styles: Record<string, CSSProperties> = {
     background: "transparent",
     color: "#334155",
     fontSize: 12,
-    fontWeight: 700,
+    fontWeight: 600,
     fontFamily: "inherit",
     cursor: "pointer",
   },
   filterDropdownItemActive: {
     background: "linear-gradient(135deg, #eef2ff 0%, #f8fbff 100%)",
     color: "#4f46e5",
-    boxShadow: "inset 3px 0 0 #5b5cf6",
+    boxShadow: "inset 0.5px 0 0 #5b5cf6",
   },
   refreshButton: {
     height: 42,

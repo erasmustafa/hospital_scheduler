@@ -80,24 +80,6 @@ function getDefaultAvatarSrc(gender?: StaffRow["gender"]) {
   return "/images/staff-avatar-male.svg";
 }
 
-function getInitials(name: string) {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return "P";
-  if (parts.length === 1) return parts[0].slice(0, 2).toLocaleUpperCase("tr-TR");
-  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toLocaleUpperCase("tr-TR");
-}
-
-function getAvatarTone(index: number) {
-  const tones = [
-    "linear-gradient(135deg, #eef2ff 0%, #ddd6fe 100%)",
-    "linear-gradient(135deg, #fce7f3 0%, #fae8ff 100%)",
-    "linear-gradient(135deg, #ffedd5 0%, #fef3c7 100%)",
-    "linear-gradient(135deg, #ccfbf1 0%, #e0f2fe 100%)",
-    "linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%)",
-  ];
-  return tones[index % tones.length];
-}
-
 export default function StaffPage() {
   const router = useRouter();
   const [staff, setStaff] = useState<StaffRow[]>([]);
@@ -419,7 +401,7 @@ export default function StaffPage() {
                       </td>
                     </tr>
                   ) : (
-                    paginatedStaff.map((row, index) => {
+                    paginatedStaff.map((row) => {
                       const titleLabel = row.title || (roleLabelTr[row.role] ?? row.role);
                       const professionLabel = row.profession || (roleLabelTr[row.role] ?? row.role);
                       const dept = row.departmentName ?? "Tanımsız";
@@ -442,14 +424,13 @@ export default function StaffPage() {
                               <span
                                 style={{
                                   ...styles.avatar,
-                                  background: row.photoUrl ? "#eef2ff" : getAvatarTone(index),
                                 }}
                               >
-                                {row.photoUrl ? (
-                                  <img src={row.photoUrl} alt={row.fullName} style={styles.avatarImage} />
-                                ) : (
-                                  getInitials(row.fullName)
-                                )}
+                                <img
+                                  src={row.photoUrl || getDefaultAvatarSrc(row.gender)}
+                                  alt={row.fullName}
+                                  style={styles.avatarImage}
+                                />
                                 <span style={styles.avatarStatus} />
                               </span>
                               <div>
@@ -525,7 +506,11 @@ export default function StaffPage() {
 
             <footer style={styles.tableFooter}>
               <div style={styles.footerLeft}>
-                <span>{filteredStaff.length} kayıt</span>
+                <span>Toplam {filteredStaff.length} kayıt</span>
+                <span style={styles.footerDivider}>•</span>
+                <span>
+                  {visibleStart} - {visibleEnd} arası gösteriliyor
+                </span>
                 <button type="button" style={styles.pageSizeButton}>
                   10 / sayfa
                   <ChevronDown size={14} />
@@ -562,9 +547,7 @@ export default function StaffPage() {
                   <ChevronRight size={16} />
                 </button>
               </div>
-              <span style={styles.footerRange}>
-                {visibleStart} - {visibleEnd} arası gösteriliyor
-              </span>
+              <span />
             </footer>
           </>
         )}
@@ -778,7 +761,7 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: "center",
     justifyContent: "space-between",
     gap: 18,
-    padding: "24px 26px 20px",
+    padding: "14px 22px 12px",
     borderBottom: "1px solid #e7edf7",
     flexShrink: 0,
   },
@@ -935,7 +918,7 @@ const styles: Record<string, React.CSSProperties> = {
     top: 0,
     zIndex: 2,
     background: "linear-gradient(180deg, #fbfdff 0%, #f7faff 100%)",
-    padding: "14px 20px",
+    padding: "9px 20px",
     color: "#667391",
     fontSize: 12,
     fontWeight: 700,
@@ -1071,12 +1054,12 @@ const styles: Record<string, React.CSSProperties> = {
   },
   tableFooter: {
     flexShrink: 0,
-    minHeight: 58,
+    minHeight: 52,
     display: "grid",
     gridTemplateColumns: "1fr auto 1fr",
     alignItems: "center",
     gap: 16,
-    padding: "10px 22px",
+    padding: "8px 22px",
     borderTop: "1px solid #e7edf7",
     background: "rgba(255,255,255,0.94)",
   },
@@ -1132,15 +1115,12 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 700,
   },
   paginationNumberActive: {
-    border: "0",
-    background: "linear-gradient(135deg, #715cff 0%, #4f46e5 100%)",
-    color: "#ffffff",
-    boxShadow: "0 12px 22px rgba(79,70,229,0.24)",
+    border: "1px solid #ddd6fe",
+    background: "#ede9fe",
+    color: "#6d28d9",
+    boxShadow: "0 10px 18px rgba(109,40,217,0.12)",
   },
-  footerRange: {
-    justifySelf: "end",
-    color: "#7a88a5",
-    fontSize: 12,
-    fontWeight: 700,
+  footerDivider: {
+    color: "#c7d2fe",
   },
 };
