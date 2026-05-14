@@ -20,7 +20,7 @@ import {
   Users,
   PlaneTakeoff,
   Store,
-  ChevronUp,
+  ChevronRight,
 } from "lucide-react";
 import type { AuthUser } from "@/lib/auth";
 import { useUiStore } from "@/store/ui-store";
@@ -250,11 +250,11 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
                 <span style={styles.profileRole}>{roleLabel(user)}</span>
               </div>
               {hasManagerAccess && (
-                <ChevronUp
+                <ChevronRight
                   size={15}
                   style={{
                     color: "rgba(255,255,255,0.75)",
-                    transform: profileMenuOpen ? "rotate(0deg)" : "rotate(180deg)",
+                    transform: profileMenuOpen ? "translateX(2px)" : "translateX(0)",
                     transition: "transform 160ms ease",
                     flexShrink: 0,
                   }}
@@ -263,27 +263,6 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
             </div>
           )}
         </div>
-        {!collapsed && hasManagerAccess && profileMenuOpen && (
-          <div style={styles.profileMenu}>
-            {managerProfileLinks.map((item) => {
-              const Icon = item.icon;
-              const active = isActiveLink(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  style={{
-                    ...styles.profileMenuItem,
-                    ...(active ? styles.profileMenuItemActive : {}),
-                  }}
-                >
-                  <Icon size={16} />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </div>
-        )}
         <button
           type="button"
           onClick={onLogout}
@@ -301,6 +280,28 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
         </button>
       </div>
     </aside>
+    {!collapsed && hasManagerAccess && profileMenuOpen && (
+      <div style={styles.profileMenu}>
+        {managerProfileLinks.map((item) => {
+          const Icon = item.icon;
+          const active = isActiveLink(item.href);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setProfileMenuOpen(false)}
+              style={{
+                ...styles.profileMenuItem,
+                ...(active ? styles.profileMenuItemActive : {}),
+              }}
+            >
+              <Icon size={16} />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </div>
+    )}
     </>
   );
 }
@@ -442,23 +443,29 @@ const styles: Record<string, React.CSSProperties> = {
     transition: "background 160ms ease, box-shadow 160ms ease",
   },
   profileMenu: {
+    position: "fixed",
+    left: 276,
+    bottom: 94,
+    zIndex: 80,
+    width: 210,
     display: "flex",
     flexDirection: "column",
     gap: 6,
-    padding: "8px",
-    borderRadius: 14,
-    background: "rgba(255,255,255,0.12)",
-    border: "1px solid rgba(255,255,255,0.14)",
-    boxShadow: "0 14px 26px rgba(30,64,175,0.16)",
+    padding: "10px",
+    borderRadius: 16,
+    background: "rgba(255,255,255,0.96)",
+    border: "1px solid rgba(219,229,246,0.92)",
+    boxShadow: "0 22px 50px rgba(30,64,175,0.18)",
+    backdropFilter: "blur(18px)",
   },
   profileMenuItem: {
     display: "flex",
     alignItems: "center",
     gap: 10,
-    minHeight: 38,
-    padding: "0 10px",
-    borderRadius: 10,
-    color: "rgba(255,255,255,0.88)",
+    minHeight: 42,
+    padding: "0 12px",
+    borderRadius: 12,
+    color: "#334155",
     textDecoration: "none",
     fontSize: 13,
     fontWeight: 700,
@@ -466,7 +473,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
   profileMenuItemActive: {
     color: "#3B5BDB",
-    background: "#ffffff",
+    background: "#eef2ff",
   },
   avatar: {
     width: 36,
