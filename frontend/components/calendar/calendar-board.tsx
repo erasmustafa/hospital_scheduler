@@ -885,7 +885,6 @@ export function CalendarBoard() {
                           }`}
                           onClick={() => selectCalendarMonth(monthDate)}
                         >
-                          <CalendarDays size={20} />
                           <span>{monthLabel}</span>
                           {isSelected ? <Check size={18} /> : null}
                         </button>
@@ -930,7 +929,6 @@ export function CalendarBoard() {
                 {isScopeDropdownOpen ? (
                   <div className={styles.scopeDropdownMenu} role="listbox">
                     {SCOPE_OPTIONS.map((option) => {
-                      const Icon = option.icon;
                       const isSelected = option.value === scope;
                       const withDivider = option.value === "my";
 
@@ -945,7 +943,6 @@ export function CalendarBoard() {
                           } ${withDivider ? styles.scopeOptionDivider : ""}`}
                           onClick={() => selectScope(option.value)}
                         >
-                          <Icon size={18} />
                           <span>{option.label}</span>
                           {isSelected ? <Check size={18} /> : null}
                         </button>
@@ -1009,7 +1006,6 @@ export function CalendarBoard() {
                       }`}
                       onClick={() => selectDepartment("")}
                     >
-                      <Users size={18} />
                       <span>Tüm Birimler</span>
                       {!selectedDepartment ? <Check size={18} /> : null}
                     </button>
@@ -1028,7 +1024,6 @@ export function CalendarBoard() {
                           }`}
                           onClick={() => selectDepartment(String(department.id))}
                         >
-                          <Building2 size={18} />
                           <span>{department.name}</span>
                           {isSelected ? <Check size={18} /> : null}
                         </button>
@@ -1092,7 +1087,6 @@ export function CalendarBoard() {
                       }`}
                       onClick={() => selectStaff("")}
                     >
-                      <Users size={18} />
                       <span>Tüm Personel</span>
                       {!selectedStaff ? <Check size={18} /> : null}
                     </button>
@@ -1111,7 +1105,6 @@ export function CalendarBoard() {
                           }`}
                           onClick={() => selectStaff(String(item.id))}
                         >
-                          <UserRound size={18} />
                           <span>{item.fullName}</span>
                           {isSelected ? <Check size={18} /> : null}
                         </button>
