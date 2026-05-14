@@ -863,19 +863,19 @@
     radial-gradient(circle at 50% 20%, rgba(219, 231, 255, 0.18), transparent 36%),
     rgba(15, 23, 42, 0.46);
   backdrop-filter: blur(9px);
-  padding: 28px;
+  padding: 24px;
 }
 
 .modalCard {
-  width: min(980px, 100%);
-  max-height: calc(100vh - 56px);
+  width: min(882px, 100%);
+  max-height: calc(100vh - 48px);
   overflow: auto;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.94)),
     radial-gradient(circle at 94% 8%, rgba(59, 130, 246, 0.08), transparent 28%);
   border: 1px solid rgba(219, 228, 239, 0.96);
-  border-radius: 32px;
-  padding: 32px;
+  border-radius: 29px;
+  padding: 29px;
   box-shadow:
     0 36px 90px rgba(15, 23, 42, 0.24),
     inset 0 1px 0 rgba(255, 255, 255, 0.82);
@@ -885,12 +885,12 @@
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
 }
 
 .modalHeroIcon {
-  width: 68px;
-  height: 68px;
+  width: 61px;
+  height: 61px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -900,29 +900,38 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
+.modalHeroIcon svg,
+.summaryIcon svg,
+.modalCloseButton svg,
+.modalActions svg,
+.modalInfo svg {
+  display: block;
+  flex-shrink: 0;
+}
+
 .modalHeading h3 {
   margin: 0;
-  font-size: clamp(22px, 2vw, 30px);
+  font-size: clamp(20px, 1.8vw, 27px);
   font-weight: 700;
   color: #0f203b;
   letter-spacing: -0.035em;
 }
 
 .modalHeading p {
-  margin: 8px 0 0;
-  font-size: 15px;
+  margin: 7px 0 0;
+  font-size: 14px;
   font-weight: 500;
   color: #63738f;
 }
 
 .modalCloseButton {
-  width: 48px;
-  height: 48px;
+  width: 43px;
+  height: 43px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border: 1px solid #dbe4ef;
-  border-radius: 13px;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.86);
   color: #334761;
   box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
@@ -937,20 +946,20 @@
 }
 
 .summaryGrid {
-  margin-top: 28px;
+  margin-top: 25px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px 18px;
+  gap: 14px 16px;
 }
 
 .summaryItem {
   display: flex;
   align-items: center;
-  gap: 18px;
-  min-height: 82px;
-  padding: 16px 18px;
+  gap: 16px;
+  min-height: 74px;
+  padding: 14px 16px;
   border: 1px solid #dbe5f2;
-  border-radius: 18px;
+  border-radius: 16px;
   background: rgba(255, 255, 255, 0.78);
   box-shadow:
     0 10px 30px rgba(15, 23, 42, 0.04),
@@ -962,13 +971,14 @@
 }
 
 .summaryIcon {
-  width: 52px;
-  height: 52px;
-  display: inline-flex;
+  width: 47px;
+  height: 47px;
+  display: inline-flex !important;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   border-radius: 999px;
+  line-height: 0;
 }
 
 .summaryIconBlue {
@@ -996,17 +1006,17 @@
   color: #0ea5e9;
 }
 
-.summaryGrid span {
+.summaryItem > div > span {
   display: block;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: #667792;
 }
 
-.summaryGrid strong {
+.summaryItem strong {
   display: block;
-  margin-top: 5px;
-  font-size: 18px;
+  margin-top: 4px;
+  font-size: 16px;
   font-weight: 700;
   color: #10203d;
   white-space: nowrap;
@@ -1015,42 +1025,42 @@
 }
 
 .swapBlock {
-  margin-top: 22px;
-  padding-top: 22px;
+  margin-top: 20px;
+  padding-top: 20px;
   border-top: 1px solid #dce5f2;
 }
 
 .swapBlock > p {
-  margin: 0 0 12px;
-  font-size: 18px;
+  margin: 0 0 11px;
+  font-size: 16px;
   font-weight: 700;
   color: #1c2d49;
 }
 
 .emptySwapState {
-  padding: 18px;
+  padding: 16px;
   border: 1px dashed #b9c8df;
-  border-radius: 18px;
+  border-radius: 16px;
   background: #f8fbff;
   color: #62758f;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
 }
 
 .swapList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 11px;
 }
 
 .swapOption {
   display: flex;
   align-items: center;
-  gap: 14px;
-  min-height: 74px;
-  padding: 14px 16px;
+  gap: 13px;
+  min-height: 67px;
+  padding: 13px 14px;
   border: 1px solid #dbe5f2;
-  border-radius: 18px;
+  border-radius: 16px;
   background: rgba(255, 255, 255, 0.84);
   cursor: pointer;
   transition:
@@ -1073,20 +1083,20 @@
 }
 
 .swapRadio {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   accent-color: #3155df;
 }
 
 .swapOption span {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 6px;
   min-width: 0;
 }
 
 .swapOption strong {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: #122342;
   white-space: nowrap;
@@ -1102,9 +1112,9 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 3px 10px;
-  border-radius: 9px;
-  font-size: 12px;
+  padding: 3px 9px;
+  border-radius: 8px;
+  font-size: 11px;
   font-weight: 700;
 }
 
@@ -1120,8 +1130,8 @@
 
 .swapBadge {
   margin-left: auto;
-  min-width: 36px;
-  height: 36px;
+  min-width: 32px;
+  height: 32px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1129,22 +1139,22 @@
   background: #f0edff;
   color: #7657de;
   font-style: normal;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
 }
 
 .modalInfo {
-  margin-top: 16px;
+  margin-top: 14px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  min-height: 52px;
-  padding: 14px 16px;
+  gap: 11px;
+  min-height: 47px;
+  padding: 13px 14px;
   border: 1px solid #cfe0ff;
-  border-radius: 16px;
+  border-radius: 14px;
   background: linear-gradient(90deg, #f1f6ff, #f8fbff);
   color: #36507a;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
 }
 
@@ -1154,24 +1164,24 @@
 }
 
 .modalActions {
-  margin-top: 22px;
+  margin-top: 20px;
   display: flex;
-  gap: 14px;
+  gap: 13px;
   justify-content: flex-end;
 }
 
 .modalActions button {
-  min-height: 48px;
+  min-height: 43px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 0 28px;
+  gap: 9px;
+  padding: 0 25px;
   border: 1px solid #dbe4ef;
-  border-radius: 14px;
+  border-radius: 13px;
   background: #ffffff;
   color: #25416a;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
