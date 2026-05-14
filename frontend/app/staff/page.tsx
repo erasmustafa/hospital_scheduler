@@ -10,7 +10,7 @@ import {
   ChevronRight,
   ChevronsUpDown,
   Filter,
-  MoreVertical,
+  Info,
   Pencil,
   Plus,
   Search,
@@ -232,6 +232,11 @@ export default function StaffPage() {
           box-shadow: 0 0 0 4px rgba(79, 115, 255, 0.10);
         }
 
+        .staff-info-tooltip:hover span {
+          opacity: 1 !important;
+          transform: translateY(-50%) translateX(2px) !important;
+        }
+
         .staff-dropdown-menu {
           animation: staffDropdownIn 160ms ease both;
           transform-origin: top right;
@@ -302,10 +307,15 @@ export default function StaffPage() {
       <section style={styles.tableSection}>
         <div style={styles.tableHeader}>
           <div>
-            <h2 style={styles.tableTitle}>Personel Tablosu</h2>
-            <p style={styles.tableSubtitle}>
-              Kadro listesini ad, ünvan, meslek, birim ve aktiflik durumu ile birlikte inceleyin.
-            </p>
+            <div style={styles.tableTitleRow}>
+              <h2 style={styles.tableTitle}>Personel Tablosu</h2>
+              <span className="staff-info-tooltip" style={styles.infoTooltipWrap}>
+                <Info size={15} />
+                <span style={styles.infoTooltip}>
+                  Kadro listesini ad, ünvan, meslek, birim ve aktiflik durumu ile birlikte inceleyin.
+                </span>
+              </span>
+            </div>
           </div>
 
           <div style={styles.tableActions}>
@@ -382,9 +392,6 @@ export default function StaffPage() {
               <table style={styles.table}>
                 <thead>
                   <tr>
-                    <th style={{ ...styles.th, width: 34 }}>
-                      <input type="checkbox" aria-label="Tüm personeli seç" style={styles.checkbox} />
-                    </th>
                     <th style={styles.th}>Ad Soyad</th>
                     <th style={{ ...styles.th, textAlign: "center" }}>
                       <span style={styles.thSort}>Personel No <ChevronsUpDown size={13} /></span>
@@ -407,7 +414,7 @@ export default function StaffPage() {
                 <tbody>
                   {paginatedStaff.length === 0 ? (
                     <tr>
-                      <td colSpan={8} style={{ ...styles.td, textAlign: "center", color: "#94a3b8" }}>
+                      <td colSpan={7} style={{ ...styles.td, textAlign: "center", color: "#94a3b8" }}>
                         Filtreye uygun personel bulunamadı.
                       </td>
                     </tr>
@@ -427,9 +434,6 @@ export default function StaffPage() {
 
                       return (
                         <tr key={row.id} className="staff-table-row" style={styles.tableRow}>
-                          <td style={styles.td}>
-                            <input type="checkbox" aria-label={`${row.fullName} seç`} style={styles.checkbox} />
-                          </td>
                           <td
                             style={styles.td}
                             onClick={() => router.push(`/staff/${row.id}`)}
@@ -508,15 +512,6 @@ export default function StaffPage() {
                               >
                                 <Pencil size={15} />
                                 Düzenle
-                              </button>
-                              <button
-                                type="button"
-                                className="staff-row-action"
-                                style={styles.moreButton}
-                                onClick={(event) => event.stopPropagation()}
-                                aria-label={`${row.fullName} işlemleri`}
-                              >
-                                <MoreVertical size={17} />
                               </button>
                             </div>
                           </td>
@@ -795,11 +790,43 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 700,
     letterSpacing: "-0.02em",
   },
-  tableSubtitle: {
-    margin: "9px 0 0",
-    color: "#7583a2",
-    fontSize: 13,
+  tableTitleRow: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 8,
+    position: "relative",
+  },
+  infoTooltipWrap: {
+    position: "relative",
+    width: 24,
+    height: 24,
+    borderRadius: 999,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#4f46e5",
+    background: "#eef2ff",
+    cursor: "help",
+  },
+  infoTooltip: {
+    position: "absolute",
+    left: "calc(100% + 10px)",
+    top: "50%",
+    transform: "translateY(-50%)",
+    width: 320,
+    padding: "9px 12px",
+    borderRadius: 12,
+    border: "1px solid #dbe5f6",
+    background: "rgba(255,255,255,0.98)",
+    color: "#52617d",
+    boxShadow: "0 16px 34px rgba(23,37,84,0.14)",
+    fontSize: 12,
     fontWeight: 600,
+    lineHeight: 1.45,
+    opacity: 0,
+    pointerEvents: "none",
+    transition: "opacity 160ms ease, transform 160ms ease",
+    zIndex: 25,
   },
   tableActions: {
     display: "flex",
@@ -933,12 +960,6 @@ const styles: Record<string, React.CSSProperties> = {
   tableRow: {
     cursor: "default",
   },
-  checkbox: {
-    width: 15,
-    height: 15,
-    accentColor: "#5b5cf6",
-    cursor: "pointer",
-  },
   nameCell: {
     display: "flex",
     alignItems: "center",
@@ -1046,19 +1067,6 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: "pointer",
     fontSize: 13,
     fontWeight: 700,
-    transition: "transform 180ms ease, box-shadow 180ms ease, filter 180ms ease",
-  },
-  moreButton: {
-    width: 40,
-    height: 40,
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 11,
-    border: "1px solid #dce5f4",
-    background: "#ffffff",
-    color: "#334155",
-    cursor: "pointer",
     transition: "transform 180ms ease, box-shadow 180ms ease, filter 180ms ease",
   },
   tableFooter: {
