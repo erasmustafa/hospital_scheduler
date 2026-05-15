@@ -222,7 +222,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           alignItems: "center",
           justifyContent: "center",
           height: "100vh",
-          backgroundColor: "#f1f5f9",
+          backgroundColor: "#F5F7FB",
           color: "#64748b",
           fontFamily: "'Inter', 'Segoe UI', sans-serif",
           fontSize: 14,
@@ -243,7 +243,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         display: "flex",
         height: "100vh",
         overflow: "hidden",
-        backgroundColor: "#f1f5f9",
+        background: "linear-gradient(180deg, #F7F9FD 0%, #F5F7FB 100%)",
       }}
     >
       {/* ── SIDEBAR ── */}
@@ -262,6 +262,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           minWidth: 0,
           minHeight: 0,
           overflow: "hidden",
+          backgroundColor: "#F5F7FB",
         }}
       >
         {shouldShowTopbar && pageInfo && (

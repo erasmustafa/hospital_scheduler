@@ -18,7 +18,6 @@ import {
   Settings,
   Sparkles,
   Users,
-  PlaneTakeoff,
   Store,
   ChevronRight,
 } from "lucide-react";
@@ -28,7 +27,6 @@ import { useUiStore } from "@/store/ui-store";
 const generalLinks = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, managerOnly: false },
   { href: "/approvals", label: "Onaylar", icon: ClipboardCheck, managerOnly: false },
-  { href: "/my-availability", label: "İzin/Uygunluk", icon: PlaneTakeoff, managerOnly: false },
   { href: "/shifts", label: "Vardiyalar", icon: ListChecks, managerOnly: true },
   { href: "/staff", label: "Personel", icon: Users, managerOnly: true },
   { href: "/auto-schedule", label: "Otomatik Liste", icon: Sparkles, managerOnly: true },
@@ -166,17 +164,19 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
                   style={{
                     ...styles.navItem,
                     backgroundColor: active
-                      ? "#ffffff"
+                      ? "#eef2ff"
                       : hovered
-                        ? "rgba(255,255,255,0.12)"
+                        ? "#f7f9ff"
                         : "transparent",
-                    color: active ? "#3B5BDB" : "rgba(255,255,255,0.88)",
+                    color: active ? "#3157E8" : hovered ? "#243754" : "#52627a",
                     justifyContent: collapsed ? "center" : "flex-start",
-                    border: hovered && !active ? "1px solid rgba(255,255,255,0.16)" : "1px solid transparent",
-                    boxShadow: hovered && !active ? "0 10px 20px rgba(30,64,175,0.14)" : "none",
+                    border: active ? "1px solid #dce6ff" : hovered ? "1px solid #e6ecf5" : "1px solid transparent",
+                    boxShadow: active
+                      ? "inset 3px 0 0 #365EFF, 0 12px 26px rgba(49,87,232,0.10)"
+                      : hovered
+                        ? "0 10px 22px rgba(15,23,42,0.05)"
+                        : "none",
                     transform: hovered && !active ? "translateX(2px)" : "translateX(0)",
-                    backdropFilter: hovered && !active ? "blur(12px)" : "none",
-                    ...(active && !collapsed ? styles.activeNavIndicator : {}),
                   }}
                   title={collapsed ? link.label : undefined}
                 >
@@ -204,17 +204,19 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
                   style={{
                     ...styles.navItem,
                     backgroundColor: active
-                      ? "#ffffff"
+                      ? "#eef2ff"
                       : hovered
-                        ? "rgba(255,255,255,0.12)"
+                        ? "#f7f9ff"
                         : "transparent",
-                    color: active ? "#3B5BDB" : "rgba(255,255,255,0.88)",
+                    color: active ? "#3157E8" : hovered ? "#243754" : "#52627a",
                     justifyContent: collapsed ? "center" : "flex-start",
-                    border: hovered && !active ? "1px solid rgba(255,255,255,0.16)" : "1px solid transparent",
-                    boxShadow: hovered && !active ? "0 10px 20px rgba(30,64,175,0.14)" : "none",
+                    border: active ? "1px solid #dce6ff" : hovered ? "1px solid #e6ecf5" : "1px solid transparent",
+                    boxShadow: active
+                      ? "inset 3px 0 0 #365EFF, 0 12px 26px rgba(49,87,232,0.10)"
+                      : hovered
+                        ? "0 10px 22px rgba(15,23,42,0.05)"
+                        : "none",
                     transform: hovered && !active ? "translateX(2px)" : "translateX(0)",
-                    backdropFilter: hovered && !active ? "blur(12px)" : "none",
-                    ...(active && !collapsed ? styles.activeNavIndicator : {}),
                   }}
                   title={collapsed ? link.label : undefined}
                 >
@@ -253,7 +255,7 @@ export function Sidebar({ onLogout, isLoggingOut = false, user = null }: Sidebar
                 <ChevronRight
                   size={15}
                   style={{
-                    color: "rgba(255,255,255,0.75)",
+                    color: "#72809A",
                     transform: profileMenuOpen ? "translateX(2px)" : "translateX(0)",
                     transition: "transform 160ms ease",
                     flexShrink: 0,
@@ -310,33 +312,37 @@ const styles: Record<string, React.CSSProperties> = {
   sidebar: {
     display: "flex",
     flexDirection: "column",
-    background: "linear-gradient(180deg, #5F7BFF 0%, #4A6CF7 40%, #3B5BDB 100%)",
-    color: "#ffffff",
+    background: "linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(247,249,253,0.96) 100%)",
+    color: "#0F172A",
     position: "sticky",
     top: 0,
     transition: "width 0.3s ease",
-    borderTopRightRadius: 24,
-    borderBottomRightRadius: 24,
+    borderTopRightRadius: 22,
+    borderBottomRightRadius: 22,
+    borderRight: "1px solid #DFE7F4",
     margin: "12px 0 12px 12px",
     height: "calc(100vh - 24px)",
     overflow: "hidden",
-    boxShadow: "4px 0 24px rgba(59,91,219,0.15)",
+    boxShadow: "0 18px 48px rgba(15,23,42,0.07)",
+    backdropFilter: "blur(18px)",
   },
   header: {
-    padding: "24px 20px",
+    padding: "22px 18px 18px",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
   },
   logoBox: {
-    width: 44,
-    height: 44,
-    borderRadius: 8,
+    width: 42,
+    height: 42,
+    borderRadius: 12,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
     overflow: "hidden",
+    background: "#eef2ff",
+    border: "1px solid #dce6ff",
   },
   logoButton: {
     padding: 0,
@@ -357,10 +363,11 @@ const styles: Record<string, React.CSSProperties> = {
     objectFit: "cover",
   },
   logoText: {
-    fontSize: 20,
-    fontWeight: 800,
+    fontSize: 19,
+    fontWeight: 700,
     letterSpacing: "-0.02em",
     lineHeight: 1.1,
+    color: "#3157E8",
   },
   logoSubtext: {
     fontSize: 10,
@@ -370,10 +377,10 @@ const styles: Record<string, React.CSSProperties> = {
   menuButton: {
     width: 32,
     height: 32,
-    borderRadius: 8,
-    backgroundColor: "rgba(255,255,255,0.1)",
-    border: "none",
-    color: "#ffffff",
+    borderRadius: 10,
+    backgroundColor: "#f5f7fb",
+    border: "1px solid #e1e8f4",
+    color: "#52627a",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -382,7 +389,7 @@ const styles: Record<string, React.CSSProperties> = {
   scrollArea: {
     flex: 1,
     overflowY: "auto",
-    padding: "0 16px 20px",
+    padding: "0 14px 18px",
     display: "flex",
     flexDirection: "column",
     gap: 24,
@@ -397,9 +404,9 @@ const styles: Record<string, React.CSSProperties> = {
   groupLabel: {
     margin: "0 0 0 12px",
     fontSize: 11,
-    fontWeight: 800,
+    fontWeight: 700,
     letterSpacing: "0.06em",
-    color: "rgba(255,255,255,0.6)",
+    color: "#8a98ad",
   },
   nav: {
     display: "flex",
@@ -410,16 +417,13 @@ const styles: Record<string, React.CSSProperties> = {
     display: "flex",
     alignItems: "center",
     gap: 12,
-    padding: "12px 14px",
+    padding: "11px 13px",
     borderRadius: 12,
     textDecoration: "none",
     fontSize: 14,
     fontWeight: 600,
-    transition: "all 0.2s",
+    transition: "background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, color 160ms ease, transform 160ms ease",
     position: "relative",
-  },
-  activeNavIndicator: {
-    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
   },
   navLabel: {
     whiteSpace: "nowrap",
@@ -427,20 +431,22 @@ const styles: Record<string, React.CSSProperties> = {
     textOverflow: "ellipsis",
   },
   footer: {
-    padding: "20px",
-    borderTop: "1px solid rgba(255,255,255,0.1)",
+    padding: "16px",
+    borderTop: "1px solid #e6ecf5",
     display: "flex",
     flexDirection: "column",
-    gap: 16,
+    gap: 12,
   },
   profileBox: {
     display: "flex",
     alignItems: "center",
     gap: 12,
-    background: "rgba(255,255,255,0.1)",
+    background: "#ffffff",
     padding: "10px",
     borderRadius: 16,
-    transition: "background 160ms ease, box-shadow 160ms ease",
+    border: "1px solid #e1e8f4",
+    boxShadow: "0 12px 28px rgba(15,23,42,0.05)",
+    transition: "background 160ms ease, box-shadow 160ms ease, border-color 160ms ease",
   },
   profileMenu: {
     position: "fixed",
@@ -479,8 +485,8 @@ const styles: Record<string, React.CSSProperties> = {
     width: 36,
     height: 36,
     borderRadius: "50%",
-    backgroundColor: "#ffffff",
-    color: "#3B5BDB",
+    backgroundColor: "#eef2ff",
+    color: "#3157E8",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -491,27 +497,27 @@ const styles: Record<string, React.CSSProperties> = {
   profileName: {
     fontSize: 14,
     fontWeight: 700,
-    color: "#ffffff",
+    color: "#101A3C",
     margin: 0,
     lineHeight: 1.2,
   },
   profileRole: {
     fontSize: 12,
-    color: "rgba(255,255,255,0.7)",
+    color: "#72809A",
     margin: 0,
   },
   logoutButton: {
     display: "flex",
     alignItems: "center",
     gap: 8,
-    padding: "12px",
-    backgroundColor: "rgba(255,255,255,0.1)",
-    border: "1px solid rgba(255,255,255,0.2)",
+    padding: "11px 12px",
+    backgroundColor: "#fff1f3",
+    border: "1px solid #ffd5dc",
     borderRadius: 12,
-    color: "#ffffff",
+    color: "#dc2626",
     fontSize: 13,
     fontWeight: 700,
     cursor: "pointer",
-    transition: "background 0.2s",
+    transition: "background-color 160ms ease, border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease",
   },
 };
