@@ -782,35 +782,6 @@ export function CalendarBoard() {
     <section className={styles.page}>
       <div className={styles.layout}>
         <div className={styles.calendarCard}>
-          <div className={styles.calendarCardHeader}>
-            <div className={styles.headerTitleWrap}>
-              <h2>Vardiya Takvimi</h2>
-              <div className={styles.infoBadgeWrap}>
-                <button
-                  type="button"
-                  className={styles.infoBadge}
-                  aria-label="Takvim hakkında bilgi"
-                >
-                  <CircleAlert size={16} />
-                </button>
-                <div className={styles.infoTooltip}>
-                  <strong>Takvim rehberi</strong>
-                  <p>
-                    Sürükle-bırak ile atama taşı, aynı birim içinde swap yap ve
-                    takvimi filtrelerle daralt.
-                  </p>
-                  <div className={styles.tooltipLegend}>
-                    <span><em className={styles.legendMesai}>M</em>Mesai</span>
-                    <span><em className={styles.legendNobet}>N</em>Nöbet</span>
-                    <span><em className={styles.legendIzin}>İ</em>İzinli</span>
-                    <span><em className={styles.legendEmpty}>-</em>Vardiya Yok</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <p>Birimlerinizin vardiya planlarını takvim üzerinden görüntüleyin ve yönetin.</p>
-          </div>
-
           {errorMessage ? <p className={styles.errorText}>{errorMessage}</p> : null}
 
           <div className={styles.toolbar}>
@@ -838,6 +809,28 @@ export function CalendarBoard() {
               >
                 Bugün
               </button>
+              <div className={styles.infoBadgeWrap}>
+                <button
+                  type="button"
+                  className={styles.infoBadge}
+                  aria-label="Takvim hakkında bilgi"
+                >
+                  <CircleAlert size={16} />
+                </button>
+                <div className={styles.infoTooltip}>
+                  <strong>Takvim rehberi</strong>
+                  <p>
+                    Sürükle-bırak ile atama taşı, aynı birim içinde swap yap ve
+                    takvimi filtrelerle daralt.
+                  </p>
+                  <div className={styles.tooltipLegend}>
+                    <span><em className={styles.legendMesai}>M</em>Mesai</span>
+                    <span><em className={styles.legendNobet}>N</em>Nöbet</span>
+                    <span><em className={styles.legendIzin}>İ</em>İzinli</span>
+                    <span><em className={styles.legendEmpty}>-</em>Vardiya Yok</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className={styles.toolbarRight}>
