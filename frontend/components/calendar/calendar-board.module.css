@@ -75,8 +75,8 @@
 
 .infoTooltip {
   position: absolute;
-  left: auto;
-  right: -12px;
+  left: 0;
+  right: auto;
   top: calc(100% + 10px);
   transform: translateY(4px);
   width: min(320px, calc(100vw - 32px));
@@ -99,7 +99,7 @@
   content: "";
   position: absolute;
   top: -6px;
-  right: 18px;
+  left: 9px;
   width: 10px;
   height: 10px;
   transform: rotate(45deg);
@@ -125,25 +125,40 @@
 .tooltipLegend {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px 10px;
-  margin-top: 10px;
-  padding-top: 10px;
+  gap: 7px;
+  margin-top: 9px;
+  padding-top: 9px;
   border-top: 1px solid #edf2f8;
 }
 
 .tooltipLegend span {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   min-width: 0;
-  min-height: 28px;
-  padding: 5px 7px;
-  border: 1px solid #edf2f8;
-  border-radius: 10px;
-  background: #f8fbff;
-  color: #334155;
+  min-height: 30px;
+  padding: 5px 8px;
+  border: 1px solid #e6edf7;
+  border-radius: 9px;
+  background: linear-gradient(180deg, #ffffff, #f8fbff);
+  color: #243754;
   font-size: 11px;
   font-weight: 700;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+}
+
+.tooltipLegend em {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 5px;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .infoBadgeWrap:hover .infoTooltip,
