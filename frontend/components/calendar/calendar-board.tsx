@@ -794,6 +794,7 @@ export function CalendarBoard() {
                   <CircleAlert size={16} />
                 </button>
                 <div className={styles.infoTooltip}>
+                  <strong>Takvim rehberi</strong>
                   <p>
                     Sürükle-bırak ile atama taşı, aynı birim içinde swap yap ve
                     takvimi filtrelerle daralt.
