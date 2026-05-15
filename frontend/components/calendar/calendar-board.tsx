@@ -794,8 +794,16 @@ export function CalendarBoard() {
                   <CircleAlert size={16} />
                 </button>
                 <div className={styles.infoTooltip}>
-                  Sürükle-bırak ile atama taşı, aynı birim içinde swap yap ve
-                  takvimi filtrelerle daralt.
+                  <p>
+                    Sürükle-bırak ile atama taşı, aynı birim içinde swap yap ve
+                    takvimi filtrelerle daralt.
+                  </p>
+                  <div className={styles.tooltipLegend}>
+                    <span><em className={styles.legendMesai}>M</em>Mesai</span>
+                    <span><em className={styles.legendNobet}>N</em>Nöbet</span>
+                    <span><em className={styles.legendIzin}>İ</em>İzinli</span>
+                    <span><em className={styles.legendEmpty}>-</em>Vardiya Yok</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -829,12 +837,6 @@ export function CalendarBoard() {
               >
                 Bugün
               </button>
-              <div className={styles.toolbarLegend}>
-                <span><em className={styles.legendMesai}>M</em>Mesai</span>
-                <span><em className={styles.legendNobet}>N</em>Nöbet</span>
-                <span><em className={styles.legendIzin}>İ</em>İzinli</span>
-                <span><em className={styles.legendEmpty}>-</em>Vardiya Yok</span>
-              </div>
             </div>
 
             <div className={styles.toolbarRight}>
